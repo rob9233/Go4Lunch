@@ -49,11 +49,11 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     private void setToolbar() {
-        toolbar = findViewById(R.id.activity_navigation_toolbar);
         setSupportActionBar(toolbar);
     }
 
     private void setViews() {
+        toolbar = findViewById(R.id.activity_navigation_toolbar);
         bottomNav = findViewById(R.id.activity_navigation_bottom_navigation);
     }
 
@@ -82,19 +82,13 @@ public class NavigationActivity extends AppCompatActivity {
                 // 4 - Handle Navigation Item Click
                 int id = menuItem.getItemId();
 
-/*        switch (id){
-            case R.id.activity_main_drawer_news :
+        switch (id){
+            case R.id.nav_drawer_map :
+                bottomNav.setSelectedItemId(R.id.nav_map);
                 break;
-            case R.id.activity_main_drawer_profile:
-                break;
-            case R.id.activity_main_drawer_settings:
-                break;
-            default:
-                break;
-        }*/
+        }
 
                 drawerLayout.closeDrawer(GravityCompat.START);
-
                 return true;
             }
         });
