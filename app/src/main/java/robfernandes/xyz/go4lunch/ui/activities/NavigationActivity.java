@@ -9,10 +9,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.ui.fragments.MapFragment;
@@ -99,18 +99,21 @@ public class NavigationActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_toolbar, menu);
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_toolbar_search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+             //   Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId()==R.id.menu_toolbar_search) {
-            //go to search
-
-            //temp toast
-            Toast.makeText(this, "Search clicked", Toast.LENGTH_SHORT).show();
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     private void setListeners() {
