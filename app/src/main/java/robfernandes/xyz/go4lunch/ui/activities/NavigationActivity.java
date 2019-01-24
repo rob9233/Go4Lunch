@@ -13,6 +13,8 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.ui.fragments.MapFragment;
@@ -25,6 +27,7 @@ public class NavigationActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private ActionBarDrawerToggle toggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +74,7 @@ public class NavigationActivity extends AppCompatActivity {
 
     private void configureDrawerLayout(){
         this.drawerLayout = findViewById(R.id.activity_navigation_drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
     }
@@ -99,7 +102,25 @@ public class NavigationActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_toolbar, menu);
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_toolbar_search).getActionView();
+        MenuItem item = menu.findItem(R.id.menu_toolbar_search);
+
+        SearchView searchView = (SearchView) item.getActionView();
+       searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //search is expanded
+                toggle.setDrawerIndicatorEnabled(false);
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                toggle.setDrawerIndicatorEnabled(true);
+                return false;
+            }
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -108,7 +129,6 @@ public class NavigationActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String s) {
-             //   Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -139,5 +159,9 @@ public class NavigationActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private void displayToast(String s) {
+        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
     }
 }
