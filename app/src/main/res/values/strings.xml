@@ -20,4 +20,10 @@
     <string name="log_in_with_gmail">Log In With Gmail</string>
     <string name="log_in_with_twitter">Log In WIth Twitter</string>
     <string name="log_in_with_github">Log In With GitHub</string>
+    <string name="go4lunch">Go4Lunch</string>
+    <string name="email_email_com">email@email.com</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="your_lunch">YOUR LUNCH</string>
+    <string name="settings">SETTINGS</string>
+    <string name="logout">LOGOUT</string>
 </resources>

@@ -110,8 +110,15 @@ public class NavigationActivity extends AppCompatActivity {
                 int id = menuItem.getItemId();
 
         switch (id){
-            case R.id.nav_drawer_map :
-                bottomNav.setSelectedItemId(R.id.nav_map);
+            case R.id.nav_drawer_your_lunch :
+               // bottomNav.setSelectedItemId(R.id.nav_map);
+                displayToast("your lunch");
+                break;
+            case R.id.nav_drawer_settings :
+                displayToast("settings");
+                break;
+            case R.id.nav_drawer_logout :
+                displayToast("logout");
                 break;
         }
                 drawerLayout.closeDrawer(GravityCompat.START);
