@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.MainActivity">
+    tools:context=".ui.activities.RegisterActivity">
 
     <com.jgabrielfreitas.core.BlurImageView
-        android:id="@+id/activity_main_background_blur_image"
+        android:id="@+id/activity_register_background_blur_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
@@ -31,7 +31,7 @@
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/activity_main_background_blur_image" />
+        app:layout_constraintTop_toTopOf="@+id/activity_register_background_blur_image" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -46,12 +46,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/activity_main_background_blur_image"
+        app:layout_constraintTop_toTopOf="@+id/activity_register_background_blur_image"
         app:layout_constraintVertical_bias="0.88"
         >
 
         <Button
-            android:id="@+id/activity_main_log_in_btn"
+            android:id="@+id/activity_register_log_in_btn"
             android:layout_width="@dimen/log_in_btn_width"
             android:layout_height="wrap_content"
             android:text="@string/log_in_with_email"
@@ -60,7 +60,7 @@
             />
 
         <Button
-            android:id="@+id/activity_main_facebook_btn"
+            android:id="@+id/activity_register_facebook_btn"
             android:layout_width="@dimen/log_in_btn_width"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/log_btn_margin_top"
@@ -70,7 +70,7 @@
             />
 
         <Button
-            android:id="@+id/activity_main_gmail_btn"
+            android:id="@+id/activity_register_gmail_btn"
             android:layout_width="@dimen/log_in_btn_width"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/log_btn_margin_top"
@@ -79,7 +79,7 @@
             android:background="@drawable/btn_round_gmail"/>
 
         <Button
-            android:id="@+id/activity_main_github_btn"
+            android:id="@+id/activity_register_github_btn"
             android:layout_width="@dimen/log_in_btn_width"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/log_btn_margin_top"
@@ -88,19 +88,12 @@
             android:background="@drawable/btn_round_github"/>
 
         <Button
-            android:id="@+id/activity_main_twitter_btn"
+            android:id="@+id/activity_register_twitter_btn"
             android:layout_width="@dimen/log_in_btn_width"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/log_btn_margin_top"
             android:text="@string/log_in_with_twitter"
             android:textColor="@android:color/white"
             android:background="@drawable/btn_round_twitter"/>
-
-        <TextView
-            android:id="@+id/activity_main_dont_have_account_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/don_t_have_an_account_click_here_to_register_for_free"
-            android:textColor="@color/design_default_color_primary" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
