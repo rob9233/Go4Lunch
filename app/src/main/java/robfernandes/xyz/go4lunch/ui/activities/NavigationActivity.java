@@ -16,10 +16,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.jgabrielfreitas.core.BlurImageView;
+
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.ui.fragments.MapFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.RestaurantListFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.WorkmatesFragment;
+import robfernandes.xyz.go4lunch.utils.Constants;
 
 public class NavigationActivity extends AppCompatActivity {
 
@@ -64,7 +67,6 @@ public class NavigationActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // 5 - Handle back click to close menu
         if (this.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             this.drawerLayout.closeDrawer(GravityCompat.START);
         } else {
@@ -77,6 +79,27 @@ public class NavigationActivity extends AppCompatActivity {
         toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View view, float v) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View view) {
+                blurBackground();
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View view) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int i) {
+
+            }
+        });
     }
 
     private void configureNavigationView(){
@@ -84,7 +107,6 @@ public class NavigationActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                // 4 - Handle Navigation Item Click
                 int id = menuItem.getItemId();
 
         switch (id){
@@ -92,7 +114,6 @@ public class NavigationActivity extends AppCompatActivity {
                 bottomNav.setSelectedItemId(R.id.nav_map);
                 break;
         }
-
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             }
@@ -163,5 +184,11 @@ public class NavigationActivity extends AppCompatActivity {
 
     private void displayToast(String s) {
         Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void blurBackground() {
+        BlurImageView blurImageView = findViewById(R.id.drawer_header_blur_image);
+        blurImageView.setBlur(Constants.BLUR_RADIOUS);
     }
 }
