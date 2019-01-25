@@ -1,5 +1,6 @@
 package robfernandes.xyz.go4lunch.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -40,7 +41,7 @@ public class NavigationActivity extends AppCompatActivity {
         setViews();
         setListeners();
         //Start on Map Fragment but not when the deice is rotated
-       if (savedInstanceState == null) {
+        if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.activity_navigation_frame_layout,
@@ -74,7 +75,7 @@ public class NavigationActivity extends AppCompatActivity {
         }
     }
 
-    private void configureDrawerLayout(){
+    private void configureDrawerLayout() {
         this.drawerLayout = findViewById(R.id.activity_navigation_drawer_layout);
         toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
@@ -102,29 +103,38 @@ public class NavigationActivity extends AppCompatActivity {
         });
     }
 
-    private void configureNavigationView(){
-        this.navigationView =  findViewById(R.id.activity_navigation_nav_view);
+    private void configureNavigationView() {
+        this.navigationView = findViewById(R.id.activity_navigation_nav_view);
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 int id = menuItem.getItemId();
+                Intent intent = null;
 
-        switch (id){
-            case R.id.nav_drawer_your_lunch :
-               // bottomNav.setSelectedItemId(R.id.nav_map);
-                displayToast("your lunch");
-                break;
-            case R.id.nav_drawer_settings :
-                displayToast("settings");
-                break;
-            case R.id.nav_drawer_logout :
-                displayToast("logout");
-                break;
-        }
+                switch (id) {
+                    case R.id.nav_drawer_your_lunch:
+                        intent = new Intent(getApplicationContext(), LunchActivity.class);
+                        break;
+                    case R.id.nav_drawer_settings:
+                        intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                        break;
+                    case R.id.nav_drawer_logout:
+                        logOut();
+                        displayToast("logout");
+                        break;
+                }
                 drawerLayout.closeDrawer(GravityCompat.START);
+                if (intent != null) {
+                    startActivity(intent);
+                }
                 return true;
             }
         });
+    }
+
+    private void logOut() {
+        displayToast("Log Out");
     }
 
     @Override
@@ -133,7 +143,7 @@ public class NavigationActivity extends AppCompatActivity {
         MenuItem item = menu.findItem(R.id.menu_toolbar_search);
 
         SearchView searchView = (SearchView) item.getActionView();
-       searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
