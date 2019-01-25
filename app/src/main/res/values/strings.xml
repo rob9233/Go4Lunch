@@ -14,4 +14,10 @@
     <string name="map">Map</string>
     <string name="workmates">Workmates</string>
     <string name="search">Search</string>
+    <string name="logo">Logo</string>
+    <string name="log_in_with_email">Log In With Email</string>
+    <string name="log_in_with_facebook">Log In With Facebook</string>
+    <string name="log_in_with_gmail">Log In With Gmail</string>
+    <string name="log_in_with_twitter">Log In WIth Twitter</string>
+    <string name="log_in_with_github">Log In With GitHub</string>
 </resources>

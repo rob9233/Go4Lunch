@@ -3,4 +3,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
+    <dimen name="logo_size">200dp</dimen>
+    <dimen name="log_in_btn_width">300dp</dimen>
+    <dimen name="log_btn_margin_top">10dp</dimen>
+    <dimen name="btn_corners_radius">5dp</dimen>
 </resources>
