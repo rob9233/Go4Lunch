@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.jgabrielfreitas.core.BlurImageView;
 
 import robfernandes.xyz.go4lunch.R;
+import robfernandes.xyz.go4lunch.ui.fragments.ChatFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.MapFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.RestaurantListFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.WorkmatesFragment;
@@ -189,6 +190,9 @@ public class NavigationActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_workmates:
                         fragment = new WorkmatesFragment();
+                        break;
+                    case R.id.nav_chat:
+                        fragment = new ChatFragment();
                         break;
                 }
 

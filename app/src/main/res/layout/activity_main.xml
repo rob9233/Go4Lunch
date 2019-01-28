@@ -78,24 +78,6 @@
             android:textColor="@android:color/white"
             android:background="@drawable/btn_round_gmail"/>
 
-        <Button
-            android:id="@+id/activity_main_github_btn"
-            android:layout_width="@dimen/log_in_btn_width"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/log_btn_margin_top"
-            android:text="@string/log_in_with_github"
-            android:textColor="@android:color/white"
-            android:background="@drawable/btn_round_github"/>
-
-        <Button
-            android:id="@+id/activity_main_twitter_btn"
-            android:layout_width="@dimen/log_in_btn_width"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/log_btn_margin_top"
-            android:text="@string/log_in_with_twitter"
-            android:textColor="@android:color/white"
-            android:background="@drawable/btn_round_twitter"/>
-
         <TextView
             android:id="@+id/activity_main_dont_have_account_text_view"
             android:layout_width="match_parent"
