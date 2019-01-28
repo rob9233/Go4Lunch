@@ -9,7 +9,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.activities.RegisterActivity"></activity>
         <activity android:name=".ui.activities.SettingsActivity" />
         <activity android:name=".ui.activities.LunchActivity" />
         <activity android:name=".ui.activities.NavigationActivity" />
