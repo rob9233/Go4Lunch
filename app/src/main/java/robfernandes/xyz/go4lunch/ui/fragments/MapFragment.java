@@ -13,6 +13,8 @@ import robfernandes.xyz.go4lunch.R;
 
 public class MapFragment extends Fragment {
 
+    private static final String TAG = MapFragment.class.getSimpleName();
+
     public MapFragment() {
         // Required empty public constructor
     }
@@ -22,4 +24,6 @@ public class MapFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
+
+
 }

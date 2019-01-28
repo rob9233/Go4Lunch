@@ -1,5 +1,6 @@
 package robfernandes.xyz.go4lunch.ui.activities;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,15 +13,19 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.jgabrielfreitas.core.BlurImageView;
 
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.ui.fragments.ChatFragment;
+import robfernandes.xyz.go4lunch.ui.fragments.MapErrorFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.MapFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.RestaurantListFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.WorkmatesFragment;
@@ -33,6 +38,8 @@ public class NavigationActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
+    private static final String TAG = "NavigationActivity";
+    private static final int ERROR_DIALOG_REQUEST = 9001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +50,17 @@ public class NavigationActivity extends AppCompatActivity {
         setListeners();
         //Start on Map Fragment but not when the deice is rotated
         if (savedInstanceState == null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.activity_navigation_frame_layout,
-                            new MapFragment()).commit();
+            if (isMapServicesOK()) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.activity_navigation_frame_layout,
+                                new MapFragment()).commit();
+            } else {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.activity_navigation_frame_layout,
+                                new MapErrorFragment()).commit();
+            }
         }
 
         setToolbar();
@@ -183,7 +197,11 @@ public class NavigationActivity extends AppCompatActivity {
 
                 switch (menuItem.getItemId()) {
                     case R.id.nav_map:
-                        fragment = new MapFragment();
+                        if (isMapServicesOK()) {
+                            fragment = new MapFragment();
+                        } else {
+                            fragment = new MapFragment();
+                        }
                         break;
                     case R.id.nav_restaurant_list:
                         fragment = new RestaurantListFragment();
@@ -211,5 +229,27 @@ public class NavigationActivity extends AppCompatActivity {
     private void blurBackground() {
         BlurImageView blurImageView = findViewById(R.id.drawer_header_blur_image);
         blurImageView.setBlur(Constants.BLUR_RADIOUS);
+    }
+
+    public boolean isMapServicesOK(){
+        Log.d(TAG, "isMapServicesOK: checking google services version");
+
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getApplicationContext());
+
+        if(available == ConnectionResult.SUCCESS){
+            //everything is fine and the user can make map requests
+            Log.d(TAG, "isMapServicesOK: Google Play Services is working");
+            return true;
+        }
+        else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
+            //an error occurred but we can resolve it
+            Log.d(TAG, "isMapServicesOK: an error occured but we can fix it");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(
+                    NavigationActivity.this, available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        }else{
+            Toast.makeText(this, "You can't make map requests", Toast.LENGTH_SHORT).show();
+        }
+        return false;
     }
 }
