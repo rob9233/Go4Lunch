@@ -11,7 +11,7 @@ import com.jgabrielfreitas.core.BlurImageView;
 
 import robfernandes.xyz.go4lunch.R;
 
-import static robfernandes.xyz.go4lunch.utils.Constants.BLUR_RADIOUS;
+import static robfernandes.xyz.go4lunch.utils.Constants.BLUR_RADIUS;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void blurBackground() {
         BlurImageView blurImageView = findViewById(R.id.activity_main_background_blur_image);
-        blurImageView.setBlur(BLUR_RADIOUS);
+        blurImageView.setBlur(BLUR_RADIUS);
     }
 
     private void setViews() {

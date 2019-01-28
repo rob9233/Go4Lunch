@@ -228,7 +228,7 @@ public class NavigationActivity extends AppCompatActivity {
 
     private void blurBackground() {
         BlurImageView blurImageView = findViewById(R.id.drawer_header_blur_image);
-        blurImageView.setBlur(Constants.BLUR_RADIOUS);
+        blurImageView.setBlur(Constants.BLUR_RADIUS);
     }
 
     public boolean isMapServicesOK(){
