@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.MainActivity">
 
-    <com.jgabrielfreitas.core.BlurImageView
+    <ImageView
         android:id="@+id/activity_main_background_blur_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

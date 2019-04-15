@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.jgabrielfreitas.core.BlurImageView;
 
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.ui.fragments.ChatFragment;
@@ -29,7 +28,6 @@ import robfernandes.xyz.go4lunch.ui.fragments.MapErrorFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.MapFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.RestaurantListFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.WorkmatesFragment;
-import robfernandes.xyz.go4lunch.utils.Constants;
 
 public class NavigationActivity extends AppCompatActivity {
 
@@ -95,27 +93,6 @@ public class NavigationActivity extends AppCompatActivity {
         toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(@NonNull View view, float v) {
-
-            }
-
-            @Override
-            public void onDrawerOpened(@NonNull View view) {
-                blurBackground();
-            }
-
-            @Override
-            public void onDrawerClosed(@NonNull View view) {
-
-            }
-
-            @Override
-            public void onDrawerStateChanged(int i) {
-
-            }
-        });
     }
 
     private void configureNavigationView() {
@@ -223,12 +200,6 @@ public class NavigationActivity extends AppCompatActivity {
 
     private void displayToast(String s) {
         Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
-    }
-
-
-    private void blurBackground() {
-        BlurImageView blurImageView = findViewById(R.id.drawer_header_blur_image);
-        blurImageView.setBlur(Constants.BLUR_RADIUS);
     }
 
     public boolean isMapServicesOK(){

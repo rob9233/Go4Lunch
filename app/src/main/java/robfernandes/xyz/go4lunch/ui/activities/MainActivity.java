@@ -7,11 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.jgabrielfreitas.core.BlurImageView;
-
 import robfernandes.xyz.go4lunch.R;
-
-import static robfernandes.xyz.go4lunch.utils.Constants.BLUR_RADIUS;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,14 +20,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setViews();
-        blurBackground();
         setOnClickListeners();
     }
 
-    private void blurBackground() {
-        BlurImageView blurImageView = findViewById(R.id.activity_main_background_blur_image);
-        blurImageView.setBlur(BLUR_RADIUS);
-    }
 
     private void setViews() {
         logInBtn = findViewById(R.id.activity_main_log_in_btn);
