@@ -135,43 +135,6 @@ public class NavigationActivity extends AppCompatActivity {
         displayToast("Log Out");
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
-        MenuItem item = menu.findItem(R.id.menu_toolbar_search);
-
-        SearchView searchView = (SearchView) item.getActionView();
-        searchView.setMaxWidth(Integer.MAX_VALUE);
-        searchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //search is expanded
-                toggle.setDrawerIndicatorEnabled(false);
-            }
-        });
-
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                toggle.setDrawerIndicatorEnabled(true);
-                return false;
-            }
-        });
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
-
-        return true;
-    }
-
     private void setListeners() {
         bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
