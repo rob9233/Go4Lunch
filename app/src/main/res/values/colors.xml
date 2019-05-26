@@ -6,6 +6,7 @@
     <color name="facebook">#507CC0</color>
     <color name="gmail">#DF4930</color>
     <color name="github">#24292E</color>
+    <color name="customGrey">#24292E</color>
     <color name="twitter">#4AB3F4</color>
     <color name="email">#CDC5BF</color>
     <color name="drawer_color">#DBDBDB</color>

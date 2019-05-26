@@ -1,12 +1,16 @@
 package robfernandes.xyz.go4lunch.ui.activities;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -23,8 +27,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import robfernandes.xyz.go4lunch.R;
-import robfernandes.xyz.go4lunch.ui.fragments.ChatFragment;
-import robfernandes.xyz.go4lunch.ui.fragments.MapErrorFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.MapFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.RestaurantListFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.WorkmatesFragment;
@@ -36,8 +38,10 @@ public class NavigationActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
-    private static final String TAG = "NavigationActivity";
     private static final int ERROR_DIALOG_REQUEST = 9001;
+    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 928;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,21 +52,23 @@ public class NavigationActivity extends AppCompatActivity {
         setListeners();
         //Start on Map Fragment but not when the deice is rotated
         if (savedInstanceState == null) {
-            if (isMapServicesOK()) {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.activity_navigation_frame_layout,
-                                new MapFragment()).commit();
-            } else {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.activity_navigation_frame_layout,
-                                new MapErrorFragment()).commit();
-            }
+            getLocationPermission();
         }
 
         setToolbar();
         configureDrawer();
+    }
+
+    private void showMapFragment() {
+        if (isServicesOK()) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.activity_navigation_frame_layout,
+                            new MapFragment()).commit();
+        } else {
+            Toast.makeText(getBaseContext(), "It is not possible to display the map"
+                    , Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void configureDrawer() {
@@ -174,11 +180,7 @@ public class NavigationActivity extends AppCompatActivity {
 
                 switch (menuItem.getItemId()) {
                     case R.id.nav_map:
-                        if (isMapServicesOK()) {
-                            fragment = new MapFragment();
-                        } else {
-                            fragment = new MapFragment();
-                        }
+                        getLocationPermission();
                         break;
                     case R.id.nav_restaurant_list:
                         fragment = new RestaurantListFragment();
@@ -186,13 +188,11 @@ public class NavigationActivity extends AppCompatActivity {
                     case R.id.nav_workmates:
                         fragment = new WorkmatesFragment();
                         break;
-                    case R.id.nav_chat:
-                        fragment = new ChatFragment();
-                        break;
                 }
-
-                getSupportFragmentManager().beginTransaction().replace(R.id.activity_navigation_frame_layout,
-                        fragment).commit();
+                if (fragment != null) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.activity_navigation_frame_layout,
+                            fragment).commit();
+                }
                 return true;
             }
         });
@@ -202,25 +202,60 @@ public class NavigationActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
     }
 
-    public boolean isMapServicesOK(){
-        Log.d(TAG, "isMapServicesOK: checking google services version");
+    public boolean isServicesOK() {
 
-        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getApplicationContext());
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
+                NavigationActivity.this);
 
-        if(available == ConnectionResult.SUCCESS){
+        if (available == ConnectionResult.SUCCESS) {
             //everything is fine and the user can make map requests
-            Log.d(TAG, "isMapServicesOK: Google Play Services is working");
             return true;
-        }
-        else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
-            //an error occurred but we can resolve it
-            Log.d(TAG, "isMapServicesOK: an error occured but we can fix it");
+        } else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
+            //an error occured but we can resolve it
             Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(
                     NavigationActivity.this, available, ERROR_DIALOG_REQUEST);
             dialog.show();
-        }else{
+        } else {
             Toast.makeText(this, "You can't make map requests", Toast.LENGTH_SHORT).show();
         }
         return false;
+    }
+
+    private void getLocationPermission() {
+        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION};
+
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                    COURSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                showMapFragment();
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        permissions,
+                        LOCATION_PERMISSION_REQUEST_CODE);
+            }
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    permissions,
+                    LOCATION_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        switch(requestCode){
+            case LOCATION_PERMISSION_REQUEST_CODE:{
+                if(grantResults.length > 0){
+                    for(int i = 0; i < grantResults.length; i++){
+                        if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
+                            return;
+                        }
+                    }
+                    showMapFragment();
+                }
+            }
+        }
     }
 }

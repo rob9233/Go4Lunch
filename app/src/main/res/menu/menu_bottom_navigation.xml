@@ -14,9 +14,4 @@
         android:id="@+id/nav_workmates"
         android:icon="@drawable/ic_group_black_24dp"
         android:title="@string/workmates" />
-
-    <item
-        android:id="@+id/nav_chat"
-        android:icon="@drawable/ic_move_to_inbox_black_24dp"
-        android:title="Chat" />
 </menu>
