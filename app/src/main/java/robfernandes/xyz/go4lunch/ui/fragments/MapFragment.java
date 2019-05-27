@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -44,6 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import robfernandes.xyz.go4lunch.R;
+import robfernandes.xyz.go4lunch.ui.adapters.AutocompleteAdapter;
 
 public class MapFragment extends Fragment implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
 
@@ -58,7 +61,10 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
             new LatLng(-33.858754, 151.229596));
     private FindAutocompletePredictionsRequest request;
     private PlacesClient placesClient;
-
+    private RecyclerView recyclerViewAdapter;
+    private AutocompleteAdapter autocompleteAdapter;
+    private List<AutocompletePrediction> autocompletePredictionList;
+    private SearchView searchView;
 
     public MapFragment() {
         // Required empty public constructor
@@ -66,12 +72,31 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_map, container, false);
         initMap();
         Places.initialize(getContext(), getString(R.string.google_maps_api_key));
         placesClient = Places.createClient(getContext());
+        setAutocompleteAdapter();
         return view;
+    }
+
+    private void setAutocompleteAdapter() {
+        recyclerViewAdapter = view.findViewById(R.id.fragment_map_autocomplete_recycler_view);
+        recyclerViewAdapter.setHasFixedSize(true);
+        autocompletePredictionList = new ArrayList<>();
+        autocompleteAdapter = new AutocompleteAdapter(autocompletePredictionList);
+        autocompleteAdapter.setOnAutoCompleteItemClickListener(autocompletePrediction -> {
+            //TODO move camera and add marker
+            searchView.setQuery("",false);
+            searchView.setIconified(true);
+
+            Toast.makeText(getContext()
+                    , autocompletePrediction.getPrimaryText(null).toString(),
+                    Toast.LENGTH_SHORT).show();
+        });
+        recyclerViewAdapter.setAdapter(autocompleteAdapter);
     }
 
     @Override
@@ -114,7 +139,8 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
                     if (task.isSuccessful()) {
                         Location currentLocation = (Location) task.getResult();
 
-                        moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                        moveCamera(new LatLng(currentLocation.getLatitude(),
+                                        currentLocation.getLongitude()),
                                 DEFAULT_ZOOM, "My Location");
 
                     }
@@ -126,7 +152,6 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
     }
 
     private void moveCamera(LatLng latLng, float zoom, String title) {
-        Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
         if (!title.equals("My Location")) {
@@ -163,7 +188,7 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(this);
         searchView.setQueryHint("Search");
         super.onCreateOptionsMenu(menu, inflater);
@@ -193,10 +218,9 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
                 .setQuery(query)
                 .build();
         placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
-            for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
-                Log.i(TAG, prediction.getPlaceId());
-                Log.i(TAG, prediction.getPrimaryText(null).toString());
-            }
+            autocompletePredictionList = response.getAutocompletePredictions();
+            autocompleteAdapter.setAutocompletePredictionList(autocompletePredictionList);
+            autocompleteAdapter.notifyDataSetChanged();
         }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {
                 ApiException apiException = (ApiException) exception;
