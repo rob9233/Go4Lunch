@@ -156,7 +156,7 @@ public class MapFragment extends Fragment  implements SearchView.OnQueryTextList
 
         super.onCreateOptionsMenu(menu, inflater);
 
-        searchView.setSuggestionsAdapter(new PlaceAutocompleteAdapter());
+      //  searchView.setSuggestionsAdapter(new PlaceAutocompleteAdapter());
     }
 
     private void geoLocate(String term){
