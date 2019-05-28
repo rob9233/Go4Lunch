@@ -23,8 +23,10 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -36,13 +38,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
+import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import robfernandes.xyz.go4lunch.R;
@@ -88,15 +93,41 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
         autocompletePredictionList = new ArrayList<>();
         autocompleteAdapter = new AutocompleteAdapter(autocompletePredictionList);
         autocompleteAdapter.setOnAutoCompleteItemClickListener(autocompletePrediction -> {
-            //TODO move camera and add marker
-            searchView.setQuery("",false);
-            searchView.setIconified(true);
-
-            Toast.makeText(getContext()
-                    , autocompletePrediction.getPrimaryText(null).toString(),
-                    Toast.LENGTH_SHORT).show();
+            setSelectedPlace(autocompletePrediction);
         });
         recyclerViewAdapter.setAdapter(autocompleteAdapter);
+    }
+
+    private void setSelectedPlace(AutocompletePrediction autocompletePrediction) {
+        searchView.setQuery("", false);
+        searchView.setIconified(true);
+
+        Toast.makeText(getContext()
+                , autocompletePrediction.getPrimaryText(null).toString(),
+                Toast.LENGTH_SHORT).show();
+
+        String placeId = autocompletePrediction.getPlaceId();
+
+        List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+
+        FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
+                .build();
+
+        placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+            Place place = response.getPlace();
+            String name = place.getName();
+            if (name == null) {
+                name = "selected place";
+            }
+            moveCamera(place.getLatLng(), name);
+        }).addOnFailureListener((exception) -> {
+            if (exception instanceof ApiException) {
+                ApiException apiException = (ApiException) exception;
+                int statusCode = apiException.getStatusCode();
+                Log.e(TAG, "Place not found: " + exception.getMessage());
+            }
+        });
+
     }
 
     @Override
@@ -141,7 +172,7 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
 
                         moveCamera(new LatLng(currentLocation.getLatitude(),
                                         currentLocation.getLongitude()),
-                                DEFAULT_ZOOM, "My Location");
+                                "My Location");
 
                     }
                 }
@@ -151,8 +182,8 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
         }
     }
 
-    private void moveCamera(LatLng latLng, float zoom, String title) {
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    private void moveCamera(LatLng latLng, String title) {
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
 
         if (!title.equals("My Location")) {
             MarkerOptions options = new MarkerOptions()
@@ -206,19 +237,26 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
         if (list.size() > 0) {
             Address address = list.get(0);
 
-            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM,
+            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()),
                     address.getAddressLine(0));
         }
     }
 
     private void autocompletePlaces(String query) {
         request = FindAutocompletePredictionsRequest.builder()
-                .setTypeFilter(TypeFilter.ADDRESS)
+                .setTypeFilter(TypeFilter.ESTABLISHMENT)
                 .setSessionToken(token)
                 .setQuery(query)
                 .build();
         placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
-            autocompletePredictionList = response.getAutocompletePredictions();
+            autocompletePredictionList.clear();
+            for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
+                List<Place.Type> placeTypes = prediction.getPlaceTypes();
+                int restaurantIndex = placeTypes.indexOf(Place.Type.RESTAURANT);
+                if (restaurantIndex >= 0) {
+                    autocompletePredictionList.add(prediction);
+                }
+            }
             autocompleteAdapter.setAutocompletePredictionList(autocompletePredictionList);
             autocompleteAdapter.notifyDataSetChanged();
         }).addOnFailureListener((exception) -> {
