@@ -69,7 +69,6 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
     private AutocompleteAdapter autocompleteAdapter;
     private List<AutocompletePrediction> autocompletePredictionList;
     private SearchView searchView;
-    private Place markerPlace;
     private RectangularBounds bounds;
     private Double currentLocationLat;
     private Double currentLocationLon;
@@ -129,9 +128,9 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
                 .build();
 
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
-            markerPlace = response.getPlace();
+            Place place = response.getPlace();
             try {
-                moveCamera();
+                moveCamera(place);
             } catch (Exception e) {
                 Toast.makeText(getContext(), "It is not possible to find the place"
                         , Toast.LENGTH_SHORT).show();
@@ -173,23 +172,27 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
             }
             mMap.setMyLocationEnabled(true);
             mMap.setOnInfoWindowClickListener(marker -> {
-                //TODO pass more info to restaurantInfo and fix bug
-                RestauranteInfo restauranteInfo = new RestauranteInfo();
-                restauranteInfo.setName(markerPlace.getName());
-                restauranteInfo.setId(markerPlace.getId());
-                Intent intent = new Intent(getContext(), RestaurantActivity.class);
-                intent.putExtra(RESTAURANT_INFO_BUNDLE_EXTRA, restauranteInfo);
-                getContext().startActivity(intent);
+                //TODO pass more info to restaurantInfo
+                RestauranteInfo restauranteInfo = (RestauranteInfo) marker.getTag();
+                if (restauranteInfo != null) {
+                    Intent intent = new Intent(getContext(), RestaurantActivity.class);
+                    intent.putExtra(RESTAURANT_INFO_BUNDLE_EXTRA, restauranteInfo);
+                    getContext().startActivity(intent);
+                } else {
+                    Toast.makeText(getContext(), "It is not possible to " +
+                                    "display info about this restaurant",
+                            Toast.LENGTH_SHORT).show();
+                }
             });
             String snippet = "Click here to see more";
-            for (RestauranteInfo restauranteInfo: nearByPlaces.getRestauranteInfoList()) {
+            for (RestauranteInfo restauranteInfo : nearByPlaces.getRestauranteInfoList()) {
                 MarkerOptions options = new MarkerOptions()
                         .position(
                                 new LatLng(restauranteInfo.getLat(), restauranteInfo.getLon())
                         )
                         .snippet(snippet)
                         .title(restauranteInfo.getName());
-                mMap.addMarker(options);
+                mMap.addMarker(options).setTag(restauranteInfo);
             }
         });
     }
@@ -205,16 +208,16 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
         }
     }
 
-    private void moveCamera() {
+    private void moveCamera(Place place) {
         mMap.clear();
 
-        String name = markerPlace.getName();
-        LatLng latLng = markerPlace.getLatLng();
+        String name = place.getName();
+        LatLng latLng = place.getLatLng();
         if (name == null) {
             name = "selected place";
         }
         if (latLng == null) {
-            LatLngBounds viewport = markerPlace.getViewport();
+            LatLngBounds viewport = place.getViewport();
             latLng = new LatLng(viewport.getCenter().latitude,
                     viewport.getCenter().longitude);
         }
@@ -222,11 +225,17 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
         String snippet = "Click here to see more details";
 
+        RestauranteInfo restauranteInfo = new RestauranteInfo();
+        restauranteInfo.setId(place.getId());
+        restauranteInfo.setLat(place.getLatLng().latitude);
+        restauranteInfo.setLon(place.getLatLng().longitude);
+        restauranteInfo.setName(place.getName());
+
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
                 .snippet(snippet)
                 .title(name);
-        mMap.addMarker(options);
+        mMap.addMarker(options).setTag(restauranteInfo);
     }
 
     @Override
