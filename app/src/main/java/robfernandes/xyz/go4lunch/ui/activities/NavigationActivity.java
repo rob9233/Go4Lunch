@@ -16,23 +16,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.Status;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteActivity;
 
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.ui.fragments.MapFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.RestaurantListFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.WorkmatesFragment;
-
-import static robfernandes.xyz.go4lunch.ui.utils.Constants.AUTOCOMPLETE_REQUEST_CODE;
 
 public class NavigationActivity extends AppCompatActivity {
 
@@ -108,30 +101,27 @@ public class NavigationActivity extends AppCompatActivity {
     private void configureNavigationView() {
         this.navigationView = findViewById(R.id.activity_navigation_nav_view);
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                int id = menuItem.getItemId();
-                Intent intent = null;
+        navigationView.setNavigationItemSelectedListener(menuItem -> {
+            int id = menuItem.getItemId();
+            Intent intent = null;
 
-                switch (id) {
-                    case R.id.nav_drawer_your_lunch:
-                        intent = new Intent(getApplicationContext(), LunchActivity.class);
-                        break;
-                    case R.id.nav_drawer_settings:
-                        intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                        break;
-                    case R.id.nav_drawer_logout:
-                        logOut();
-                        displayToast("logout");
-                        break;
-                }
-                drawerLayout.closeDrawer(GravityCompat.START);
-                if (intent != null) {
-                    startActivity(intent);
-                }
-                return true;
+            switch (id) {
+                case R.id.nav_drawer_your_lunch:
+                    intent = new Intent(getApplicationContext(), LunchActivity.class);
+                    break;
+                case R.id.nav_drawer_settings:
+                    intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                    break;
+                case R.id.nav_drawer_logout:
+                    logOut();
+                    displayToast("logout");
+                    break;
             }
+            drawerLayout.closeDrawer(GravityCompat.START);
+            if (intent != null) {
+                startActivity(intent);
+            }
+            return true;
         });
     }
 
@@ -140,28 +130,25 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     private void setListeners() {
-        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                Fragment fragment = null;
+        bottomNav.setOnNavigationItemSelectedListener(menuItem -> {
+            Fragment fragment = null;
 
-                switch (menuItem.getItemId()) {
-                    case R.id.nav_map:
-                        getLocationPermission();
-                        break;
-                    case R.id.nav_restaurant_list:
-                        fragment = new RestaurantListFragment();
-                        break;
-                    case R.id.nav_workmates:
-                        fragment = new WorkmatesFragment();
-                        break;
-                }
-                if (fragment != null) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.activity_navigation_frame_layout,
-                            fragment).commit();
-                }
-                return true;
+            switch (menuItem.getItemId()) {
+                case R.id.nav_map:
+                    getLocationPermission();
+                    break;
+                case R.id.nav_restaurant_list:
+                    fragment = new RestaurantListFragment();
+                    break;
+                case R.id.nav_workmates:
+                    fragment = new WorkmatesFragment();
+                    break;
             }
+            if (fragment != null) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.activity_navigation_frame_layout,
+                        fragment).commit();
+            }
+            return true;
         });
     }
 

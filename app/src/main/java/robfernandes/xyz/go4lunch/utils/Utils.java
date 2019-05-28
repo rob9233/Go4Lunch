@@ -1,4 +1,4 @@
-package robfernandes.xyz.go4lunch.ui.utils;
+package robfernandes.xyz.go4lunch.utils;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;

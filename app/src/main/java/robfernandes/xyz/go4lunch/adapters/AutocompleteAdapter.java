@@ -1,4 +1,4 @@
-package robfernandes.xyz.go4lunch.ui.adapters;
+package robfernandes.xyz.go4lunch.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;

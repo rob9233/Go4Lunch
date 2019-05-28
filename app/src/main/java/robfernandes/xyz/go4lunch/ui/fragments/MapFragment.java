@@ -2,6 +2,7 @@ package robfernandes.xyz.go4lunch.ui.fragments;
 
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -27,12 +28,10 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
@@ -50,26 +49,28 @@ import java.util.Arrays;
 import java.util.List;
 
 import robfernandes.xyz.go4lunch.R;
-import robfernandes.xyz.go4lunch.ui.adapters.AutocompleteAdapter;
-import robfernandes.xyz.go4lunch.ui.utils.Utils;
+import robfernandes.xyz.go4lunch.model.RestauranteInfo;
+import robfernandes.xyz.go4lunch.ui.activities.RestaurantActivity;
+import robfernandes.xyz.go4lunch.adapters.AutocompleteAdapter;
+import robfernandes.xyz.go4lunch.utils.Utils;
+
+import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
 
 public class MapFragment extends Fragment implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
 
     private static final String TAG = MapFragment.class.getSimpleName();
     private View view;
     private GoogleMap mMap;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
     private static final float DEFAULT_ZOOM = 14f;
     private AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
-    private FindAutocompletePredictionsRequest request;
     private PlacesClient placesClient;
-    private RecyclerView recyclerViewAdapter;
     private AutocompleteAdapter autocompleteAdapter;
     private List<AutocompletePrediction> autocompletePredictionList;
     private SearchView searchView;
     private Location currentLocation;
     private RectangularBounds bounds;
     private static final long searchRadiousInMetres = 50000;
+    private Place markerPlace;
 
     public MapFragment() {
         // Required empty public constructor
@@ -88,13 +89,12 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
     }
 
     private void setAutocompleteAdapter() {
-        recyclerViewAdapter = view.findViewById(R.id.fragment_map_autocomplete_recycler_view);
+        RecyclerView recyclerViewAdapter = view.findViewById(R.id.fragment_map_autocomplete_recycler_view);
         recyclerViewAdapter.setHasFixedSize(true);
         autocompletePredictionList = new ArrayList<>();
         autocompleteAdapter = new AutocompleteAdapter(autocompletePredictionList);
-        autocompleteAdapter.setOnAutoCompleteItemClickListener(autocompletePrediction -> {
-            setSelectedPlace(autocompletePrediction);
-        });
+        autocompleteAdapter.setOnAutoCompleteItemClickListener(autocompletePrediction ->
+                setSelectedPlace(autocompletePrediction));
         recyclerViewAdapter.setAdapter(autocompleteAdapter);
     }
 
@@ -111,25 +111,20 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
         List<Place.Field> placeFields = Arrays.asList(Place.Field.ID,
                 Place.Field.LAT_LNG,
                 Place.Field.VIEWPORT,
+                Place.Field.ADDRESS,
+                Place.Field.RATING,
+                Place.Field.PRICE_LEVEL,
+                Place.Field.PHONE_NUMBER,
+                Place.Field.WEBSITE_URI,
                 Place.Field.NAME);
 
         FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
                 .build();
 
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
-            Place place = response.getPlace();
-            String name = place.getName();
-            LatLng latLng = place.getLatLng();
-            if (name == null) {
-                name = "selected place";
-            }
-            if (latLng == null) {
-                LatLngBounds viewport = place.getViewport();
-                latLng = new LatLng(viewport.getCenter().latitude,
-                        viewport.getCenter().longitude);
-            }
+            markerPlace = response.getPlace();
             try {
-                moveCamera(latLng, name);
+                moveCamera();
             } catch (Exception e) {
                 Toast.makeText(getContext(), "It is not possible to find the place"
                         , Toast.LENGTH_SHORT).show();
@@ -151,45 +146,46 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
 
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                mMap = googleMap;
-                if (ActivityCompat.checkSelfPermission(
-                        getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                        getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED) {
+        mapFragment.getMapAsync(googleMap -> {
+            mMap = googleMap;
+            if (ActivityCompat.checkSelfPermission(
+                    getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
 
-                    return;
-                }
-                mMap.setMyLocationEnabled(true);
-                getDeviceLocation();
+                return;
             }
+            mMap.setMyLocationEnabled(true);
+            getDeviceLocation();
+            mMap.setOnInfoWindowClickListener(marker -> {
+                RestauranteInfo restauranteInfo = new RestauranteInfo();
+                restauranteInfo.setName(markerPlace.getName());
+                Intent intent = new Intent(getContext(), RestaurantActivity.class);
+                intent.putExtra(RESTAURANT_INFO_BUNDLE_EXTRA, restauranteInfo);
+                getContext().startActivity(intent);
+            });
         });
     }
 
     private void getDeviceLocation() {
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(
+        FusedLocationProviderClient mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(
                 getContext());
 
         try {
             final Task location = mFusedLocationProviderClient.getLastLocation();
-            location.addOnCompleteListener(new OnCompleteListener() {
-                @Override
-                public void onComplete(@NonNull Task task) {
-                    if (task.isSuccessful()) {
-                        currentLocation = (Location) task.getResult();
+            location.addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    currentLocation = (Location) task.getResult();
 
-                        moveCamera(new LatLng(currentLocation.getLatitude(),
-                                        currentLocation.getLongitude()),
-                                "My Location");
-                        bounds = RectangularBounds.newInstance(Utils.getBounds(
-                                new LatLng(currentLocation.getLatitude(),
-                                        currentLocation.getLongitude())
-                                , searchRadiousInMetres
-                        ));
-                    }
+                    moveCamera(new LatLng(currentLocation.getLatitude(),
+                                    currentLocation.getLongitude()),
+                            "My Location");
+                    bounds = RectangularBounds.newInstance(Utils.getBounds(
+                            new LatLng(currentLocation.getLatitude(),
+                                    currentLocation.getLongitude())
+                            , searchRadiousInMetres
+                    ));
                 }
             });
         } catch (SecurityException e) {
@@ -206,6 +202,30 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
                     .title(title);
             mMap.addMarker(options);
         }
+    }
+
+    private void moveCamera() {
+        mMap.clear();
+
+        String name = markerPlace.getName();
+        LatLng latLng = markerPlace.getLatLng();
+        if (name == null) {
+            name = "selected place";
+        }
+        if (latLng == null) {
+            LatLngBounds viewport = markerPlace.getViewport();
+            latLng = new LatLng(viewport.getCenter().latitude,
+                    viewport.getCenter().longitude);
+        }
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
+        String snippet = "Click here to see more details";
+
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .snippet(snippet)
+                .title(name);
+        mMap.addMarker(options);
     }
 
     @Override
@@ -258,7 +278,7 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
     }
 
     private void autocompletePlaces(String query) {
-        request = FindAutocompletePredictionsRequest.builder()
+        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
                 .setTypeFilter(TypeFilter.ESTABLISHMENT)
                 .setSessionToken(token)
                 .setLocationRestriction(bounds)
