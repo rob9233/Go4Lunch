@@ -29,33 +29,6 @@ public class MainActivity extends AppCompatActivity {
 
         setViews();
         setOnClickListeners();
-        getNearByRestaurants();
-    }
-
-    private void getNearByRestaurants() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://maps.googleapis.com/maps/api/place/search/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        NearbyRestaurantsService service = retrofit.create(NearbyRestaurantsService.class);
-        Call<PlacesResponse> call = service.getNearbyRestaurants("49.260691,-123.137784"
-                , "AIzaSyADNjBKLJP-x6SCiDfw_dPhlQ07EK4eO80");
-
-        call.enqueue(new Callback<PlacesResponse>() {
-            @Override
-            public void onResponse(Call<PlacesResponse> call, Response<PlacesResponse> response) {
-                if (response.code() == 200) {
-                    PlacesResponse placesResponse = response.body();
-                    Log.d("TAG", "onResponse: ");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PlacesResponse> call, Throwable t) {
-                Log.d("TAG", "onFailure: ");
-            }
-        });
     }
 
     private void setViews() {

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -16,15 +17,37 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import robfernandes.xyz.go4lunch.R;
+import robfernandes.xyz.go4lunch.model.NearByPlaces;
+import robfernandes.xyz.go4lunch.model.RestauranteInfo;
+import robfernandes.xyz.go4lunch.model.placesResponse.PlacesResponse;
+import robfernandes.xyz.go4lunch.model.placesResponse.Result;
+import robfernandes.xyz.go4lunch.services.network.NearbyRestaurantsService;
 import robfernandes.xyz.go4lunch.ui.fragments.MapFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.RestaurantListFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.WorkmatesFragment;
+
+import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
+import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
+import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
+import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES_BASE_URL;
 
 public class NavigationActivity extends AppCompatActivity {
 
@@ -38,6 +61,9 @@ public class NavigationActivity extends AppCompatActivity {
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 928;
     private static final String TAG = "NavigationActivity";
+    private double currentLocationLat;
+    private double currentLocationLon;
+    private NearByPlaces nearByPlaces;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,16 +81,82 @@ public class NavigationActivity extends AppCompatActivity {
         configureDrawer();
     }
 
-    private void showMapFragment() {
+    private void getDeviceLocation() {
         if (isServicesOK()) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.activity_navigation_frame_layout,
-                            new MapFragment()).commit();
+            FusedLocationProviderClient mFusedLocationProviderClient =
+                    LocationServices.getFusedLocationProviderClient(
+                            getBaseContext());
+
+            try {
+                final Task location = mFusedLocationProviderClient.getLastLocation();
+                location.addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        currentLocationLat = ((Location) task.getResult()).getLatitude();
+                        currentLocationLon = ((Location) task.getResult()).getLongitude();
+                        getNearByRestaurants();
+                    }
+                });
+            } catch (SecurityException e) {
+                Log.e(TAG, "getDeviceLocation: SecurityException: " + e.getMessage());
+            }
         } else {
             Toast.makeText(getBaseContext(), "It is not possible to display the map"
                     , Toast.LENGTH_SHORT).show();
         }
+
+    }
+
+    private void getNearByRestaurants() {
+        String location = currentLocationLat + "," + currentLocationLon;
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(NEARBY_PLACES_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        NearbyRestaurantsService service = retrofit.create(NearbyRestaurantsService.class);
+        Call<PlacesResponse> call = service.getNearbyRestaurants(location
+                , getString(R.string.google_maps_api_key));
+
+        call.enqueue(new Callback<PlacesResponse>() {
+            @Override
+            public void onResponse(Call<PlacesResponse> call, Response<PlacesResponse> response) {
+                if (response.code() == 200) {
+                    nearByPlaces = new NearByPlaces();
+                    List<RestauranteInfo>  restauranteInfoList = new ArrayList<>();
+                    List<Result> results = response.body().getResults();
+                    for (Result result: results) {
+                        //TODO add mor info
+                        RestauranteInfo restauranteInfo = new RestauranteInfo();
+                        restauranteInfo.setName(result.getName());
+                        restauranteInfo.setId(result.getId());
+                        restauranteInfo.setLat(result.getGeometry().getLocation().getLat());
+                        restauranteInfo.setLon(result.getGeometry().getLocation().getLng());
+                        restauranteInfoList.add(restauranteInfo);
+                    }
+                    nearByPlaces.setRestauranteInfoList(restauranteInfoList);
+                    showMapFragment();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PlacesResponse> call, Throwable t) {
+                Log.d("TAG", "onFailure: ");
+            }
+        });
+    }
+
+    private void showMapFragment() {
+        MapFragment mapFragment = new MapFragment();
+        Bundle bundle = new Bundle();
+        bundle.putDouble(DEVICE_LOCATION_LAT, currentLocationLat);
+        bundle.putDouble(DEVICE_LOCATION_LON, currentLocationLon);
+        bundle.putParcelable(NEARBY_PLACES, nearByPlaces);
+        mapFragment.setArguments(bundle);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.activity_navigation_frame_layout,
+                        mapFragment).commit();
     }
 
     private void configureDrawer() {
@@ -182,7 +274,7 @@ public class NavigationActivity extends AppCompatActivity {
                 FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                     COURSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                showMapFragment();
+                getDeviceLocation();
             } else {
                 ActivityCompat.requestPermissions(this,
                         permissions,
@@ -198,15 +290,15 @@ public class NavigationActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
-        switch(requestCode){
-            case LOCATION_PERMISSION_REQUEST_CODE:{
-                if(grantResults.length > 0){
-                    for(int i = 0; i < grantResults.length; i++){
-                        if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
+        switch (requestCode) {
+            case LOCATION_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < grantResults.length; i++) {
+                        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                             return;
                         }
                     }
-                    showMapFragment();
+                    getDeviceLocation();
                 }
             }
         }

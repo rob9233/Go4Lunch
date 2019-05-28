@@ -20,20 +20,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
@@ -50,11 +46,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import robfernandes.xyz.go4lunch.R;
+import robfernandes.xyz.go4lunch.adapters.AutocompleteAdapter;
+import robfernandes.xyz.go4lunch.model.NearByPlaces;
 import robfernandes.xyz.go4lunch.model.RestauranteInfo;
 import robfernandes.xyz.go4lunch.ui.activities.RestaurantActivity;
-import robfernandes.xyz.go4lunch.adapters.AutocompleteAdapter;
 import robfernandes.xyz.go4lunch.utils.Utils;
 
+
+import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
+import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
+import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
 
 public class MapFragment extends Fragment implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
@@ -68,10 +69,12 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
     private AutocompleteAdapter autocompleteAdapter;
     private List<AutocompletePrediction> autocompletePredictionList;
     private SearchView searchView;
-    private Location currentLocation;
-    private RectangularBounds bounds;
-    private static final long searchRadiousInMetres = 50000;
     private Place markerPlace;
+    private RectangularBounds bounds;
+    private Double currentLocationLat;
+    private Double currentLocationLon;
+    private static final long searchRadiousInMetres = 50000;
+    private NearByPlaces nearByPlaces;
 
     public MapFragment() {
         // Required empty public constructor
@@ -81,6 +84,9 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        currentLocationLat = getArguments().getDouble(DEVICE_LOCATION_LAT);
+        currentLocationLon = getArguments().getDouble(DEVICE_LOCATION_LON);
+        nearByPlaces = getArguments().getParcelable(NEARBY_PLACES);
         view = inflater.inflate(R.layout.fragment_map, container, false);
         initMap();
         Places.initialize(getContext(), getString(R.string.google_maps_api_key));
@@ -149,6 +155,14 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
 
         mapFragment.getMapAsync(googleMap -> {
             mMap = googleMap;
+            moveCamera(new LatLng(currentLocationLat,
+                            currentLocationLon),
+                    "My Location");
+            bounds = RectangularBounds.newInstance(Utils.getBounds(
+                    new LatLng(currentLocationLat,
+                            currentLocationLon)
+                    , searchRadiousInMetres
+            ));
             if (ActivityCompat.checkSelfPermission(
                     getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
@@ -158,9 +172,8 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
                 return;
             }
             mMap.setMyLocationEnabled(true);
-            getDeviceLocation();
             mMap.setOnInfoWindowClickListener(marker -> {
-                //TODO pass more info to restaurantInfo
+                //TODO pass more info to restaurantInfo and fix bug
                 RestauranteInfo restauranteInfo = new RestauranteInfo();
                 restauranteInfo.setName(markerPlace.getName());
                 restauranteInfo.setId(markerPlace.getId());
@@ -168,32 +181,17 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
                 intent.putExtra(RESTAURANT_INFO_BUNDLE_EXTRA, restauranteInfo);
                 getContext().startActivity(intent);
             });
+            String snippet = "Click here to see more";
+            for (RestauranteInfo restauranteInfo: nearByPlaces.getRestauranteInfoList()) {
+                MarkerOptions options = new MarkerOptions()
+                        .position(
+                                new LatLng(restauranteInfo.getLat(), restauranteInfo.getLon())
+                        )
+                        .snippet(snippet)
+                        .title(restauranteInfo.getName());
+                mMap.addMarker(options);
+            }
         });
-    }
-
-    private void getDeviceLocation() {
-        FusedLocationProviderClient mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(
-                getContext());
-
-        try {
-            final Task location = mFusedLocationProviderClient.getLastLocation();
-            location.addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    currentLocation = (Location) task.getResult();
-
-                    moveCamera(new LatLng(currentLocation.getLatitude(),
-                                    currentLocation.getLongitude()),
-                            "My Location");
-                    bounds = RectangularBounds.newInstance(Utils.getBounds(
-                            new LatLng(currentLocation.getLatitude(),
-                                    currentLocation.getLongitude())
-                            , searchRadiousInMetres
-                    ));
-                }
-            });
-        } catch (SecurityException e) {
-            Log.e(TAG, "getDeviceLocation: SecurityException: " + e.getMessage());
-        }
     }
 
     private void moveCamera(LatLng latLng, String title) {

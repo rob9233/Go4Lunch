@@ -6,13 +6,18 @@ import android.os.Parcelable;
 public class RestauranteInfo implements Parcelable {
     private String name;
     private String id;
+    private double lat;
+    private double lon;
 
     public RestauranteInfo() {
     }
 
+
     protected RestauranteInfo(Parcel in) {
         name = in.readString();
         id = in.readString();
+        lat = in.readDouble();
+        lon = in.readDouble();
     }
 
     public static final Creator<RestauranteInfo> CREATOR = new Creator<RestauranteInfo>() {
@@ -43,6 +48,22 @@ public class RestauranteInfo implements Parcelable {
         this.id = id;
     }
 
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLon() {
+        return lon;
+    }
+
+    public void setLon(double lon) {
+        this.lon = lon;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -52,5 +73,7 @@ public class RestauranteInfo implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeString(id);
+        dest.writeDouble(lat);
+        dest.writeDouble(lon);
     }
 }
