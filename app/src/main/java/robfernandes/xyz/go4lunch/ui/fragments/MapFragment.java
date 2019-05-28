@@ -20,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -71,6 +72,7 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
     private RectangularBounds bounds;
     private static final long searchRadiousInMetres = 50000;
     private Place markerPlace;
+    private ImageView placePicker;
 
     public MapFragment() {
         // Required empty public constructor
@@ -85,6 +87,11 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
         Places.initialize(getContext(), getString(R.string.google_maps_api_key));
         placesClient = Places.createClient(getContext());
         setAutocompleteAdapter();
+        placePicker = view.findViewById(R.id.place_picker);
+        placePicker.setOnClickListener(v -> {
+
+        });
+
         return view;
     }
 
