@@ -160,8 +160,10 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
             mMap.setMyLocationEnabled(true);
             getDeviceLocation();
             mMap.setOnInfoWindowClickListener(marker -> {
+                //TODO pass more info to restaurantInfo
                 RestauranteInfo restauranteInfo = new RestauranteInfo();
                 restauranteInfo.setName(markerPlace.getName());
+                restauranteInfo.setId(markerPlace.getId());
                 Intent intent = new Intent(getContext(), RestaurantActivity.class);
                 intent.putExtra(RESTAURANT_INFO_BUNDLE_EXTRA, restauranteInfo);
                 getContext().startActivity(intent);

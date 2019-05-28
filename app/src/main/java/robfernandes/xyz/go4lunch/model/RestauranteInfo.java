@@ -5,12 +5,14 @@ import android.os.Parcelable;
 
 public class RestauranteInfo implements Parcelable {
     private String name;
+    private String id;
 
     public RestauranteInfo() {
     }
 
     protected RestauranteInfo(Parcel in) {
         name = in.readString();
+        id = in.readString();
     }
 
     public static final Creator<RestauranteInfo> CREATOR = new Creator<RestauranteInfo>() {
@@ -33,6 +35,14 @@ public class RestauranteInfo implements Parcelable {
         this.name = name;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -41,5 +51,6 @@ public class RestauranteInfo implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
+        dest.writeString(id);
     }
 }
