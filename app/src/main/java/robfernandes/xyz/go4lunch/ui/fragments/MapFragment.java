@@ -23,10 +23,8 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -53,6 +51,7 @@ import java.util.List;
 
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.ui.adapters.AutocompleteAdapter;
+import robfernandes.xyz.go4lunch.ui.utils.Utils;
 
 public class MapFragment extends Fragment implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
 
@@ -62,15 +61,15 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private static final float DEFAULT_ZOOM = 14f;
     private AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
-    private RectangularBounds bounds = RectangularBounds.newInstance(
-            new LatLng(-33.880490, 151.184363),
-            new LatLng(-33.858754, 151.229596));
     private FindAutocompletePredictionsRequest request;
     private PlacesClient placesClient;
     private RecyclerView recyclerViewAdapter;
     private AutocompleteAdapter autocompleteAdapter;
     private List<AutocompletePrediction> autocompletePredictionList;
     private SearchView searchView;
+    private Location currentLocation;
+    private RectangularBounds bounds;
+    private static final long searchRadiousInMetres = 50000;
 
     public MapFragment() {
         // Required empty public constructor
@@ -180,12 +179,16 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
                 @Override
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
-                        Location currentLocation = (Location) task.getResult();
+                        currentLocation = (Location) task.getResult();
 
                         moveCamera(new LatLng(currentLocation.getLatitude(),
                                         currentLocation.getLongitude()),
                                 "My Location");
-
+                        bounds = RectangularBounds.newInstance(Utils.getBounds(
+                                new LatLng(currentLocation.getLatitude(),
+                                        currentLocation.getLongitude())
+                                , searchRadiousInMetres
+                        ));
                     }
                 }
             });
@@ -258,6 +261,7 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
         request = FindAutocompletePredictionsRequest.builder()
                 .setTypeFilter(TypeFilter.ESTABLISHMENT)
                 .setSessionToken(token)
+                .setLocationRestriction(bounds)
                 .setQuery(query)
                 .build();
         placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
