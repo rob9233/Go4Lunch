@@ -32,6 +32,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -108,7 +109,10 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
 
         String placeId = autocompletePrediction.getPlaceId();
 
-        List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+        List<Place.Field> placeFields = Arrays.asList(Place.Field.ID,
+                Place.Field.LAT_LNG,
+                Place.Field.VIEWPORT,
+                Place.Field.NAME);
 
         FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
                 .build();
@@ -116,16 +120,24 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
             Place place = response.getPlace();
             String name = place.getName();
+            LatLng latLng = place.getLatLng();
             if (name == null) {
                 name = "selected place";
             }
-            moveCamera(place.getLatLng(), name);
-        }).addOnFailureListener((exception) -> {
-            if (exception instanceof ApiException) {
-                ApiException apiException = (ApiException) exception;
-                int statusCode = apiException.getStatusCode();
-                Log.e(TAG, "Place not found: " + exception.getMessage());
+            if (latLng == null) {
+                LatLngBounds viewport = place.getViewport();
+                latLng = new LatLng(viewport.getCenter().latitude,
+                        viewport.getCenter().longitude);
             }
+            try {
+                moveCamera(latLng, name);
+            } catch (Exception e) {
+                Toast.makeText(getContext(), "It is not possible to find the place"
+                        , Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener((exception) -> {
+            Toast.makeText(getContext(), "It is not possible to find the place"
+                    , Toast.LENGTH_SHORT).show();
         });
 
     }
