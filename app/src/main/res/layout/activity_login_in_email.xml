@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activities.LoginInEmailActivity"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <ImageView
+        android:layout_width="@dimen/logo_size"
+        android:layout_height="@dimen/logo_size"
+        android:contentDescription="@string/logo"
+        android:src="@drawable/logo" />
+
+    <EditText
+        android:id="@+id/activity_log_in_email_email"
+        android:layout_marginTop="10dp"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:hint="Email"/>
+
+    <EditText
+        android:id="@+id/activity_log_in_email_password"
+        android:layout_marginTop="10dp"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:hint="Password"/>
+
+    <Button
+        android:id="@+id/activity_log_in_email_register_btn"
+        android:background="@drawable/btn_round_email"
+        android:layout_marginTop="10dp"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:text="Register"/>
+</LinearLayout>

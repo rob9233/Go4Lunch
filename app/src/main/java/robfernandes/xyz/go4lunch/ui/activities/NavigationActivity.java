@@ -18,6 +18,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -25,6 +27,8 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,12 +68,28 @@ public class NavigationActivity extends AppCompatActivity {
     private double currentLocationLat;
     private double currentLocationLon;
     private NearByPlaces nearByPlaces;
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser!= null) {
+            init(savedInstanceState);
+        } else {
+            restartApp();
+        }
+    }
+
+    private void restartApp() {
+        Intent intent = new Intent(NavigationActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    private void init(Bundle savedInstanceState) {
         setViews();
         setListeners();
         //Start on Map Fragment but not when the deice is rotated
@@ -184,13 +204,17 @@ public class NavigationActivity extends AppCompatActivity {
 
     private void configureDrawerLayout() {
         this.drawerLayout = findViewById(R.id.activity_navigation_drawer_layout);
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
     }
 
     private void configureNavigationView() {
         this.navigationView = findViewById(R.id.activity_navigation_nav_view);
+
+        TextView emailNav = navigationView.getHeaderView(0).findViewById(R.id.drawer_header_user_email);
+        emailNav.setText(currentUser.getEmail());
 
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             int id = menuItem.getItemId();
@@ -217,7 +241,10 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     private void logOut() {
-        displayToast("Log Out");
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(NavigationActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     private void setListeners() {
@@ -261,7 +288,8 @@ public class NavigationActivity extends AppCompatActivity {
                     NavigationActivity.this, available, ERROR_DIALOG_REQUEST);
             dialog.show();
         } else {
-            Toast.makeText(this, "You can't make map requests", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You can't make map requests", Toast.LENGTH_SHORT)
+                    .show();
         }
         return false;
     }
@@ -288,7 +316,8 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions
+            , @NonNull int[] grantResults) {
 
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST_CODE: {
