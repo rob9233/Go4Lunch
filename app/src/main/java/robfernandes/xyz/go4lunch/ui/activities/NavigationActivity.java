@@ -69,6 +69,9 @@ public class NavigationActivity extends AppCompatActivity {
     private double currentLocationLon;
     private NearByPlaces nearByPlaces;
     private FirebaseUser currentUser;
+    private static final int MAP_FLAG =0;
+    private static final int RESTAURANT_FLAG =1;
+    private static final int WORKERS_FLAG =2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +79,7 @@ public class NavigationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_navigation);
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser!= null) {
+        if (currentUser != null) {
             init(savedInstanceState);
         } else {
             restartApp();
@@ -113,7 +116,7 @@ public class NavigationActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         currentLocationLat = ((Location) task.getResult()).getLatitude();
                         currentLocationLon = ((Location) task.getResult()).getLongitude();
-                        getNearByRestaurants();
+                        getNearByRestaurants(MAP_FLAG);
                     }
                 });
             } catch (SecurityException e) {
@@ -126,7 +129,7 @@ public class NavigationActivity extends AppCompatActivity {
 
     }
 
-    private void getNearByRestaurants() {
+    private void getNearByRestaurants(int flag) {
         String location = currentLocationLat + "," + currentLocationLon;
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -143,9 +146,9 @@ public class NavigationActivity extends AppCompatActivity {
             public void onResponse(Call<PlacesResponse> call, Response<PlacesResponse> response) {
                 if (response.code() == 200) {
                     nearByPlaces = new NearByPlaces();
-                    List<RestauranteInfo>  restauranteInfoList = new ArrayList<>();
+                    List<RestauranteInfo> restauranteInfoList = new ArrayList<>();
                     List<Result> results = response.body().getResults();
-                    for (Result result: results) {
+                    for (Result result : results) {
                         //TODO add mor info
                         RestauranteInfo restauranteInfo = new RestauranteInfo();
                         restauranteInfo.setName(result.getName());
@@ -155,7 +158,15 @@ public class NavigationActivity extends AppCompatActivity {
                         restauranteInfoList.add(restauranteInfo);
                     }
                     nearByPlaces.setRestauranteInfoList(restauranteInfoList);
-                    showMapFragment();
+                    switch (flag) {
+                        case MAP_FLAG:   showMapFragment();
+                        break;
+                        case RESTAURANT_FLAG:   showRestaurants();
+                            break;
+                        case WORKERS_FLAG: showWorkers();
+                        break;
+                    }
+
                 }
             }
 
@@ -164,6 +175,14 @@ public class NavigationActivity extends AppCompatActivity {
                 Log.d("TAG", "onFailure: ");
             }
         });
+    }
+
+    private void showWorkers() {
+        WorkmatesFragment workmatesFragment = new WorkmatesFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.activity_navigation_frame_layout,
+                        workmatesFragment).commit();
     }
 
     private void showMapFragment() {
@@ -213,7 +232,8 @@ public class NavigationActivity extends AppCompatActivity {
     private void configureNavigationView() {
         this.navigationView = findViewById(R.id.activity_navigation_nav_view);
 
-        TextView emailNav = navigationView.getHeaderView(0).findViewById(R.id.drawer_header_user_email);
+        TextView emailNav = navigationView.getHeaderView(0)
+                .findViewById(R.id.drawer_header_user_email);
         emailNav.setText(currentUser.getEmail());
 
         navigationView.setNavigationItemSelectedListener(menuItem -> {
@@ -249,25 +269,35 @@ public class NavigationActivity extends AppCompatActivity {
 
     private void setListeners() {
         bottomNav.setOnNavigationItemSelectedListener(menuItem -> {
-            Fragment fragment = null;
-
             switch (menuItem.getItemId()) {
                 case R.id.nav_map:
                     getLocationPermission();
                     break;
                 case R.id.nav_restaurant_list:
-                    fragment = new RestaurantListFragment();
+                    if (nearByPlaces != null) {
+                        showRestaurants();
+                    } else  {
+                        getNearByRestaurants(RESTAURANT_FLAG);
+                }
                     break;
-                case R.id.nav_workmates:
-                    fragment = new WorkmatesFragment();
+                case R.id.nav_workmates:getNearByRestaurants(WORKERS_FLAG);
                     break;
-            }
-            if (fragment != null) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.activity_navigation_frame_layout,
-                        fragment).commit();
             }
             return true;
         });
+    }
+
+    private void showRestaurants() {
+        Fragment fragment = new RestaurantListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putDouble(DEVICE_LOCATION_LAT, currentLocationLat);
+        bundle.putDouble(DEVICE_LOCATION_LON, currentLocationLon);
+        bundle.putParcelable(NEARBY_PLACES, nearByPlaces);
+        fragment.setArguments(bundle);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.activity_navigation_frame_layout,
+                        fragment).commit();
     }
 
     private void displayToast(String s) {
