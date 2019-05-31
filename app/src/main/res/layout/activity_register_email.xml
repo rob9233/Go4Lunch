@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.LoginInEmailActivity"
+    tools:context=".ui.activities.RegisterEmailActivity"
     android:orientation="vertical"
     android:gravity="center">
 
@@ -15,21 +15,23 @@
         android:src="@drawable/logo" />
 
     <EditText
-        android:id="@+id/activity_log_in_email_email"
+        android:id="@+id/activity_register_email_email"
         android:layout_marginTop="10dp"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:hint="Email"/>
+        android:hint="Email"
+        android:inputType="textEmailAddress"/>
 
     <EditText
-        android:id="@+id/activity_log_in_email_password"
+        android:id="@+id/activity_register_email_password"
         android:layout_marginTop="10dp"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:hint="Password"/>
+        android:hint="Password"
+        android:inputType="textPassword"/>
 
     <Button
-        android:id="@+id/activity_log_in_email_register_btn"
+        android:id="@+id/activity_register_email_register_btn"
         android:background="@drawable/btn_round_email"
         android:layout_marginTop="10dp"
         android:layout_width="300dp"
