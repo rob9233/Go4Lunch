@@ -83,14 +83,13 @@
             android:textColor="@android:color/white"
             />
 
-        <Button
+        <com.google.android.gms.common.SignInButton
             android:id="@+id/activity_main_gmail_btn"
             android:layout_width="@dimen/log_in_btn_width"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/log_btn_margin_top"
             android:text="@string/log_in_with_gmail"
-            android:textColor="@android:color/white"
-            android:background="@drawable/btn_round_gmail"/>
+            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/activity_main_github_btn"
