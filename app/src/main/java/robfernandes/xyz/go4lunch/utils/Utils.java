@@ -1,8 +1,13 @@
 package robfernandes.xyz.go4lunch.utils;
 
+import android.widget.ImageView;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.SphericalUtil;
+import com.squareup.picasso.Picasso;
+
+import robfernandes.xyz.go4lunch.model.placesResponse.Photo;
 
 public class Utils {
     public static LatLngBounds getBounds(LatLng center, double radiusInMeters) {
@@ -13,5 +18,9 @@ public class Utils {
         LatLng northeastCorner =
                 SphericalUtil.computeOffset(center, distanceFromCenterToCorner, 45.0);
         return new LatLngBounds(southwestCorner, northeastCorner);
+    }
+
+    public static void putImageIntoImageView(ImageView imageView, String url) {
+        Picasso.get().load(url).into(imageView);
     }
 }

@@ -18,7 +18,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +39,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.model.NearByPlaces;
-import robfernandes.xyz.go4lunch.model.RestauranteInfo;
+import robfernandes.xyz.go4lunch.model.RestaurantInfo;
+import robfernandes.xyz.go4lunch.model.placesResponse.Photo;
 import robfernandes.xyz.go4lunch.model.placesResponse.PlacesResponse;
 import robfernandes.xyz.go4lunch.model.placesResponse.Result;
 import robfernandes.xyz.go4lunch.services.network.NearbyRestaurantsService;
@@ -146,20 +146,21 @@ public class NavigationActivity extends AppCompatActivity {
             public void onResponse(Call<PlacesResponse> call, Response<PlacesResponse> response) {
                 if (response.code() == 200) {
                     nearByPlaces = new NearByPlaces();
-                    List<RestauranteInfo> restauranteInfoList = new ArrayList<>();
+                    List<RestaurantInfo> restaurantInfoList = new ArrayList<>();
                     List<Result> results = response.body().getResults();
                     for (Result result : results) {
                         //TODO add mor info
-                        RestauranteInfo restauranteInfo = new RestauranteInfo();
-                        restauranteInfo.setName(result.getName());
-                        restauranteInfo.setId(result.getId());
-                        restauranteInfo.setLat(result.getGeometry().getLocation().getLat());
-                        restauranteInfo.setLon(result.getGeometry().getLocation().getLng());
-                        restauranteInfo.setAdress(result.getVicinity());
-                        restauranteInfo.setOpeningHours(result.getOpeningHours());
-                        restauranteInfoList.add(restauranteInfo);
+                        RestaurantInfo restaurantInfo = new RestaurantInfo();
+                        restaurantInfo.setName(result.getName());
+                        restaurantInfo.setId(result.getId());
+                        restaurantInfo.setLat(result.getGeometry().getLocation().getLat());
+                        restaurantInfo.setLon(result.getGeometry().getLocation().getLng());
+                        restaurantInfo.setAdress(result.getVicinity());
+                        restaurantInfo.setOpeningHours(result.getOpeningHours());
+                        restaurantInfo.setPhotos(result.getPhotos());
+                        restaurantInfoList.add(restaurantInfo);
                     }
-                    nearByPlaces.setRestauranteInfoList(restauranteInfoList);
+                    nearByPlaces.setRestaurantInfoList(restaurantInfoList);
                     switch (flag) {
                         case MAP_FLAG:   showMapFragment();
                         break;
@@ -188,16 +189,20 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     private void showMapFragment() {
-        MapFragment mapFragment = new MapFragment();
-        Bundle bundle = new Bundle();
-        bundle.putDouble(DEVICE_LOCATION_LAT, currentLocationLat);
-        bundle.putDouble(DEVICE_LOCATION_LON, currentLocationLon);
-        bundle.putParcelable(NEARBY_PLACES, nearByPlaces);
-        mapFragment.setArguments(bundle);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.activity_navigation_frame_layout,
-                        mapFragment).commit();
+        try {
+            MapFragment mapFragment = new MapFragment();
+            Bundle bundle = new Bundle();
+            bundle.putDouble(DEVICE_LOCATION_LAT, currentLocationLat);
+            bundle.putDouble(DEVICE_LOCATION_LON, currentLocationLon);
+            bundle.putParcelable(NEARBY_PLACES, nearByPlaces);
+            mapFragment.setArguments(bundle);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.activity_navigation_frame_layout,
+                            mapFragment).commit();
+        } catch (IllegalStateException e) {
+            // Can not perform the try block after onSaveInstanceState
+        }
     }
 
     private void configureDrawer() {

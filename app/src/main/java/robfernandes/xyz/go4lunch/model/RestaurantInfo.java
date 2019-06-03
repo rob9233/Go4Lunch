@@ -3,18 +3,42 @@ package robfernandes.xyz.go4lunch.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import robfernandes.xyz.go4lunch.model.placesResponse.OpeningHours;
+import java.util.List;
 
-public class RestauranteInfo implements Parcelable {
+import robfernandes.xyz.go4lunch.model.placesResponse.OpeningHours;
+import robfernandes.xyz.go4lunch.model.placesResponse.Photo;
+
+public class RestaurantInfo implements Parcelable {
     private String name;
     private String adress;
     private OpeningHours openingHours;
     private String id;
     private double lat;
     private double lon;
+    private List<Photo> photos;
 
-    public RestauranteInfo() {
+    public RestaurantInfo() {
     }
+
+    protected RestaurantInfo(Parcel in) {
+        name = in.readString();
+        adress = in.readString();
+        id = in.readString();
+        lat = in.readDouble();
+        lon = in.readDouble();
+    }
+
+    public static final Creator<RestaurantInfo> CREATOR = new Creator<RestaurantInfo>() {
+        @Override
+        public RestaurantInfo createFromParcel(Parcel in) {
+            return new RestaurantInfo(in);
+        }
+
+        @Override
+        public RestaurantInfo[] newArray(int size) {
+            return new RestaurantInfo[size];
+        }
+    };
 
     public String getName() {
         return name;
@@ -64,25 +88,13 @@ public class RestauranteInfo implements Parcelable {
         this.lon = lon;
     }
 
-    protected RestauranteInfo(Parcel in) {
-        name = in.readString();
-        adress = in.readString();
-        id = in.readString();
-        lat = in.readDouble();
-        lon = in.readDouble();
+    public List<Photo> getPhotos() {
+        return photos;
     }
 
-    public static final Creator<RestauranteInfo> CREATOR = new Creator<RestauranteInfo>() {
-        @Override
-        public RestauranteInfo createFromParcel(Parcel in) {
-            return new RestauranteInfo(in);
-        }
-
-        @Override
-        public RestauranteInfo[] newArray(int size) {
-            return new RestauranteInfo[size];
-        }
-    };
+    public void setPhotos(List<Photo> photos) {
+        this.photos = photos;
+    }
 
     @Override
     public int describeContents() {

@@ -14,7 +14,6 @@ import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.adapters.RestaurantsAdapter;
 import robfernandes.xyz.go4lunch.model.NearByPlaces;
 
-import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
@@ -53,8 +52,8 @@ public class RestaurantListFragment extends Fragment {
     private void setRecyclerVIew() {
         recyclerView = view.findViewById(R.id.fragment_restaurants_recycler_view);
         LatLng userLatLng = new LatLng(currentLocationLat, currentLocationLon);
-        restaurantsAdapter = new RestaurantsAdapter(nearByPlaces.getRestauranteInfoList()
-                , userLatLng);
+        restaurantsAdapter = new RestaurantsAdapter(nearByPlaces.getRestaurantInfoList()
+                , userLatLng , getContext());
         recyclerView.setAdapter(restaurantsAdapter);
     }
 

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -48,7 +47,7 @@ import java.util.List;
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.adapters.AutocompleteAdapter;
 import robfernandes.xyz.go4lunch.model.NearByPlaces;
-import robfernandes.xyz.go4lunch.model.RestauranteInfo;
+import robfernandes.xyz.go4lunch.model.RestaurantInfo;
 import robfernandes.xyz.go4lunch.ui.activities.RestaurantActivity;
 import robfernandes.xyz.go4lunch.utils.Utils;
 
@@ -177,10 +176,10 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
             mMap.setMyLocationEnabled(true);
             mMap.setOnInfoWindowClickListener(marker -> {
                 //TODO pass more info to restaurantInfo
-                RestauranteInfo restauranteInfo = (RestauranteInfo) marker.getTag();
-                if (restauranteInfo != null) {
+                RestaurantInfo restaurantInfo = (RestaurantInfo) marker.getTag();
+                if (restaurantInfo != null) {
                     Intent intent = new Intent(getContext(), RestaurantActivity.class);
-                    intent.putExtra(RESTAURANT_INFO_BUNDLE_EXTRA, restauranteInfo);
+                    intent.putExtra(RESTAURANT_INFO_BUNDLE_EXTRA, restaurantInfo);
                     getContext().startActivity(intent);
                 } else {
                     Toast.makeText(getContext(), "It is not possible to " +
@@ -189,14 +188,14 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
                 }
             });
             String snippet = "Click here to see more";
-            for (RestauranteInfo restauranteInfo : nearByPlaces.getRestauranteInfoList()) {
+            for (RestaurantInfo restaurantInfo : nearByPlaces.getRestaurantInfoList()) {
                 MarkerOptions options = new MarkerOptions()
                         .position(
-                                new LatLng(restauranteInfo.getLat(), restauranteInfo.getLon())
+                                new LatLng(restaurantInfo.getLat(), restaurantInfo.getLon())
                         )
                         .snippet(snippet)
-                        .title(restauranteInfo.getName());
-                mMap.addMarker(options).setTag(restauranteInfo);
+                        .title(restaurantInfo.getName());
+                mMap.addMarker(options).setTag(restaurantInfo);
             }
         });
     }
@@ -229,17 +228,17 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
         String snippet = "Click here to see more details";
 
-        RestauranteInfo restauranteInfo = new RestauranteInfo();
-        restauranteInfo.setId(place.getId());
-        restauranteInfo.setLat(place.getLatLng().latitude);
-        restauranteInfo.setLon(place.getLatLng().longitude);
-        restauranteInfo.setName(place.getName());
+        RestaurantInfo restaurantInfo = new RestaurantInfo();
+        restaurantInfo.setId(place.getId());
+        restaurantInfo.setLat(place.getLatLng().latitude);
+        restaurantInfo.setLon(place.getLatLng().longitude);
+        restaurantInfo.setName(place.getName());
 
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
                 .snippet(snippet)
                 .title(name);
-        mMap.addMarker(options).setTag(restauranteInfo);
+        mMap.addMarker(options).setTag(restaurantInfo);
     }
 
     @Override

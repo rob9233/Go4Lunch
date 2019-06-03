@@ -6,13 +6,13 @@ import android.os.Parcelable;
 import java.util.List;
 
 public class NearByPlaces implements Parcelable {
-    private List<RestauranteInfo> restauranteInfoList;
+    private List<RestaurantInfo> restaurantInfoList;
 
     public NearByPlaces() {
     }
 
     protected NearByPlaces(Parcel in) {
-        restauranteInfoList = in.createTypedArrayList(RestauranteInfo.CREATOR);
+        restaurantInfoList = in.createTypedArrayList(RestaurantInfo.CREATOR);
     }
 
     public static final Creator<NearByPlaces> CREATOR = new Creator<NearByPlaces>() {
@@ -27,12 +27,12 @@ public class NearByPlaces implements Parcelable {
         }
     };
 
-    public List<RestauranteInfo> getRestauranteInfoList() {
-        return restauranteInfoList;
+    public List<RestaurantInfo> getRestaurantInfoList() {
+        return restaurantInfoList;
     }
 
-    public void setRestauranteInfoList(List<RestauranteInfo> restauranteInfoList) {
-        this.restauranteInfoList = restauranteInfoList;
+    public void setRestaurantInfoList(List<RestaurantInfo> restaurantInfoList) {
+        this.restaurantInfoList = restaurantInfoList;
     }
 
     @Override
@@ -42,6 +42,6 @@ public class NearByPlaces implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeTypedList(restauranteInfoList);
+        dest.writeTypedList(restaurantInfoList);
     }
 }
