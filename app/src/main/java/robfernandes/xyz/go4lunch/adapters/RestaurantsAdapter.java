@@ -19,14 +19,16 @@ import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.model.RestaurantInfo;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
+import static robfernandes.xyz.go4lunch.utils.Utils.formatNumberOfStars;
 import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
 
 public class RestaurantsAdapter extends
         RecyclerView.Adapter<RestaurantsAdapter.ViewHolder> {
 
     private List<RestaurantInfo> restaurantInfoList;
-    private LatLng userLatLng ;
+    private LatLng userLatLng;
     private Context context;
+    private static final String TAG = "RestaurantsAdapter";
 
     public RestaurantsAdapter(List<RestaurantInfo> restaurantInfoList, LatLng userLatLng, Context context) {
         this.restaurantInfoList = restaurantInfoList;
@@ -76,6 +78,25 @@ public class RestaurantsAdapter extends
             putImageIntoImageView(viewHolder.imageView, photoUrl);
         } catch (Exception e) {
         }
+
+        try {
+            int starsNum = formatNumberOfStars(restaurantInfo.getRating());
+            if (starsNum < 1) {
+                viewHolder.star1.setVisibility(View.INVISIBLE);
+            }
+            if (starsNum < 2) {
+                viewHolder.star2.setVisibility(View.INVISIBLE);
+            }
+            if (starsNum < 3) {
+                viewHolder.star3.setVisibility(View.INVISIBLE);
+            }
+            if (starsNum > 0) {
+                viewHolder.star0.setVisibility(View.GONE);
+            }
+
+        } catch (NullPointerException e) {
+            viewHolder.starContainer.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -85,7 +106,8 @@ public class RestaurantsAdapter extends
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView title, description, openHours, distance;
-        private ImageView imageView;
+        private ImageView imageView, star1, star2, star3, star0;
+        private View starContainer;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -95,6 +117,11 @@ public class RestaurantsAdapter extends
             openHours = itemView.findViewById(R.id.restaurant_item_open_hours);
             distance = itemView.findViewById(R.id.restaurant_item_distance);
             imageView = itemView.findViewById(R.id.restaurant_item_image);
+            star0 = itemView.findViewById(R.id.restaurant_item_rating_star_0);
+            star1 = itemView.findViewById(R.id.restaurant_item_rating_star_1);
+            star2 = itemView.findViewById(R.id.restaurant_item_rating_star_2);
+            star3 = itemView.findViewById(R.id.restaurant_item_rating_star_3);
+            starContainer = itemView.findViewById(R.id.restaurant_item_rating_star_container);
         }
     }
 }

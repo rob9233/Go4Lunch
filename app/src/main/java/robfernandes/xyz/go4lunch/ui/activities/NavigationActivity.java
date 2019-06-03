@@ -149,7 +149,6 @@ public class NavigationActivity extends AppCompatActivity {
                     List<RestaurantInfo> restaurantInfoList = new ArrayList<>();
                     List<Result> results = response.body().getResults();
                     for (Result result : results) {
-                        //TODO add mor info
                         RestaurantInfo restaurantInfo = new RestaurantInfo();
                         restaurantInfo.setName(result.getName());
                         restaurantInfo.setId(result.getId());
@@ -158,6 +157,11 @@ public class NavigationActivity extends AppCompatActivity {
                         restaurantInfo.setAdress(result.getVicinity());
                         restaurantInfo.setOpeningHours(result.getOpeningHours());
                         restaurantInfo.setPhotos(result.getPhotos());
+                        try {
+                            restaurantInfo.setRating(result.getRating());
+                        } catch (NullPointerException e) {
+                        }
+
                         restaurantInfoList.add(restaurantInfo);
                     }
                     nearByPlaces.setRestaurantInfoList(restaurantInfoList);

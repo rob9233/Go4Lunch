@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@android:color/holo_red_dark">
+    android:background="@android:color/darker_gray">
 
   <android.support.v7.widget.RecyclerView
       android:id="@+id/fragment_restaurants_recycler_view"

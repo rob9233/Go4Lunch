@@ -7,12 +7,10 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.SphericalUtil;
 import com.squareup.picasso.Picasso;
 
-import robfernandes.xyz.go4lunch.model.placesResponse.Photo;
-
 public class Utils {
     public static LatLngBounds getBounds(LatLng center, double radiusInMeters) {
         double distanceFromCenterToCorner = radiusInMeters * Math.sqrt(2.0);
-      //  in SphericalUtil 225 and 45 are heading values to calculate a Spherical LatLng
+        //  in SphericalUtil 225 and 45 are heading values to calculate a Spherical LatLng
         LatLng southwestCorner =
                 SphericalUtil.computeOffset(center, distanceFromCenterToCorner, 225.0);
         LatLng northeastCorner =
@@ -22,5 +20,9 @@ public class Utils {
 
     public static void putImageIntoImageView(ImageView imageView, String url) {
         Picasso.get().load(url).into(imageView);
+    }
+
+    public static int formatNumberOfStars(double rating) {
+       return   (int) (rating * 3d / 5d + .5d);
     }
 }

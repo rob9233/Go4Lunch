@@ -16,6 +16,7 @@ public class RestaurantInfo implements Parcelable {
     private double lat;
     private double lon;
     private List<Photo> photos;
+    private double rating;
 
     public RestaurantInfo() {
     }
@@ -26,6 +27,7 @@ public class RestaurantInfo implements Parcelable {
         id = in.readString();
         lat = in.readDouble();
         lon = in.readDouble();
+        rating = in.readDouble();
     }
 
     public static final Creator<RestaurantInfo> CREATOR = new Creator<RestaurantInfo>() {
@@ -96,6 +98,14 @@ public class RestaurantInfo implements Parcelable {
         this.photos = photos;
     }
 
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -108,5 +118,6 @@ public class RestaurantInfo implements Parcelable {
         dest.writeString(id);
         dest.writeDouble(lat);
         dest.writeDouble(lon);
+        dest.writeDouble(rating);
     }
 }
