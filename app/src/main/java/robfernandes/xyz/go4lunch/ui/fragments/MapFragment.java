@@ -28,6 +28,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
@@ -175,17 +176,7 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
             }
             mMap.setMyLocationEnabled(true);
             mMap.setOnInfoWindowClickListener(marker -> {
-                //TODO pass more info to restaurantInfo
-                RestaurantInfo restaurantInfo = (RestaurantInfo) marker.getTag();
-                if (restaurantInfo != null) {
-                    Intent intent = new Intent(getContext(), RestaurantActivity.class);
-                    intent.putExtra(RESTAURANT_INFO_BUNDLE_EXTRA, restaurantInfo);
-                    getContext().startActivity(intent);
-                } else {
-                    Toast.makeText(getContext(), "It is not possible to " +
-                                    "display info about this restaurant",
-                            Toast.LENGTH_SHORT).show();
-                }
+                goToRestaurantActivity(marker);
             });
             String snippet = "Click here to see more";
             for (RestaurantInfo restaurantInfo : nearByPlaces.getRestaurantInfoList()) {
@@ -198,6 +189,19 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
                 mMap.addMarker(options).setTag(restaurantInfo);
             }
         });
+    }
+
+    private void goToRestaurantActivity(Marker marker) {
+        RestaurantInfo restaurantInfo = (RestaurantInfo) marker.getTag();
+        if (restaurantInfo != null) {
+            Intent intent = new Intent(getContext(), RestaurantActivity.class);
+            intent.putExtra(RESTAURANT_INFO_BUNDLE_EXTRA, restaurantInfo);
+            getContext().startActivity(intent);
+        } else {
+            Toast.makeText(getContext(), "It is not possible to " +
+                            "display info about this restaurant",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void moveCamera(LatLng latLng, String title) {

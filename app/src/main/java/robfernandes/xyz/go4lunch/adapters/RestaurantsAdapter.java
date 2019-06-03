@@ -1,6 +1,7 @@
 package robfernandes.xyz.go4lunch.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -17,8 +19,10 @@ import java.util.List;
 
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.model.RestaurantInfo;
+import robfernandes.xyz.go4lunch.ui.activities.RestaurantActivity;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
+import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.formatNumberOfStars;
 import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
 
@@ -122,6 +126,21 @@ public class RestaurantsAdapter extends
             star2 = itemView.findViewById(R.id.restaurant_item_rating_star_2);
             star3 = itemView.findViewById(R.id.restaurant_item_rating_star_3);
             starContainer = itemView.findViewById(R.id.restaurant_item_rating_star_container);
+
+            itemView.setOnClickListener(v ->
+                    goToRestaurantActivity(restaurantInfoList.get(getAdapterPosition())));
+        }
+    }
+
+    private void goToRestaurantActivity(RestaurantInfo restaurantInfo) {
+        if (restaurantInfo != null) {
+            Intent intent = new Intent(context, RestaurantActivity.class);
+            intent.putExtra(RESTAURANT_INFO_BUNDLE_EXTRA, restaurantInfo);
+            context.startActivity(intent);
+        } else {
+            Toast.makeText(context, "It is not possible to " +
+                            "display info about this restaurant",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 }

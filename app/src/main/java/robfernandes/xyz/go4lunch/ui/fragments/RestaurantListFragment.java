@@ -1,22 +1,28 @@
 package robfernandes.xyz.go4lunch.ui.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.adapters.RestaurantsAdapter;
 import robfernandes.xyz.go4lunch.model.NearByPlaces;
+import robfernandes.xyz.go4lunch.model.RestaurantInfo;
+import robfernandes.xyz.go4lunch.ui.activities.RestaurantActivity;
 
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
+import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,5 +62,4 @@ public class RestaurantListFragment extends Fragment {
                 , userLatLng , getContext());
         recyclerView.setAdapter(restaurantsAdapter);
     }
-
 }
