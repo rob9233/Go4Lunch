@@ -83,15 +83,19 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        currentLocationLat = getArguments().getDouble(DEVICE_LOCATION_LAT);
-        currentLocationLon = getArguments().getDouble(DEVICE_LOCATION_LON);
-        nearByPlaces = getArguments().getParcelable(NEARBY_PLACES);
+        getParams();
         view = inflater.inflate(R.layout.fragment_map, container, false);
         initMap();
         Places.initialize(getContext(), getString(R.string.google_maps_api_key));
         placesClient = Places.createClient(getContext());
         setAutocompleteAdapter();
         return view;
+    }
+
+    private void getParams() {
+        currentLocationLat = getArguments().getDouble(DEVICE_LOCATION_LAT);
+        currentLocationLon = getArguments().getDouble(DEVICE_LOCATION_LON);
+        nearByPlaces = getArguments().getParcelable(NEARBY_PLACES);
     }
 
     private void setAutocompleteAdapter() {

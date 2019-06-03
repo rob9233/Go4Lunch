@@ -155,6 +155,8 @@ public class NavigationActivity extends AppCompatActivity {
                         restauranteInfo.setId(result.getId());
                         restauranteInfo.setLat(result.getGeometry().getLocation().getLat());
                         restauranteInfo.setLon(result.getGeometry().getLocation().getLng());
+                        restauranteInfo.setAdress(result.getVicinity());
+                        restauranteInfo.setOpeningHours(result.getOpeningHours());
                         restauranteInfoList.add(restauranteInfo);
                     }
                     nearByPlaces.setRestauranteInfoList(restauranteInfoList);

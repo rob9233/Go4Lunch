@@ -8,10 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.adapters.RestaurantsAdapter;
 import robfernandes.xyz.go4lunch.model.NearByPlaces;
 
+import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
+import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
+import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 
 /**
@@ -21,6 +26,8 @@ public class RestaurantListFragment extends Fragment {
     private NearByPlaces nearByPlaces;
     private View view;
     private RecyclerView recyclerView;
+    private Double currentLocationLat;
+    private Double currentLocationLon;
     private RestaurantsAdapter restaurantsAdapter;
 
 
@@ -32,14 +39,22 @@ public class RestaurantListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_restaurant_list, container, false);
-        nearByPlaces = getArguments().getParcelable(NEARBY_PLACES);
+        getParams();
         setRecyclerVIew();
         return view;
     }
 
+    private void getParams() {
+        currentLocationLat = getArguments().getDouble(DEVICE_LOCATION_LAT);
+        currentLocationLon = getArguments().getDouble(DEVICE_LOCATION_LON);
+        nearByPlaces = getArguments().getParcelable(NEARBY_PLACES);
+    }
+
     private void setRecyclerVIew() {
         recyclerView = view.findViewById(R.id.fragment_restaurants_recycler_view);
-        restaurantsAdapter = new RestaurantsAdapter(nearByPlaces.getRestauranteInfoList());
+        LatLng userLatLng = new LatLng(currentLocationLat, currentLocationLon);
+        restaurantsAdapter = new RestaurantsAdapter(nearByPlaces.getRestauranteInfoList()
+                , userLatLng);
         recyclerView.setAdapter(restaurantsAdapter);
     }
 
