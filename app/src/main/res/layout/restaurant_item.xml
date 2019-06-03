@@ -89,12 +89,6 @@
                         android:layout_height="wrap_content"
                         card_view:srcCompat="@drawable/ic_star_yellow_16dp" />
 
-                    <ImageView
-                        android:id="@+id/restaurant_item_rating_star_0"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        card_view:srcCompat="@drawable/ic_star_border_yellow_16dp" />
-
                 </LinearLayout>
             </LinearLayout>
 

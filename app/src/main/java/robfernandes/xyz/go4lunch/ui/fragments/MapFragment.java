@@ -4,8 +4,6 @@ package robfernandes.xyz.go4lunch.ui.fragments;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -41,7 +39,6 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,7 +49,6 @@ import robfernandes.xyz.go4lunch.model.NearByPlaces;
 import robfernandes.xyz.go4lunch.model.RestaurantInfo;
 import robfernandes.xyz.go4lunch.ui.activities.RestaurantActivity;
 import robfernandes.xyz.go4lunch.utils.Utils;
-
 
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
@@ -128,6 +124,7 @@ public class MapFragment extends Fragment
                 Place.Field.PRICE_LEVEL,
                 Place.Field.PHONE_NUMBER,
                 Place.Field.WEBSITE_URI,
+                Place.Field.PHOTO_METADATAS,
                 Place.Field.NAME);
 
         FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
@@ -161,8 +158,7 @@ public class MapFragment extends Fragment
         mapFragment.getMapAsync(googleMap -> {
             mMap = googleMap;
             moveCamera(new LatLng(currentLocationLat,
-                            currentLocationLon),
-                    "My Location");
+                    currentLocationLon));
             bounds = RectangularBounds.newInstance(Utils.getBounds(
                     new LatLng(currentLocationLat,
                             currentLocationLon)
@@ -177,11 +173,15 @@ public class MapFragment extends Fragment
                 return;
             }
             mMap.setMyLocationEnabled(true);
-            mMap.setOnInfoWindowClickListener(marker -> {
+            mMap.setOnInfoWindowClickListener(marker ->
+            {
+                RestaurantInfo tag = (RestaurantInfo) marker.getTag();
                 goToRestaurantActivity(marker);
             });
+
             String snippet = "Click here to see more";
-            for (RestaurantInfo restaurantInfo : nearByPlaces.getRestaurantInfoList()) {
+
+            for (RestaurantInfo restaurantInfo : this.nearByPlaces.getRestaurantInfoList()) {
                 MarkerOptions options = new MarkerOptions()
                         .position(
                                 new LatLng(restaurantInfo.getLat(), restaurantInfo.getLon())
@@ -206,16 +206,11 @@ public class MapFragment extends Fragment
         }
     }
 
-    private void moveCamera(LatLng latLng, String title) {
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
 
-        if (!title.equals("My Location")) {
-            MarkerOptions options = new MarkerOptions()
-                    .position(latLng)
-                    .title(title);
-            mMap.addMarker(options);
-        }
+    private void moveCamera(LatLng latLng) {
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
     }
+
 
     private void moveCamera(Place place) {
         mMap.clear();
@@ -259,7 +254,6 @@ public class MapFragment extends Fragment
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        geoLocate(query);
         return false;
     }
 
@@ -278,23 +272,6 @@ public class MapFragment extends Fragment
         searchView.setQueryHint("Search");
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
         super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    private void geoLocate(String term) {
-        Geocoder geocoder = new Geocoder(getContext());
-        List<Address> list = new ArrayList<>();
-        try {
-            list = geocoder.getFromLocationName(term, 1);
-        } catch (IOException e) {
-            Log.e(TAG, "geoLocate: IOException: " + e.getMessage());
-        }
-
-        if (list.size() > 0) {
-            Address address = list.get(0);
-
-            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()),
-                    address.getAddressLine(0));
-        }
     }
 
     private void autocompletePlaces(String query) {

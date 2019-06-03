@@ -1,11 +1,14 @@
 package robfernandes.xyz.go4lunch.utils;
 
+import android.content.Context;
 import android.widget.ImageView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.SphericalUtil;
 import com.squareup.picasso.Picasso;
+
+import robfernandes.xyz.go4lunch.R;
 
 public class Utils {
     public static LatLngBounds getBounds(LatLng center, double radiusInMeters) {
@@ -23,6 +26,20 @@ public class Utils {
     }
 
     public static int formatNumberOfStars(double rating) {
-       return   (int) (rating * 3d / 5d + .5d);
+        return (int) (rating * 3d / 5d + .5d);
+    }
+
+    public static String getRestaurantPhotoUrl(String photoReference, Context context
+            , String maxWidth, String maxHeight) {
+        StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/photo");
+        sb.append("?maxwidth=");
+        sb.append(maxWidth);
+        sb.append("&maxheight=");
+        sb.append(maxHeight);
+        sb.append("&photoreference=");
+        sb.append(photoReference);
+        sb.append("&key=");
+        sb.append(context.getString(R.string.google_maps_api_key));
+        return sb.toString();
     }
 }

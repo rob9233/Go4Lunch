@@ -26,6 +26,7 @@ import robfernandes.xyz.go4lunch.ui.activities.RestaurantActivity;
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.formatNumberOfStars;
+import static robfernandes.xyz.go4lunch.utils.Utils.getRestaurantPhotoUrl;
 import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
 
 public class RestaurantsAdapter extends
@@ -59,7 +60,7 @@ public class RestaurantsAdapter extends
         viewHolder.title.setText(restaurantInfo.getName());
         viewHolder.description.setText(restaurantInfo.getAdress());
         try {
-            if (restaurantInfo.getOpeningHours().getOpenNow()) {
+            if (restaurantInfo.isOpen()) {
                 viewHolder.openHours.setText("Open now");
                 viewHolder.openHours.setTextColor(Color.GREEN);
             } else {
@@ -75,15 +76,9 @@ public class RestaurantsAdapter extends
 
         viewHolder.distance.setText(distanceString);
         try {
-            StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/photo");
-            sb.append("?maxwidth=100");
-            sb.append("&maxheight=100");
-            sb.append("&photoreference=");
-            sb.append(restaurantInfo.getPhotos().get(0).getPhotoReference());
-            sb.append("&key=");
-            sb.append(context.getString(R.string.google_maps_api_key));
-
-            String photoUrl = sb.toString();
+            String photoReference = restaurantInfo.getPhotoRef();
+            String photoUrl = getRestaurantPhotoUrl(photoReference, context
+                    , "100" , "100");
             putImageIntoImageView(viewHolder.imageView, photoUrl);
         } catch (Exception e) {
         }
@@ -98,9 +93,6 @@ public class RestaurantsAdapter extends
             }
             if (starsNum < 3) {
                 viewHolder.star3.setVisibility(View.INVISIBLE);
-            }
-            if (starsNum > 0) {
-                viewHolder.star0.setVisibility(View.GONE);
             }
 
         } catch (NullPointerException e) {
@@ -153,7 +145,7 @@ public class RestaurantsAdapter extends
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView title, description, openHours, distance;
-        private ImageView imageView, star1, star2, star3, star0;
+        private ImageView imageView, star1, star2, star3;
         private View starContainer;
 
         public ViewHolder(@NonNull View itemView) {
@@ -164,7 +156,6 @@ public class RestaurantsAdapter extends
             openHours = itemView.findViewById(R.id.restaurant_item_open_hours);
             distance = itemView.findViewById(R.id.restaurant_item_distance);
             imageView = itemView.findViewById(R.id.restaurant_item_image);
-            star0 = itemView.findViewById(R.id.restaurant_item_rating_star_0);
             star1 = itemView.findViewById(R.id.restaurant_item_rating_star_1);
             star2 = itemView.findViewById(R.id.restaurant_item_rating_star_2);
             star3 = itemView.findViewById(R.id.restaurant_item_rating_star_3);

@@ -69,9 +69,9 @@ public class NavigationActivity extends AppCompatActivity {
     private double currentLocationLon;
     private NearByPlaces nearByPlaces;
     private FirebaseUser currentUser;
-    private static final int MAP_FLAG =0;
-    private static final int RESTAURANT_FLAG =1;
-    private static final int WORKERS_FLAG =2;
+    private static final int MAP_FLAG = 0;
+    private static final int RESTAURANT_FLAG = 1;
+    private static final int WORKERS_FLAG = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,8 +155,14 @@ public class NavigationActivity extends AppCompatActivity {
                         restaurantInfo.setLat(result.getGeometry().getLocation().getLat());
                         restaurantInfo.setLon(result.getGeometry().getLocation().getLng());
                         restaurantInfo.setAdress(result.getVicinity());
-                        restaurantInfo.setOpeningHours(result.getOpeningHours());
-                        restaurantInfo.setPhotos(result.getPhotos());
+                        try {
+                            restaurantInfo.setOpen(result.getOpeningHours().getOpenNow());
+                        } catch (NullPointerException e) {
+                        }
+                        try {
+                            restaurantInfo.setPhotoRef(result.getPhotos().get(0).getPhotoReference());
+                        } catch (NullPointerException e) {
+                        }
                         try {
                             restaurantInfo.setRating(result.getRating());
                         } catch (NullPointerException e) {
@@ -166,12 +172,15 @@ public class NavigationActivity extends AppCompatActivity {
                     }
                     nearByPlaces.setRestaurantInfoList(restaurantInfoList);
                     switch (flag) {
-                        case MAP_FLAG:   showMapFragment();
-                        break;
-                        case RESTAURANT_FLAG:   showRestaurants();
+                        case MAP_FLAG:
+                            showMapFragment();
                             break;
-                        case WORKERS_FLAG: showWorkers();
-                        break;
+                        case RESTAURANT_FLAG:
+                            showRestaurants();
+                            break;
+                        case WORKERS_FLAG:
+                            showWorkers();
+                            break;
                     }
 
                 }
@@ -287,11 +296,12 @@ public class NavigationActivity extends AppCompatActivity {
                 case R.id.nav_restaurant_list:
                     if (nearByPlaces != null) {
                         showRestaurants();
-                    } else  {
+                    } else {
                         getNearByRestaurants(RESTAURANT_FLAG);
-                }
+                    }
                     break;
-                case R.id.nav_workmates:getNearByRestaurants(WORKERS_FLAG);
+                case R.id.nav_workmates:
+                    getNearByRestaurants(WORKERS_FLAG);
                     break;
             }
             return true;

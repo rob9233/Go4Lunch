@@ -11,11 +11,11 @@ import robfernandes.xyz.go4lunch.model.placesResponse.Photo;
 public class RestaurantInfo implements Parcelable {
     private String name;
     private String adress;
-    private OpeningHours openingHours;
+    private boolean open;
     private String id;
     private double lat;
     private double lon;
-    private List<Photo> photos;
+    private String photoRef;
     private double rating;
 
     public RestaurantInfo() {
@@ -24,9 +24,11 @@ public class RestaurantInfo implements Parcelable {
     protected RestaurantInfo(Parcel in) {
         name = in.readString();
         adress = in.readString();
+        open = in.readByte() != 0;
         id = in.readString();
         lat = in.readDouble();
         lon = in.readDouble();
+        photoRef = in.readString();
         rating = in.readDouble();
     }
 
@@ -58,12 +60,12 @@ public class RestaurantInfo implements Parcelable {
         this.adress = adress;
     }
 
-    public OpeningHours getOpeningHours() {
-        return openingHours;
+    public boolean isOpen() {
+        return open;
     }
 
-    public void setOpeningHours(OpeningHours openingHours) {
-        this.openingHours = openingHours;
+    public void setOpen(boolean open) {
+        this.open = open;
     }
 
     public String getId() {
@@ -90,12 +92,12 @@ public class RestaurantInfo implements Parcelable {
         this.lon = lon;
     }
 
-    public List<Photo> getPhotos() {
-        return photos;
+    public String getPhotoRef() {
+        return photoRef;
     }
 
-    public void setPhotos(List<Photo> photos) {
-        this.photos = photos;
+    public void setPhotoRef(String photoRef) {
+        this.photoRef = photoRef;
     }
 
     public double getRating() {
@@ -115,9 +117,11 @@ public class RestaurantInfo implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeString(adress);
+        dest.writeByte((byte) (open ? 1 : 0));
         dest.writeString(id);
         dest.writeDouble(lat);
         dest.writeDouble(lon);
+        dest.writeString(photoRef);
         dest.writeDouble(rating);
     }
 }
