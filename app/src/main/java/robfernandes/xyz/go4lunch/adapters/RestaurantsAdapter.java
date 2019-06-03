@@ -5,16 +5,18 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import robfernandes.xyz.go4lunch.R;
@@ -27,15 +29,18 @@ import static robfernandes.xyz.go4lunch.utils.Utils.formatNumberOfStars;
 import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
 
 public class RestaurantsAdapter extends
-        RecyclerView.Adapter<RestaurantsAdapter.ViewHolder> {
+        RecyclerView.Adapter<RestaurantsAdapter.ViewHolder>
+        implements Filterable {
 
     private List<RestaurantInfo> restaurantInfoList;
+    private List<RestaurantInfo> fullRestaurantsList;
     private LatLng userLatLng;
     private Context context;
     private static final String TAG = "RestaurantsAdapter";
 
     public RestaurantsAdapter(List<RestaurantInfo> restaurantInfoList, LatLng userLatLng, Context context) {
         this.restaurantInfoList = restaurantInfoList;
+        this.fullRestaurantsList = new ArrayList<>(restaurantInfoList);
         this.userLatLng = userLatLng;
         this.context = context;
     }
@@ -107,6 +112,44 @@ public class RestaurantsAdapter extends
     public int getItemCount() {
         return restaurantInfoList.size();
     }
+
+    @Override
+    public Filter getFilter() {
+        return restaurantFilter;
+    }
+
+    private Filter restaurantFilter = new Filter() {
+        //this runs asycn
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<RestaurantInfo> filteredList = new ArrayList<>();
+
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(fullRestaurantsList);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+
+                for (RestaurantInfo restaurantInfo : fullRestaurantsList) {
+                    if (restaurantInfo.getName().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(restaurantInfo);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+
+            //returns to pubishResults
+            return results;
+        }
+
+        //this runs sync when performFiltering is over
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            restaurantInfoList.clear();
+            restaurantInfoList.addAll((List) results.values);
+            notifyDataSetChanged();
+        }
+    };
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView title, description, openHours, distance;

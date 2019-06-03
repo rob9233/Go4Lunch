@@ -19,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -58,7 +59,8 @@ import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
 
-public class MapFragment extends Fragment implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
+public class MapFragment extends Fragment
+        implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
 
     private static final String TAG = MapFragment.class.getSimpleName();
     private View view;
@@ -274,6 +276,7 @@ public class MapFragment extends Fragment implements SearchView.OnQueryTextListe
         searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(this);
         searchView.setQueryHint("Search");
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
