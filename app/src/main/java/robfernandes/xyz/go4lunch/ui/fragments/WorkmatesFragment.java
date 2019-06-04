@@ -30,7 +30,7 @@ import static com.android.volley.VolleyLog.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WorkmatesFragment extends BaseFragment  {
+public class WorkmatesFragment extends BaseFragment {
 
     private List<UserInformation> userList;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -64,7 +64,7 @@ public class WorkmatesFragment extends BaseFragment  {
                             userList.add(userInformation);
                         }
                         displayUsers();
-                    } 
+                    }
                 });
     }
 
@@ -76,6 +76,7 @@ public class WorkmatesFragment extends BaseFragment  {
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        workmatesAdapter.getFilter().filter(newText);
         return false;
     }
 }
