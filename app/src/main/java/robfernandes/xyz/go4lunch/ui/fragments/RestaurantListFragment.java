@@ -34,8 +34,7 @@ import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_E
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RestaurantListFragment extends Fragment
-        implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
+public class RestaurantListFragment extends BaseFragment {
     private NearByPlaces nearByPlaces;
     private View view;
     private RecyclerView recyclerView;
@@ -72,40 +71,8 @@ public class RestaurantListFragment extends Fragment
     }
 
     @Override
-    public boolean onMenuItemActionExpand(MenuItem item) {
-        return false;
-    }
-
-    @Override
-    public boolean onMenuItemActionCollapse(MenuItem item) {
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        return false;
-    }
-
-    @Override
     public boolean onQueryTextChange(String newText) {
        restaurantsAdapter.getFilter().filter(newText);
         return false;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.search_menu, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) searchItem.getActionView();
-        searchView.setOnQueryTextListener(this);
-        searchView.setQueryHint("Search");
-        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 }

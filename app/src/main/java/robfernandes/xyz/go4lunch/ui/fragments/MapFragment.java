@@ -8,17 +8,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
@@ -55,8 +49,7 @@ import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
 
-public class MapFragment extends Fragment
-        implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
+public class MapFragment extends BaseFragment{
 
     private static final String TAG = MapFragment.class.getSimpleName();
     private View view;
@@ -66,7 +59,6 @@ public class MapFragment extends Fragment
     private PlacesClient placesClient;
     private AutocompleteAdapter autocompleteAdapter;
     private List<AutocompletePrediction> autocompletePredictionList;
-    private SearchView searchView;
     private RectangularBounds bounds;
     private Double currentLocationLat;
     private Double currentLocationLon;
@@ -145,12 +137,6 @@ public class MapFragment extends Fragment
 
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
     private void initMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
@@ -206,7 +192,6 @@ public class MapFragment extends Fragment
         }
     }
 
-
     private void moveCamera(LatLng latLng) {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
     }
@@ -243,35 +228,9 @@ public class MapFragment extends Fragment
     }
 
     @Override
-    public boolean onMenuItemActionExpand(MenuItem item) {
-        return false;
-    }
-
-    @Override
-    public boolean onMenuItemActionCollapse(MenuItem item) {
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        return false;
-    }
-
-    @Override
     public boolean onQueryTextChange(String newText) {
         autocompletePlaces(newText);
         return false;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.search_menu, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) searchItem.getActionView();
-        searchView.setOnQueryTextListener(this);
-        searchView.setQueryHint("Search");
-        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     private void autocompletePlaces(String query) {

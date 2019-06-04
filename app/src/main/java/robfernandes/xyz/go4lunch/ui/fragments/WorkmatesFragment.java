@@ -7,8 +7,10 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,7 +30,7 @@ import static com.android.volley.VolleyLog.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WorkmatesFragment extends Fragment {
+public class WorkmatesFragment extends BaseFragment  {
 
     private List<UserInformation> userList;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -72,4 +74,8 @@ public class WorkmatesFragment extends Fragment {
         recyclerView.setAdapter(workmatesAdapter);
     }
 
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
 }
