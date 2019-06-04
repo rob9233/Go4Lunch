@@ -4,37 +4,64 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.RegisterEmailActivity"
+    android:gravity="center"
     android:orientation="vertical"
-    android:gravity="center">
+    tools:context=".ui.activities.RegisterEmailActivity">
 
-    <ImageView
-        android:layout_width="@dimen/logo_size"
-        android:layout_height="@dimen/logo_size"
-        android:contentDescription="@string/logo"
-        android:src="@drawable/logo" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/activity_register_email_profile_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_margin="50dp"
+            android:background="@color/colorPrimary"
+            android:contentDescription="@string/click_here_to_add_a_profile_picture" />
+
+        <TextView
+            android:id="@+id/activity_register_email_profile_text_view"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="@string/click_here_to_add_a_profile_picture"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
+    </RelativeLayout>
+
+
+    <EditText
+        android:id="@+id/activity_register_email_name"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:hint="Name" />
 
     <EditText
         android:id="@+id/activity_register_email_email"
-        android:layout_marginTop="10dp"
         android:layout_width="300dp"
         android:layout_height="50dp"
+        android:layout_marginTop="10dp"
         android:hint="Email"
-        android:inputType="textEmailAddress"/>
+        android:inputType="textEmailAddress" />
 
     <EditText
         android:id="@+id/activity_register_email_password"
-        android:layout_marginTop="10dp"
         android:layout_width="300dp"
         android:layout_height="50dp"
+        android:layout_marginTop="10dp"
         android:hint="Password"
-        android:inputType="textPassword"/>
+        android:inputType="textPassword" />
 
     <Button
         android:id="@+id/activity_register_email_register_btn"
-        android:background="@drawable/btn_round_email"
-        android:layout_marginTop="10dp"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:text="Register"/>
+        android:layout_marginTop="10dp"
+        android:background="@drawable/btn_round_email"
+        android:text="Register" />
 </LinearLayout>

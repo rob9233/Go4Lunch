@@ -54,10 +54,12 @@
         app:layout_constraintVertical_bias="0.948">
 
         <ImageView
+            android:id="@+id/drawer_header_user_image"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_margin="@dimen/profile_margin"
-            tools:srcCompat="@tools:sample/avatars[4]"
+            android:src="@drawable/logo"
+            android:background="@android:color/holo_blue_light"
             android:contentDescription="@string/profile_picture"/>
 
         <TextView

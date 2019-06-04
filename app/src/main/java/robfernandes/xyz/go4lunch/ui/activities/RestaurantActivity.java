@@ -17,7 +17,7 @@ import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
 public class RestaurantActivity extends AppCompatActivity {
 
     private RestaurantInfo restaurantInfo;
-    private ImageView restaurantImage, star1, star2, star3 ;
+    private ImageView restaurantImage, star1, star2, star3;
     private TextView restaurantTitle, restaurantDescription;
 
     @Override
@@ -64,7 +64,8 @@ public class RestaurantActivity extends AppCompatActivity {
                     , getApplicationContext(),
                     "1000",
                     "400");
-            putImageIntoImageView(restaurantImage, restaurantPhotoUrl);
+            putImageIntoImageView(restaurantImage, restaurantPhotoUrl,
+                    getResources().getDrawable(R.drawable.logo));
         } catch (Exception e) {
         }
     }

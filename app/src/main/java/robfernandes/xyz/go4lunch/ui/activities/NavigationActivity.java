@@ -18,6 +18,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,9 +26,13 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +45,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.model.NearByPlaces;
 import robfernandes.xyz.go4lunch.model.RestaurantInfo;
+import robfernandes.xyz.go4lunch.model.UserInformation;
 import robfernandes.xyz.go4lunch.model.placesResponse.PlacesResponse;
 import robfernandes.xyz.go4lunch.model.placesResponse.Result;
 import robfernandes.xyz.go4lunch.services.network.NearbyRestaurantsService;
@@ -51,6 +57,7 @@ import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES_BASE_URL;
+import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
 
 public class NavigationActivity extends AppCompatActivity {
 
@@ -68,9 +75,12 @@ public class NavigationActivity extends AppCompatActivity {
     private double currentLocationLon;
     private NearByPlaces nearByPlaces;
     private FirebaseUser currentUser;
+    private UserInformation userInformation;
     private static final int MAP_FLAG = 0;
     private static final int RESTAURANT_FLAG = 1;
     private static final int WORKERS_FLAG = 2;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private ImageView profileImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +102,7 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     private void init(Bundle savedInstanceState) {
+        getUserInfo();
         setViews();
         setListeners();
         //Start on Map Fragment but not when the deice is rotated
@@ -101,6 +112,22 @@ public class NavigationActivity extends AppCompatActivity {
 
         setToolbar();
         configureDrawer();
+    }
+
+    private void getUserInfo() {
+        DocumentReference docRef = db.collection("users")
+                .document(currentUser.getUid());
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    userInformation = document.toObject(UserInformation.class);
+                    if (profileImageView != null) {
+                        displayProfileImage();
+                    }
+                }
+            }
+        });
     }
 
     private void getDeviceLocation() {
@@ -181,7 +208,6 @@ public class NavigationActivity extends AppCompatActivity {
                             showWorkers();
                             break;
                     }
-
                 }
             }
 
@@ -255,6 +281,11 @@ public class NavigationActivity extends AppCompatActivity {
                 .findViewById(R.id.drawer_header_user_email);
         emailNav.setText(currentUser.getEmail());
 
+        profileImageView = navigationView.getHeaderView(0)
+                .findViewById(R.id.drawer_header_user_image);
+
+        displayProfileImage();
+
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             int id = menuItem.getItemId();
             Intent intent = null;
@@ -277,6 +308,17 @@ public class NavigationActivity extends AppCompatActivity {
             }
             return true;
         });
+    }
+
+    private void displayProfileImage() {
+        String photoUrl;
+        try {
+            photoUrl = userInformation.getPhotoUrl();
+        } catch (NullPointerException e) {
+            photoUrl = getString(R.string.logo_url);
+        }
+        putImageIntoImageView(profileImageView, photoUrl
+                , getResources().getDrawable(R.drawable.logo));
     }
 
     private void logOut() {

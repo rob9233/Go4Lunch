@@ -4,6 +4,7 @@ public class UserInformation {
     private String id;
     private String email;
     private String name = "";
+    private String photoUrl = "";
 
     public String getId() {
         return id;
@@ -30,5 +31,13 @@ public class UserInformation {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 }

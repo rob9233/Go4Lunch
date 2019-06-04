@@ -36,7 +36,7 @@ public class BaseRegisterActivity extends AppCompatActivity {
         overridePendingTransition(0, 0);
     }
 
-    void saveUserInfo(UserInformation userInformation) {
+    void saveUserInfoAndLogIn(UserInformation userInformation) {
         CollectionReference users = db.collection("users");
         users.document(userInformation.getId()).get().addOnCompleteListener(
                 task -> {

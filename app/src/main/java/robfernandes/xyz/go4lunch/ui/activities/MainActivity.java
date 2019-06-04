@@ -2,8 +2,6 @@ package robfernandes.xyz.go4lunch.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,16 +14,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.model.UserInformation;
@@ -87,8 +79,6 @@ public class MainActivity extends BaseRegisterActivity {
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
-
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
@@ -97,7 +87,13 @@ public class MainActivity extends BaseRegisterActivity {
                         userInformation.setEmail(acct.getEmail());
                         userInformation.setName(acct.getDisplayName());
                         userInformation.setId(firebaseAuth.getUid());
-                        saveUserInfo(userInformation);
+                        try {
+                            userInformation.setPhotoUrl(acct.getPhotoUrl().toString());
+                        } catch (NullPointerException e) {
+                            userInformation.setPhotoUrl(getString(R.string.logo_url));
+                        }
+
+                        saveUserInfoAndLogIn(userInformation);
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.e(TAG, "signInWithCredential:failure", task.getException());

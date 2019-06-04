@@ -1,12 +1,15 @@
 package robfernandes.xyz.go4lunch.utils;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.SphericalUtil;
 import com.squareup.picasso.Picasso;
+
+import java.util.UUID;
 
 import robfernandes.xyz.go4lunch.R;
 
@@ -21,7 +24,16 @@ public class Utils {
         return new LatLngBounds(southwestCorner, northeastCorner);
     }
 
-    public static void putImageIntoImageView(ImageView imageView, String url) {
+    public static void putImageIntoImageView(ImageView imageView, String url, Drawable errorDrawable)
+    {
+        try {
+            Picasso.get().load(url).error(errorDrawable).into(imageView);
+        } catch (Exception e) {
+        }
+    }
+
+    public static void putImageIntoImageView(ImageView imageView, String url)
+    {
         Picasso.get().load(url).into(imageView);
     }
 
@@ -41,5 +53,9 @@ public class Utils {
         sb.append("&key=");
         sb.append(context.getString(R.string.google_maps_api_key));
         return sb.toString();
+    }
+
+    public static String generateRandomFileName() {
+        return UUID.randomUUID().toString();
     }
 }
