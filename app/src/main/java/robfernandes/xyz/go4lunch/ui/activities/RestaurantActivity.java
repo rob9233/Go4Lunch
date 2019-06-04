@@ -82,7 +82,17 @@ public class RestaurantActivity extends AppCompatActivity {
                         eatingPlans.add(eatingPlan);
                     }
                     if (eatingPlans.size() > 0) {
-                        setPlanParams(true);
+                        boolean found = false;
+                        for (EatingPlan eatingPlan: eatingPlans) {
+                            if (eatingPlan.getRestaurantID().equals(restaurantInfo.getId())) {
+                                found = true;
+                            }
+                        }
+                        if (found) {
+                            setPlanParams(true);
+                        } else {
+                            setPlanParams(false);
+                        }
                     } else {
                         setPlanParams(false);
                     }
@@ -146,9 +156,11 @@ public class RestaurantActivity extends AppCompatActivity {
 
     private void updatePlanStatus() {
         if (goingToThisRestaurant) {
-            //TODO
-            //delete entry
+            removeUserPlan();
+            goingToThisRestaurant = false;
+            displayPlan();
         } else {
+            removeUserPlan();
             EatingPlan eatingPlan = new EatingPlan();
             eatingPlan.setUserID(FirebaseAuth.getInstance().getCurrentUser().getUid());
             eatingPlan.setRestaurantID(restaurantInfo.getId());
@@ -157,7 +169,8 @@ public class RestaurantActivity extends AppCompatActivity {
 
             plansCollection.document(pathName)
                     .collection(eatingPlan.getUserID())
-                    .add(eatingPlan)
+                    .document("plan")
+                    .set(eatingPlan)
                     .addOnSuccessListener(documentReference -> {
                                 goingToThisRestaurant = true;
                                 displayPlan();
@@ -183,5 +196,14 @@ public class RestaurantActivity extends AppCompatActivity {
             planImageView.setImageDrawable(getResources()
                     .getDrawable(R.drawable.ic_near_me_yellow_24dp));
         }
+    }
+
+    private void removeUserPlan() {
+        String pathName = getFormatedTodaysDate();
+
+        plansCollection.document(pathName)
+                .collection(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .document("plan")
+                .delete();
     }
 }
