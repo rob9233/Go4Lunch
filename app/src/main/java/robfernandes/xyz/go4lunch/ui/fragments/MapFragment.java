@@ -19,6 +19,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -32,13 +33,17 @@ import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.adapters.AutocompleteAdapter;
+import robfernandes.xyz.go4lunch.model.EatingPlan;
 import robfernandes.xyz.go4lunch.model.NearByPlaces;
 import robfernandes.xyz.go4lunch.model.RestaurantInfo;
 import robfernandes.xyz.go4lunch.ui.activities.RestaurantActivity;
@@ -48,8 +53,9 @@ import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
+import static robfernandes.xyz.go4lunch.utils.Utils.getMarkerIconFromDrawable;
 
-public class MapFragment extends BaseFragment{
+public class MapFragment extends BaseFragment {
 
     private static final String TAG = MapFragment.class.getSimpleName();
     private View view;
@@ -64,6 +70,10 @@ public class MapFragment extends BaseFragment{
     private Double currentLocationLon;
     private static final long searchRadiousInMetres = 50000;
     private NearByPlaces nearByPlaces;
+    private String snippet = "Click here to see more";
+    private List<EatingPlan> eatingPlanList = null;
+    private CollectionReference plansCollection;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public MapFragment() {
         // Required empty public constructor
@@ -79,7 +89,12 @@ public class MapFragment extends BaseFragment{
         Places.initialize(getContext(), getString(R.string.google_maps_api_key));
         placesClient = Places.createClient(getContext());
         setAutocompleteAdapter();
+        getEatingPlans();
         return view;
+    }
+
+    private void getEatingPlans() {
+    //TODO
     }
 
     private void getParams() {
@@ -161,22 +176,31 @@ public class MapFragment extends BaseFragment{
             mMap.setMyLocationEnabled(true);
             mMap.setOnInfoWindowClickListener(marker ->
             {
-                RestaurantInfo tag = (RestaurantInfo) marker.getTag();
                 goToRestaurantActivity(marker);
             });
 
-            String snippet = "Click here to see more";
 
             for (RestaurantInfo restaurantInfo : this.nearByPlaces.getRestaurantInfoList()) {
-                MarkerOptions options = new MarkerOptions()
-                        .position(
-                                new LatLng(restaurantInfo.getLat(), restaurantInfo.getLon())
-                        )
-                        .snippet(snippet)
-                        .title(restaurantInfo.getName());
-                mMap.addMarker(options).setTag(restaurantInfo);
+                addMarker(restaurantInfo);
             }
         });
+    }
+
+    private void addMarker(RestaurantInfo restaurantInfo) {
+        BitmapDescriptor iconBitmap;
+
+        iconBitmap = getMarkerIconFromDrawable(
+                getResources().getDrawable(R.drawable.ic_location_on_green_48dp));
+
+        MarkerOptions options = new MarkerOptions()
+                .position(
+                        new LatLng(restaurantInfo.getLat(), restaurantInfo.getLon())
+                )
+                .snippet(snippet)
+                .icon(iconBitmap)
+                .title(restaurantInfo.getName());
+
+        mMap.addMarker(options).setTag(restaurantInfo);
     }
 
     private void goToRestaurantActivity(Marker marker) {
@@ -200,11 +224,7 @@ public class MapFragment extends BaseFragment{
     private void moveCamera(Place place) {
         mMap.clear();
 
-        String name = place.getName();
         LatLng latLng = place.getLatLng();
-        if (name == null) {
-            name = "selected place";
-        }
         if (latLng == null) {
             LatLngBounds viewport = place.getViewport();
             latLng = new LatLng(viewport.getCenter().latitude,
@@ -212,7 +232,6 @@ public class MapFragment extends BaseFragment{
         }
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
-        String snippet = "Click here to see more details";
 
         RestaurantInfo restaurantInfo = new RestaurantInfo();
         restaurantInfo.setId(place.getId());
@@ -220,11 +239,7 @@ public class MapFragment extends BaseFragment{
         restaurantInfo.setLon(place.getLatLng().longitude);
         restaurantInfo.setName(place.getName());
 
-        MarkerOptions options = new MarkerOptions()
-                .position(latLng)
-                .snippet(snippet)
-                .title(name);
-        mMap.addMarker(options).setTag(restaurantInfo);
+        addMarker(restaurantInfo);
     }
 
     @Override

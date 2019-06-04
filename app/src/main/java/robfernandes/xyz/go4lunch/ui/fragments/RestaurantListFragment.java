@@ -41,7 +41,6 @@ public class RestaurantListFragment extends BaseFragment {
     private Double currentLocationLat;
     private Double currentLocationLon;
     private RestaurantsAdapter restaurantsAdapter;
-    private SearchView searchView;
 
     public RestaurantListFragment() {
         // Required empty public constructor
