@@ -64,6 +64,24 @@
                 android:textColor="@android:color/white" />
 
         </LinearLayout>
+
+        <RelativeLayout
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="-15dp"
+            android:layout_below="@+id/restaurant_activity_image_view"
+            android:background="@drawable/round_white_bkg"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/restaurant_activity_go_option_container">
+            <ImageView
+                android:id="@+id/restaurant_activity_go_option_plan"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+
     </RelativeLayout>
 
 

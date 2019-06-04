@@ -9,6 +9,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.SphericalUtil;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 import robfernandes.xyz.go4lunch.R;
@@ -24,16 +26,14 @@ public class Utils {
         return new LatLngBounds(southwestCorner, northeastCorner);
     }
 
-    public static void putImageIntoImageView(ImageView imageView, String url, Drawable errorDrawable)
-    {
+    public static void putImageIntoImageView(ImageView imageView, String url, Drawable errorDrawable) {
         try {
             Picasso.get().load(url).error(errorDrawable).into(imageView);
         } catch (Exception e) {
         }
     }
 
-    public static void putImageIntoImageView(ImageView imageView, String url)
-    {
+    public static void putImageIntoImageView(ImageView imageView, String url) {
         Picasso.get().load(url).into(imageView);
     }
 
@@ -57,5 +57,11 @@ public class Utils {
 
     public static String generateRandomFileName() {
         return UUID.randomUUID().toString();
+    }
+
+    public static String getFormatedTodaysDate() {
+        Date date = new Date(System.currentTimeMillis());
+        SimpleDateFormat df = new SimpleDateFormat("yyyy/M/d");
+        return df.format(date);
     }
 }
