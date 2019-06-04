@@ -1,10 +1,16 @@
 package robfernandes.xyz.go4lunch.model;
 
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
+
 public class UserInformation {
     private String id;
     private String email;
     private String name = "";
     private String photoUrl = "";
+    @ServerTimestamp
+    private Date timestamp;
 
     public String getId() {
         return id;
@@ -39,5 +45,13 @@ public class UserInformation {
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }
