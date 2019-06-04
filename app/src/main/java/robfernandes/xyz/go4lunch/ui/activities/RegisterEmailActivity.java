@@ -11,7 +11,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import robfernandes.xyz.go4lunch.R;
 
-public class RegisterEmailActivity extends AppCompatActivity {
+public class RegisterEmailActivity extends BaseRegisterActivity {
 
     private EditText emailEditText, passwordEditText;
     private Button registerBtn;

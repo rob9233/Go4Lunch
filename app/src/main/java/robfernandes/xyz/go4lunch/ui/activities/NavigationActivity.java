@@ -40,7 +40,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.model.NearByPlaces;
 import robfernandes.xyz.go4lunch.model.RestaurantInfo;
-import robfernandes.xyz.go4lunch.model.placesResponse.Photo;
 import robfernandes.xyz.go4lunch.model.placesResponse.PlacesResponse;
 import robfernandes.xyz.go4lunch.model.placesResponse.Result;
 import robfernandes.xyz.go4lunch.services.network.NearbyRestaurantsService;

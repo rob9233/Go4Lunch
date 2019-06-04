@@ -2,6 +2,7 @@ package robfernandes.xyz.go4lunch.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
@@ -15,22 +16,28 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import robfernandes.xyz.go4lunch.R;
+import robfernandes.xyz.go4lunch.model.UserInformation;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseRegisterActivity {
 
     private Button logInWithEmailBtn, logInWithFacebookBtn;
     private SignInButton getLogInWithGmailBtn;
     private TextView dontHaveAccountTextView;
     private EditText email, password;
     private GoogleSignInOptions gso;
-    private FirebaseAuth mAuth;
+    private FirebaseAuth firebaseAuth;
     private GoogleSignInClient mGoogleSignInClient;
     private static final String TAG = "MainActivity";
     private static final int RC_SIGN_IN = 9001;
@@ -40,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mAuth = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
         setViews();
         setOnClickListeners();
         setSignInOptions();
@@ -83,24 +90,19 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
+        firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        logInUser();
+                        UserInformation userInformation = new UserInformation();
+                        userInformation.setEmail(acct.getEmail());
+                        userInformation.setName(acct.getDisplayName());
+                        userInformation.setId(firebaseAuth.getUid());
+                        saveUserInfo(userInformation);
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.e(TAG, "signInWithCredential:failure", task.getException());
                     }
                 });
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            logInUser();
-        }
     }
 
     private void setViews() {
@@ -150,17 +152,5 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
-
-    private void logInUser() {
-        goToActivityWithClearTask(new Intent(MainActivity.this
-                , NavigationActivity.class));
-    }
-
-    private void goToActivityWithClearTask(Intent intent) {
-        //to not come back to this intent when pressing back button
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
     }
 }
