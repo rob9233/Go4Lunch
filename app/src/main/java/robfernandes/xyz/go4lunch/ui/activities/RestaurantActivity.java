@@ -72,7 +72,7 @@ public class RestaurantActivity extends AppCompatActivity {
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         plansCollection.document(year).collection(month).document(day)
-                .collection(userID)
+                .collection("plan")
                 .get().addOnSuccessListener(
                 documentSnapshot -> {
                     List<DocumentSnapshot> documents = documentSnapshot.getDocuments();
@@ -168,8 +168,8 @@ public class RestaurantActivity extends AppCompatActivity {
             String pathName = getFormatedTodaysDate();
 
             plansCollection.document(pathName)
-                    .collection(eatingPlan.getUserID())
-                    .document("plan")
+                    .collection("plan")
+                    .document(eatingPlan.getUserID())
                     .set(eatingPlan)
                     .addOnSuccessListener(documentReference -> {
                                 goingToThisRestaurant = true;
@@ -202,8 +202,8 @@ public class RestaurantActivity extends AppCompatActivity {
         String pathName = getFormatedTodaysDate();
 
         plansCollection.document(pathName)
-                .collection(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .document("plan")
+                .collection("plan")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .delete();
     }
 }

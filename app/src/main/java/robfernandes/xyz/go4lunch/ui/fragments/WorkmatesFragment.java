@@ -47,9 +47,14 @@ public class WorkmatesFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        getUserInfo();
         view = inflater.inflate(R.layout.fragment_work_mates, container, false);
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getUserInfo();
     }
 
     private void getUserInfo() {
