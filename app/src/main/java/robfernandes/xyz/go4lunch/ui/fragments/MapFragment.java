@@ -67,7 +67,7 @@ public class MapFragment extends BaseFragment {
     private Double currentLocationLon;
     private static final long searchRadiousInMetres = 50000;
     private NearByPlaces nearByPlaces;
-    private String snippet = "Click here to see more";
+    private String defaultSnippet = "Click here to see more";
 
     public MapFragment() {
         // Required empty public constructor
@@ -182,31 +182,47 @@ public class MapFragment extends BaseFragment {
     }
 
     private void addMarker(RestaurantInfo restaurantInfo) {
+        String snippet = defaultSnippet;
         MarkerOptions options = new MarkerOptions()
                 .position(
                         new LatLng(restaurantInfo.getLat(), restaurantInfo.getLon())
                 )
-                .snippet(snippet)
                 .title(restaurantInfo.getName());
 
-        if (restaurantHasPlans(restaurantInfo)) {
+        int numOfPlans = numOfPlansInRestaurant(restaurantInfo);
+
+        if (numOfPlans > 0) {
             try {
                 BitmapDescriptor iconBitmap = getMarkerIconFromDrawable(
-                        getActivity().getResources().getDrawable(R.drawable.ic_location_on_green_48dp));
+                        getActivity().getResources()
+                                .getDrawable(R.drawable.ic_location_on_green_48dp));
                 options.icon(iconBitmap);
-            }catch (Exception e) {
+                String text;
+                if (numOfPlans == 1) {
+                    text = "person is";
+                } else {
+                    text = "persons are";
+                }
+
+                snippet = String.format("%d %s going here", numOfPlans, text);
+
+            } catch (Exception e) {
             }
         }
+        options.snippet(snippet);
 
         mMap.addMarker(options).setTag(restaurantInfo);
     }
 
-    private boolean restaurantHasPlans(RestaurantInfo restaurantInfo) {
-        for (EatingPlan eatingPlan: eatingPlanList) {
-            if (eatingPlan.getRestaurantID().equals(restaurantInfo.getId())) return true;
+    private int numOfPlansInRestaurant(RestaurantInfo restaurantInfo) {
+        int num = 0;
+        for (EatingPlan eatingPlan : eatingPlanList) {
+            if (eatingPlan.getRestaurantID().equals(restaurantInfo.getId())) {
+                num++;
+            }
         }
 
-        return false;
+        return num;
     }
 
     private void goToRestaurantActivity(Marker marker) {

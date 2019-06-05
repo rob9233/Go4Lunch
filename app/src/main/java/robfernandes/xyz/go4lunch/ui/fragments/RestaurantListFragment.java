@@ -70,13 +70,13 @@ public class RestaurantListFragment extends BaseFragment {
         recyclerView = view.findViewById(R.id.fragment_restaurants_recycler_view);
         LatLng userLatLng = new LatLng(currentLocationLat, currentLocationLon);
         restaurantsAdapter = new RestaurantsAdapter(nearByPlaces.getRestaurantInfoList()
-                , userLatLng , eatingPlanList, getContext());
+                , userLatLng, eatingPlanList, getContext());
         recyclerView.setAdapter(restaurantsAdapter);
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-       restaurantsAdapter.getFilter().filter(newText);
+        restaurantsAdapter.getFilter().filter(newText);
         return false;
     }
 }
