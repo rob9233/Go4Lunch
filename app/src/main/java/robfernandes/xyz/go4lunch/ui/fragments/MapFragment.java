@@ -24,7 +24,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
@@ -34,24 +33,16 @@ import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.adapters.AutocompleteAdapter;
 import robfernandes.xyz.go4lunch.model.EatingPlan;
 import robfernandes.xyz.go4lunch.model.NearByPlaces;
 import robfernandes.xyz.go4lunch.model.RestaurantInfo;
-import robfernandes.xyz.go4lunch.model.UserInformation;
 import robfernandes.xyz.go4lunch.ui.activities.RestaurantActivity;
 import robfernandes.xyz.go4lunch.utils.Utils;
 
@@ -77,8 +68,6 @@ public class MapFragment extends BaseFragment {
     private static final long searchRadiousInMetres = 50000;
     private NearByPlaces nearByPlaces;
     private String snippet = "Click here to see more";
-    private List<EatingPlan> eatingPlanList;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public MapFragment() {
         // Required empty public constructor
@@ -177,29 +166,13 @@ public class MapFragment extends BaseFragment {
             mMap.setOnInfoWindowClickListener(marker ->
                     goToRestaurantActivity(marker));
 
-            addAllMarkers();
+            getEatingPlans();
         });
     }
 
-    private void addAllMarkers() {
-        eatingPlanList = new ArrayList<>();
-        Calendar calendar = Calendar.getInstance();
-        String year = String.valueOf(calendar.get(Calendar.YEAR));
-        String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
-        String day = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
-
-        CollectionReference collection = db.collection("plans")
-                .document(year).collection(month).document(day).collection("plan");
-
-        collection.get().addOnSuccessListener(queryDocumentSnapshots -> {
-            List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
-
-            for (DocumentSnapshot document : documents) {
-                eatingPlanList.add(document.toObject(EatingPlan.class));
-            }
-            displayMarkers();
-        });
-
+    @Override
+    protected void displayEatingPlans() {
+        displayMarkers();
     }
 
     private void displayMarkers() {
@@ -217,9 +190,12 @@ public class MapFragment extends BaseFragment {
                 .title(restaurantInfo.getName());
 
         if (restaurantHasPlans(restaurantInfo)) {
-            BitmapDescriptor iconBitmap = getMarkerIconFromDrawable(
-                    getResources().getDrawable(R.drawable.ic_location_on_green_48dp));
-            options.icon(iconBitmap);
+            try {
+                BitmapDescriptor iconBitmap = getMarkerIconFromDrawable(
+                        getActivity().getResources().getDrawable(R.drawable.ic_location_on_green_48dp));
+                options.icon(iconBitmap);
+            }catch (Exception e) {
+            }
         }
 
         mMap.addMarker(options).setTag(restaurantInfo);
@@ -302,7 +278,5 @@ public class MapFragment extends BaseFragment {
                 Log.e(TAG, "Place not found: " + apiException.getStatusCode());
             }
         });
-
     }
-
 }

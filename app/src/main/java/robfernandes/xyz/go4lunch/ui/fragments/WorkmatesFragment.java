@@ -33,7 +33,6 @@ import static com.android.volley.VolleyLog.TAG;
 public class WorkmatesFragment extends BaseFragment {
 
     private List<UserInformation> userList;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private RecyclerView recyclerView;
     private WorkmatesAdapter workmatesAdapter;
     private View view;
@@ -68,9 +67,14 @@ public class WorkmatesFragment extends BaseFragment {
                                     .toObject(UserInformation.class);
                             userList.add(userInformation);
                         }
-                        displayUsers();
+                      getEatingPlans();
                     }
                 });
+    }
+
+    @Override
+    protected void displayEatingPlans() {
+        displayUsers();
     }
 
     private void displayUsers() {

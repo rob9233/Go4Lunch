@@ -51,8 +51,13 @@ public class RestaurantListFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_restaurant_list, container, false);
         getParams();
-        setRecyclerVIew();
+        getEatingPlans();
         return view;
+    }
+
+    @Override
+    protected void displayEatingPlans() {
+        setRecyclerVIew();
     }
 
     private void getParams() {
@@ -65,7 +70,7 @@ public class RestaurantListFragment extends BaseFragment {
         recyclerView = view.findViewById(R.id.fragment_restaurants_recycler_view);
         LatLng userLatLng = new LatLng(currentLocationLat, currentLocationLon);
         restaurantsAdapter = new RestaurantsAdapter(nearByPlaces.getRestaurantInfoList()
-                , userLatLng , getContext());
+                , userLatLng , eatingPlanList, getContext());
         recyclerView.setAdapter(restaurantsAdapter);
     }
 

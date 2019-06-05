@@ -52,7 +52,8 @@
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/restaurant_item_rating_plans_container">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -60,9 +61,9 @@
                         card_view:srcCompat="@drawable/ic_person_black_16dp" />
 
                     <TextView
+                        android:id="@+id/restaurant_item_rating_plans_num"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="(2)" />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout

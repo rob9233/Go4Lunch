@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import robfernandes.xyz.go4lunch.R;
+import robfernandes.xyz.go4lunch.model.EatingPlan;
 import robfernandes.xyz.go4lunch.model.RestaurantInfo;
 import robfernandes.xyz.go4lunch.ui.activities.RestaurantActivity;
 
@@ -37,13 +38,15 @@ public class RestaurantsAdapter extends
     private List<RestaurantInfo> fullRestaurantsList;
     private LatLng userLatLng;
     private Context context;
-    private static final String TAG = "RestaurantsAdapter";
+    private List<EatingPlan> eatingPlanList;
 
-    public RestaurantsAdapter(List<RestaurantInfo> restaurantInfoList, LatLng userLatLng, Context context) {
+    public RestaurantsAdapter(List<RestaurantInfo> restaurantInfoList, LatLng userLatLng
+            , List<EatingPlan> eatingPlanList, Context context) {
         this.restaurantInfoList = restaurantInfoList;
         this.fullRestaurantsList = new ArrayList<>(restaurantInfoList);
         this.userLatLng = userLatLng;
         this.context = context;
+        this.eatingPlanList = eatingPlanList;
     }
 
     @NonNull
@@ -57,6 +60,14 @@ public class RestaurantsAdapter extends
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         RestaurantInfo restaurantInfo = restaurantInfoList.get(i);
+        int numOfPlans = getNumberOfPlansOnRestaurant(restaurantInfo);
+        if (numOfPlans>0) {
+            viewHolder.plansContainer.setVisibility(View.VISIBLE);
+            viewHolder.numPlansTextView.setText(String.format(String.valueOf(numOfPlans), "(%d)"));
+        } else {
+            viewHolder.plansContainer.setVisibility(View.INVISIBLE);
+        }
+
         viewHolder.title.setText(restaurantInfo.getName());
         viewHolder.description.setText(restaurantInfo.getAdress());
         try {
@@ -78,7 +89,7 @@ public class RestaurantsAdapter extends
         try {
             String photoReference = restaurantInfo.getPhotoRef();
             String photoUrl = getRestaurantPhotoUrl(photoReference, context
-                    , "100" , "100");
+                    , "100", "100");
             putImageIntoImageView(viewHolder.imageView, photoUrl);
         } catch (Exception e) {
         }
@@ -144,9 +155,10 @@ public class RestaurantsAdapter extends
     };
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView title, description, openHours, distance;
+        private TextView title, description, openHours, distance, numPlansTextView;
         private ImageView imageView, star1, star2, star3;
         private View starContainer;
+        private View plansContainer;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -160,6 +172,8 @@ public class RestaurantsAdapter extends
             star2 = itemView.findViewById(R.id.restaurant_item_rating_star_2);
             star3 = itemView.findViewById(R.id.restaurant_item_rating_star_3);
             starContainer = itemView.findViewById(R.id.restaurant_item_rating_star_container);
+            numPlansTextView = itemView.findViewById(R.id.restaurant_item_rating_plans_num);
+            plansContainer = itemView.findViewById(R.id.restaurant_item_rating_plans_container);
 
             itemView.setOnClickListener(v ->
                     goToRestaurantActivity(restaurantInfoList.get(getAdapterPosition())));
@@ -176,5 +190,19 @@ public class RestaurantsAdapter extends
                             "display info about this restaurant",
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private int getNumberOfPlansOnRestaurant(RestaurantInfo restaurantInfo) {
+        int numOfPlans = 0;
+
+        try {
+            for (EatingPlan eatingPlan : eatingPlanList) {
+                if (restaurantInfo.getId().equals(eatingPlan.getRestaurantID())) {
+                    numOfPlans++;
+                }
+            }
+        } catch (Exception e) {
+        }
+        return numOfPlans;
     }
 }
