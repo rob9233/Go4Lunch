@@ -34,6 +34,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import retrofit2.Call;
@@ -42,6 +43,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import robfernandes.xyz.go4lunch.R;
+import robfernandes.xyz.go4lunch.model.EatingPlan;
 import robfernandes.xyz.go4lunch.model.NearByPlaces;
 import robfernandes.xyz.go4lunch.model.RestaurantInfo;
 import robfernandes.xyz.go4lunch.model.UserInformation;
@@ -56,6 +58,7 @@ import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES_BASE_URL;
+import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
 
 public class NavigationActivity extends AppCompatActivity {
@@ -291,7 +294,7 @@ public class NavigationActivity extends AppCompatActivity {
 
             switch (id) {
                 case R.id.nav_drawer_your_lunch:
-                    intent = new Intent(getApplicationContext(), LunchActivity.class);
+              //      displayUserPlan();
                     break;
                 case R.id.nav_drawer_settings:
                     intent = new Intent(getApplicationContext(), SettingsActivity.class);
@@ -308,6 +311,44 @@ public class NavigationActivity extends AppCompatActivity {
             return true;
         });
     }
+
+    /*private void displayUserPlan() {
+        Calendar calendar = Calendar.getInstance();
+        String year = String.valueOf(calendar.get(Calendar.YEAR));
+        String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
+        String day = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        DocumentReference document = db.collection("plans")
+                .document(year).collection(month).document(day).collection("plan")
+                .document(userID);
+
+        document.get().addOnSuccessListener(documentSnapshot -> {
+            EatingPlan eatingPlan = documentSnapshot.toObject(EatingPlan.class);
+            boolean foundPlace = false;
+            for (RestaurantInfo restaurantInfo : nearByPlaces.getRestaurantInfoList()) {
+                if (restaurantInfo.getId().equals(eatingPlan.getRestaurantID())) {
+                    showRestaurantInfo(restaurantInfo);
+                    foundPlace = true;
+                    break;
+                }
+            }
+            if (!foundPlace) {
+                Toast.makeText(getBaseContext()
+                        , "It was not found a lunch plan"
+                        , Toast.LENGTH_SHORT).show();
+            }
+        })
+                .addOnFailureListener(e -> Toast.makeText(getBaseContext()
+                        , "It was not found a lunch plan"
+                        , Toast.LENGTH_SHORT).show());
+    }
+
+    private void showRestaurantInfo(RestaurantInfo restaurantInfo) {
+        Intent intent = new Intent(NavigationActivity.this, RestaurantActivity.class);
+        intent.putExtra(RESTAURANT_INFO_BUNDLE_EXTRA, restaurantInfo);
+        startActivity(intent);
+    }*/
 
     private void displayProfileImage() {
         String photoUrl;

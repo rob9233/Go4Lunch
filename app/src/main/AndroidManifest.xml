@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".app.ApplicationClass"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -25,7 +26,6 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".ui.activities.SettingsActivity" />
-        <activity android:name=".ui.activities.LunchActivity" />
         <activity android:name=".ui.activities.NavigationActivity" />
         <activity android:name=".ui.activities.MainActivity">
             <intent-filter>
