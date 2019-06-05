@@ -1,18 +1,14 @@
 package robfernandes.xyz.go4lunch.ui.activities;
 
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -20,7 +16,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import robfernandes.xyz.go4lunch.R;
@@ -42,6 +37,7 @@ public class RestaurantActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private boolean goingToThisRestaurant = false;
     private CollectionReference plansCollection;
+    private boolean dataChanged = false;
     private static final String TAG = "RestaurantActivity";
 
     @Override
@@ -69,7 +65,6 @@ public class RestaurantActivity extends AppCompatActivity {
         String year = String.valueOf(calendar.get(Calendar.YEAR));
         String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
         String day = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         plansCollection.document(year).collection(month).document(day)
                 .collection("plan")
@@ -83,7 +78,7 @@ public class RestaurantActivity extends AppCompatActivity {
                     }
                     if (eatingPlans.size() > 0) {
                         boolean found = false;
-                        for (EatingPlan eatingPlan: eatingPlans) {
+                        for (EatingPlan eatingPlan : eatingPlans) {
                             if (eatingPlan.getRestaurantID().equals(restaurantInfo.getId())) {
                                 found = true;
                             }
@@ -155,6 +150,7 @@ public class RestaurantActivity extends AppCompatActivity {
     }
 
     private void updatePlanStatus() {
+        dataChanged = true;
         if (goingToThisRestaurant) {
             removeUserPlan();
             goingToThisRestaurant = false;
@@ -205,5 +201,18 @@ public class RestaurantActivity extends AppCompatActivity {
                 .collection("plan")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .delete();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (dataChanged) {
+            Intent intent = new Intent(RestaurantActivity.this
+                    , NavigationActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(0, 0);
+        } else {
+            super.onBackPressed();
+        }
     }
 }
