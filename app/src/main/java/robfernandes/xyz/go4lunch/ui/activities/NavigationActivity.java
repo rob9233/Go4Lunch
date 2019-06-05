@@ -53,13 +53,13 @@ import robfernandes.xyz.go4lunch.services.network.NearbyRestaurantsService;
 import robfernandes.xyz.go4lunch.ui.fragments.MapFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.RestaurantListFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.WorkmatesFragment;
-import robfernandes.xyz.go4lunch.utils.Utils;
 
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES_BASE_URL;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
+import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
 import static robfernandes.xyz.go4lunch.utils.Utils.restartApp;
 
@@ -93,9 +93,14 @@ public class NavigationActivity extends AppCompatActivity {
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
-            init(savedInstanceState);
+            FirebaseFirestore.getInstance().collection("users")
+                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .get().addOnFailureListener(e -> {
+                FirebaseAuth.getInstance().signOut();
+                restartApp(NavigationActivity.this);
+            }).addOnSuccessListener(documentSnapshot -> init(savedInstanceState));
         } else {
-           restartApp(NavigationActivity.this);
+            restartApp(NavigationActivity.this);
         }
     }
 
@@ -231,6 +236,7 @@ public class NavigationActivity extends AppCompatActivity {
             bundle.putDouble(DEVICE_LOCATION_LAT, currentLocationLat);
             bundle.putDouble(DEVICE_LOCATION_LON, currentLocationLon);
             bundle.putParcelable(NEARBY_PLACES, nearByPlaces);
+            bundle.putParcelable(USER_INFORMATION_EXTRA, userInformation);
             mapFragment.setArguments(bundle);
             getSupportFragmentManager()
                     .beginTransaction()
@@ -290,7 +296,7 @@ public class NavigationActivity extends AppCompatActivity {
 
             switch (id) {
                 case R.id.nav_drawer_your_lunch:
-                   displayUserPlan();
+                    displayUserPlan();
                     break;
                 case R.id.nav_drawer_settings:
                     intent = new Intent(getApplicationContext(), SettingsActivity.class);
@@ -347,6 +353,7 @@ public class NavigationActivity extends AppCompatActivity {
     private void showRestaurantInfo(RestaurantInfo restaurantInfo) {
         Intent intent = new Intent(NavigationActivity.this, RestaurantActivity.class);
         intent.putExtra(RESTAURANT_INFO_BUNDLE_EXTRA, restaurantInfo);
+        intent.putExtra(USER_INFORMATION_EXTRA, userInformation);
         startActivity(intent);
     }
 
@@ -395,6 +402,7 @@ public class NavigationActivity extends AppCompatActivity {
         bundle.putDouble(DEVICE_LOCATION_LAT, currentLocationLat);
         bundle.putDouble(DEVICE_LOCATION_LON, currentLocationLon);
         bundle.putParcelable(NEARBY_PLACES, nearByPlaces);
+        bundle.putParcelable(USER_INFORMATION_EXTRA, userInformation);
         fragment.setArguments(bundle);
         getSupportFragmentManager()
                 .beginTransaction()

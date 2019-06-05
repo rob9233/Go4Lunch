@@ -3,6 +3,7 @@ package robfernandes.xyz.go4lunch.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -19,10 +20,13 @@ import java.util.Calendar;
 import java.util.List;
 
 import robfernandes.xyz.go4lunch.R;
+import robfernandes.xyz.go4lunch.adapters.WorkmatesAdapter;
 import robfernandes.xyz.go4lunch.model.EatingPlan;
 import robfernandes.xyz.go4lunch.model.RestaurantInfo;
+import robfernandes.xyz.go4lunch.model.UserInformation;
 
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
+import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.formatNumberOfStars;
 import static robfernandes.xyz.go4lunch.utils.Utils.getFormatedTodaysDate;
 import static robfernandes.xyz.go4lunch.utils.Utils.getRestaurantPhotoUrl;
@@ -37,15 +41,21 @@ public class RestaurantActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private boolean goingToThisRestaurant = false;
     private CollectionReference plansCollection;
+    private RecyclerView recyclerView;
+    private WorkmatesAdapter workmatesAdapter;
     private boolean dataChanged = false;
+    private List<EatingPlan> eatingPlans;
+    private UserInformation userInformation;
     private static final String TAG = "RestaurantActivity";
+    private List<UserInformation> usersList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant);
 
-        restaurantInfo = getRestaurantInfo();
+        restaurantInfo = getIntent().getParcelableExtra(RESTAURANT_INFO_BUNDLE_EXTRA);
+        userInformation = getIntent().getParcelableExtra(USER_INFORMATION_EXTRA);
         if (restaurantInfo != null) {
             init();
         } else {
@@ -57,6 +67,7 @@ public class RestaurantActivity extends AppCompatActivity {
         setViews();
         showInfo();
         checkPlan();
+        setUserList();
     }
 
     private void checkPlan() {
@@ -71,16 +82,26 @@ public class RestaurantActivity extends AppCompatActivity {
                 .get().addOnSuccessListener(
                 documentSnapshot -> {
                     List<DocumentSnapshot> documents = documentSnapshot.getDocuments();
-                    List<EatingPlan> eatingPlans = new ArrayList<>();
+                    eatingPlans = new ArrayList<>();
                     for (DocumentSnapshot document : documents) {
-                        EatingPlan eatingPlan = document.toObject(EatingPlan.class);
-                        eatingPlans.add(eatingPlan);
+                        try {
+                            EatingPlan eatingPlan = document.toObject(EatingPlan.class);
+                            eatingPlans.add(eatingPlan);
+                        } catch (Exception e) {
+                        }
                     }
                     if (eatingPlans.size() > 0) {
                         boolean found = false;
                         for (EatingPlan eatingPlan : eatingPlans) {
-                            if (eatingPlan.getRestaurantID().equals(restaurantInfo.getId())) {
-                                found = true;
+                            try {
+                                if (
+                                        (eatingPlan.getRestaurantID().equals(restaurantInfo.getId())
+                                                && (eatingPlan.getUserID()
+                                                .equals(userInformation.getId()))
+                                        )) {
+                                    found = true;
+                                }
+                            } catch (NullPointerException e) {
                             }
                         }
                         if (found) {
@@ -95,14 +116,34 @@ public class RestaurantActivity extends AppCompatActivity {
         ).addOnFailureListener(e ->
                 setPlanParams(false)
         );
-
-
     }
 
     private void setPlanParams(boolean going) {
         goingToThisRestaurant = going;
         displayPlan();
         setPlanListeners();
+    }
+
+    private void setUserList() {
+        usersList.clear();
+        db.collection("users").get().addOnSuccessListener(queryDocumentSnapshots -> {
+            List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+            for (DocumentSnapshot document : documents) {
+                try {
+                    UserInformation userInformation = document.toObject(UserInformation.class);
+                    for (EatingPlan plan : eatingPlans) {
+                        if ((plan.getUserID().equals(userInformation.getId())
+                                && (plan.getRestaurantID().equals(restaurantInfo.getId()))
+                        )) {
+                            usersList.add(userInformation);
+                        }
+                    }
+                } catch (Exception e) {
+                }
+            }
+            workmatesAdapter.notifyDataSetChanged();
+        }).addOnFailureListener(e ->
+                workmatesAdapter.notifyDataSetChanged());
     }
 
     private void setViews() {
@@ -114,6 +155,14 @@ public class RestaurantActivity extends AppCompatActivity {
         star3 = findViewById(R.id.restaurant_activity_rating_star_3);
         goOptionContainer = findViewById(R.id.restaurant_activity_go_option_container);
         planImageView = findViewById(R.id.restaurant_activity_go_option_plan);
+        setRecyclerView();
+    }
+
+    private void setRecyclerView() {
+        recyclerView = findViewById(R.id.activity_restaurant_recycler_view);
+        workmatesAdapter = new WorkmatesAdapter(usersList
+                , eatingPlans, false);
+        recyclerView.setAdapter(workmatesAdapter);
     }
 
     private void showInfo() {
@@ -154,6 +203,7 @@ public class RestaurantActivity extends AppCompatActivity {
         if (goingToThisRestaurant) {
             removeUserPlan();
             goingToThisRestaurant = false;
+            usersList.remove(userInformation);
             displayPlan();
         } else {
             removeUserPlan();
@@ -171,6 +221,8 @@ public class RestaurantActivity extends AppCompatActivity {
                     .addOnSuccessListener(documentReference -> {
                                 goingToThisRestaurant = true;
                                 displayPlan();
+                                usersList.add(userInformation);
+                                workmatesAdapter.notifyDataSetChanged();
                             }
                     )
                     .addOnFailureListener(e ->
@@ -179,10 +231,6 @@ public class RestaurantActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show()
                     );
         }
-    }
-
-    private RestaurantInfo getRestaurantInfo() {
-        return getIntent().getParcelableExtra(RESTAURANT_INFO_BUNDLE_EXTRA);
     }
 
     private void displayPlan() {
@@ -197,12 +245,21 @@ public class RestaurantActivity extends AppCompatActivity {
 
     private void removeUserPlan() {
         String pathName = getFormatedTodaysDate();
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         plansCollection.document(pathName)
                 .collection("plan")
-                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .document(uid)
                 .delete();
+
+        try {
+            usersList.remove(userInformation);
+            workmatesAdapter.notifyDataSetChanged();
+        } catch (NullPointerException e) {
+        }
+
     }
+
 
     @Override
     public void onBackPressed() {

@@ -43,6 +43,7 @@ import robfernandes.xyz.go4lunch.adapters.AutocompleteAdapter;
 import robfernandes.xyz.go4lunch.model.EatingPlan;
 import robfernandes.xyz.go4lunch.model.NearByPlaces;
 import robfernandes.xyz.go4lunch.model.RestaurantInfo;
+import robfernandes.xyz.go4lunch.model.UserInformation;
 import robfernandes.xyz.go4lunch.ui.activities.RestaurantActivity;
 import robfernandes.xyz.go4lunch.utils.Utils;
 
@@ -50,6 +51,7 @@ import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
+import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.getMarkerIconFromDrawable;
 import static robfernandes.xyz.go4lunch.utils.Utils.restartApp;
 
@@ -66,7 +68,8 @@ public class MapFragment extends BaseFragment {
     private RectangularBounds bounds;
     private Double currentLocationLat;
     private Double currentLocationLon;
-    private static final long searchRadiousInMetres = 50000;
+    private UserInformation userInformation;
+    private static final long searchRadiusInMetres = 50000;
     private NearByPlaces nearByPlaces;
     private String defaultSnippet = "Click here to see more";
 
@@ -80,7 +83,8 @@ public class MapFragment extends BaseFragment {
                              @Nullable Bundle savedInstanceState) {
         getParams();
         view = inflater.inflate(R.layout.fragment_map, container, false);
-        if (currentLocationLat != null && currentLocationLon != null && nearByPlaces != null) {
+        if (currentLocationLat != null && currentLocationLon != null && userInformation != null
+                && nearByPlaces != null) {
             initFragment();
         } else {
             restartApp(getActivity());
@@ -99,6 +103,7 @@ public class MapFragment extends BaseFragment {
         currentLocationLat = getArguments().getDouble(DEVICE_LOCATION_LAT);
         currentLocationLon = getArguments().getDouble(DEVICE_LOCATION_LON);
         nearByPlaces = getArguments().getParcelable(NEARBY_PLACES);
+        userInformation = getArguments().getParcelable(USER_INFORMATION_EXTRA);
     }
 
     private void setAutocompleteAdapter() {
@@ -161,7 +166,7 @@ public class MapFragment extends BaseFragment {
             bounds = RectangularBounds.newInstance(Utils.getBounds(
                     new LatLng(currentLocationLat,
                             currentLocationLon)
-                    , searchRadiousInMetres
+                    , searchRadiusInMetres
             ));
             if (ActivityCompat.checkSelfPermission(
                     getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -226,8 +231,11 @@ public class MapFragment extends BaseFragment {
     private int numOfPlansInRestaurant(RestaurantInfo restaurantInfo) {
         int num = 0;
         for (EatingPlan eatingPlan : eatingPlanList) {
-            if (eatingPlan.getRestaurantID().equals(restaurantInfo.getId())) {
-                num++;
+            try {
+                if (eatingPlan.getRestaurantID().equals(restaurantInfo.getId())) {
+                    num++;
+                }
+            } catch (NullPointerException e) {
             }
         }
 
@@ -239,6 +247,7 @@ public class MapFragment extends BaseFragment {
         if (restaurantInfo != null) {
             Intent intent = new Intent(getContext(), RestaurantActivity.class);
             intent.putExtra(RESTAURANT_INFO_BUNDLE_EXTRA, restaurantInfo);
+            intent.putExtra(USER_INFORMATION_EXTRA, userInformation);
             getContext().startActivity(intent);
         } else {
             Toast.makeText(getContext(), "It is not possible to " +

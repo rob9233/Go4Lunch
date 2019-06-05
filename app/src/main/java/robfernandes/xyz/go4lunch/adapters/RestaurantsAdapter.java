@@ -22,10 +22,12 @@ import java.util.List;
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.model.EatingPlan;
 import robfernandes.xyz.go4lunch.model.RestaurantInfo;
+import robfernandes.xyz.go4lunch.model.UserInformation;
 import robfernandes.xyz.go4lunch.ui.activities.RestaurantActivity;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
+import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.formatNumberOfStars;
 import static robfernandes.xyz.go4lunch.utils.Utils.getRestaurantPhotoUrl;
 import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
@@ -36,17 +38,19 @@ public class RestaurantsAdapter extends
 
     private List<RestaurantInfo> restaurantInfoList;
     private List<RestaurantInfo> fullRestaurantsList;
+    private UserInformation userInformation;
     private LatLng userLatLng;
     private Context context;
     private List<EatingPlan> eatingPlanList;
 
     public RestaurantsAdapter(List<RestaurantInfo> restaurantInfoList, LatLng userLatLng
-            , List<EatingPlan> eatingPlanList, Context context) {
+            , List<EatingPlan> eatingPlanList, UserInformation userInformation, Context context) {
         this.restaurantInfoList = restaurantInfoList;
         this.fullRestaurantsList = new ArrayList<>(restaurantInfoList);
         this.userLatLng = userLatLng;
         this.context = context;
         this.eatingPlanList = eatingPlanList;
+        this.userInformation = userInformation;
     }
 
     @NonNull
@@ -184,6 +188,7 @@ public class RestaurantsAdapter extends
         if (restaurantInfo != null) {
             Intent intent = new Intent(context, RestaurantActivity.class);
             intent.putExtra(RESTAURANT_INFO_BUNDLE_EXTRA, restaurantInfo);
+            intent.putExtra(USER_INFORMATION_EXTRA, userInformation);
             context.startActivity(intent);
         } else {
             Toast.makeText(context, "It is not possible to " +

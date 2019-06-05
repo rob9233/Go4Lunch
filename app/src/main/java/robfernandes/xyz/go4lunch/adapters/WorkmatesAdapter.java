@@ -27,11 +27,20 @@ public class WorkmatesAdapter extends
     private List<UserInformation> userList;
     private List<UserInformation> fullUserList;
     private List<EatingPlan> eatingPlanList;
+    private boolean showFullDescription;
 
-    public WorkmatesAdapter(List<UserInformation> userList, List<EatingPlan> eatingPlanList) {
+    public WorkmatesAdapter(List<UserInformation> userList, List<EatingPlan> eatingPlanList,
+                            boolean showFullDescription
+    ) {
+        this.showFullDescription = showFullDescription;
         this.userList = userList;
         this.fullUserList = new ArrayList<>(userList);
         this.eatingPlanList = eatingPlanList;
+    }
+
+    public WorkmatesAdapter(List<UserInformation> userList, List<EatingPlan> eatingPlanList
+    ) {
+        this(userList, eatingPlanList, true);
     }
 
     @NonNull
@@ -45,16 +54,23 @@ public class WorkmatesAdapter extends
     @Override
     public void onBindViewHolder(@NonNull WorkmatesAdapter.ViewHolder viewHolder, int i) {
         UserInformation userInformation = userList.get(i);
-        String planedRestaurantName = getPlanedRestaurant(userInformation);
-        String text = userInformation.getName();
-        if (planedRestaurantName != null && !planedRestaurantName.isEmpty()) {
-            text += " is eating at " + planedRestaurantName;
-            viewHolder.description.setTextColor(Color.BLACK);
+        String descriptionText;
+
+        if (showFullDescription) {
+            String planedRestaurantName = getPlanedRestaurant(userInformation);
+            descriptionText = userInformation.getName();
+            if (planedRestaurantName != null && !planedRestaurantName.isEmpty()) {
+                descriptionText += " is eating at " + planedRestaurantName;
+                viewHolder.description.setTextColor(Color.BLACK);
+            } else {
+                descriptionText += " hasn't decided yet";
+            }
         } else {
-            text += " hasn't decided yet";
+            viewHolder.description.setTextColor(Color.BLACK);
+            descriptionText = userInformation.getName();
         }
 
-        viewHolder.description.setText(text);
+        viewHolder.description.setText(descriptionText);
 
         putImageIntoImageView(viewHolder.porfilePic, userInformation.getPhotoUrl());
     }

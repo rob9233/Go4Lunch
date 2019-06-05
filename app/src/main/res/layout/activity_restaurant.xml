@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/darker_gray"
     tools:context=".ui.activities.RestaurantActivity">
 
     <RelativeLayout
@@ -14,6 +15,7 @@
             android:id="@+id/restaurant_activity_image_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="15dp"
             android:scaleType="centerCrop"
             android:src="@android:color/black" />
 
@@ -21,6 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/restaurant_activity_image_view"
+            android:id="@+id/restaurant_activity_title_container"
             android:background="@color/colorPrimary"
             android:orientation="vertical"
             android:padding="10dp">
@@ -66,21 +69,29 @@
         </LinearLayout>
 
         <RelativeLayout
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="-15dp"
-            android:layout_below="@+id/restaurant_activity_image_view"
-            android:background="@drawable/round_white_bkg"
+            android:id="@+id/restaurant_activity_go_option_container"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:id="@+id/restaurant_activity_go_option_container">
+            android:layout_below="@+id/restaurant_activity_image_view"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="-15dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/round_white_bkg">
+
             <ImageView
                 android:id="@+id/restaurant_activity_go_option_plan"
-                android:layout_centerInParent="true"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
         </RelativeLayout>
 
+        <android.support.v7.widget.RecyclerView
+            android:layout_margin="5dp"
+            android:layout_below="@+id/restaurant_activity_title_container"
+            android:id="@+id/activity_restaurant_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
 
     </RelativeLayout>
 

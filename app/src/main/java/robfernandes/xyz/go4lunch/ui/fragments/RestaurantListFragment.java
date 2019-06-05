@@ -24,12 +24,14 @@ import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.adapters.RestaurantsAdapter;
 import robfernandes.xyz.go4lunch.model.NearByPlaces;
 import robfernandes.xyz.go4lunch.model.RestaurantInfo;
+import robfernandes.xyz.go4lunch.model.UserInformation;
 import robfernandes.xyz.go4lunch.ui.activities.RestaurantActivity;
 
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
+import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.restartApp;
 
 /**
@@ -42,6 +44,7 @@ public class RestaurantListFragment extends BaseFragment {
     private Double currentLocationLat;
     private Double currentLocationLon;
     private RestaurantsAdapter restaurantsAdapter;
+    private UserInformation userInformation;
 
     public RestaurantListFragment() {
         // Required empty public constructor
@@ -52,7 +55,8 @@ public class RestaurantListFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_restaurant_list, container, false);
         getParams();
-        if (currentLocationLat != null && currentLocationLon != null && nearByPlaces != null) {
+        if (currentLocationLat != null && currentLocationLon != null && userInformation != null
+                && nearByPlaces != null) {
             getEatingPlans();
         } else {
             restartApp(getActivity());
@@ -69,13 +73,14 @@ public class RestaurantListFragment extends BaseFragment {
         currentLocationLat = getArguments().getDouble(DEVICE_LOCATION_LAT);
         currentLocationLon = getArguments().getDouble(DEVICE_LOCATION_LON);
         nearByPlaces = getArguments().getParcelable(NEARBY_PLACES);
+        userInformation = getArguments().getParcelable(USER_INFORMATION_EXTRA);
     }
 
     private void setRecyclerVIew() {
         recyclerView = view.findViewById(R.id.fragment_restaurants_recycler_view);
         LatLng userLatLng = new LatLng(currentLocationLat, currentLocationLon);
         restaurantsAdapter = new RestaurantsAdapter(nearByPlaces.getRestaurantInfoList()
-                , userLatLng, eatingPlanList, getContext());
+                , userLatLng, eatingPlanList, userInformation, getContext());
         recyclerView.setAdapter(restaurantsAdapter);
     }
 
