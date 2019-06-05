@@ -53,6 +53,7 @@ import robfernandes.xyz.go4lunch.services.network.NearbyRestaurantsService;
 import robfernandes.xyz.go4lunch.ui.fragments.MapFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.RestaurantListFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.WorkmatesFragment;
+import robfernandes.xyz.go4lunch.utils.Utils;
 
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
@@ -60,6 +61,7 @@ import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES_BASE_URL;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
+import static robfernandes.xyz.go4lunch.utils.Utils.restartApp;
 
 public class NavigationActivity extends AppCompatActivity {
 
@@ -93,14 +95,8 @@ public class NavigationActivity extends AppCompatActivity {
         if (currentUser != null) {
             init(savedInstanceState);
         } else {
-            restartApp();
+           restartApp(NavigationActivity.this);
         }
-    }
-
-    private void restartApp() {
-        Intent intent = new Intent(NavigationActivity.this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 
     private void init(Bundle savedInstanceState) {

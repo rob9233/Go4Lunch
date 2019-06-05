@@ -30,6 +30,7 @@ import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
+import static robfernandes.xyz.go4lunch.utils.Utils.restartApp;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -51,7 +52,11 @@ public class RestaurantListFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_restaurant_list, container, false);
         getParams();
-        getEatingPlans();
+        if (currentLocationLat != null && currentLocationLon != null && nearByPlaces != null) {
+            getEatingPlans();
+        } else {
+            restartApp(getActivity());
+        }
         return view;
     }
 

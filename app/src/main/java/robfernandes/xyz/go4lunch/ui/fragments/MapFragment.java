@@ -51,6 +51,7 @@ import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.getMarkerIconFromDrawable;
+import static robfernandes.xyz.go4lunch.utils.Utils.restartApp;
 
 public class MapFragment extends BaseFragment {
 
@@ -79,11 +80,19 @@ public class MapFragment extends BaseFragment {
                              @Nullable Bundle savedInstanceState) {
         getParams();
         view = inflater.inflate(R.layout.fragment_map, container, false);
+        if (currentLocationLat != null && currentLocationLon != null && nearByPlaces != null) {
+            initFragment();
+        } else {
+            restartApp(getActivity());
+        }
+        return view;
+    }
+
+    private void initFragment() {
         initMap();
         Places.initialize(getContext(), getString(R.string.google_maps_api_key));
         placesClient = Places.createClient(getContext());
         setAutocompleteAdapter();
-        return view;
     }
 
     private void getParams() {

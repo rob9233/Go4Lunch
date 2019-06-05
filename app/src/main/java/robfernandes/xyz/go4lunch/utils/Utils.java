@@ -1,6 +1,8 @@
 package robfernandes.xyz.go4lunch.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -18,6 +20,8 @@ import java.util.Date;
 import java.util.UUID;
 
 import robfernandes.xyz.go4lunch.R;
+import robfernandes.xyz.go4lunch.ui.activities.MainActivity;
+import robfernandes.xyz.go4lunch.ui.activities.NavigationActivity;
 
 public class Utils {
     public static LatLngBounds getBounds(LatLng center, double radiusInMeters) {
@@ -38,7 +42,16 @@ public class Utils {
     }
 
     public static void putImageIntoImageView(ImageView imageView, String url) {
-        Picasso.get().load(url).into(imageView);
+        try {
+            Picasso.get().load(url).into(imageView);
+        } catch (Exception e) {
+        }
+    }
+
+    public static void restartApp(Activity activity) {
+        Intent intent = new Intent(activity, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(intent);
     }
 
     public static int formatNumberOfStars(double rating) {

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.model.EatingPlan;
 import robfernandes.xyz.go4lunch.model.UserInformation;
 
-import static android.graphics.Typeface.BOLD;
+import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
 
 public class WorkmatesAdapter extends
         RecyclerView.Adapter<WorkmatesAdapter.ViewHolder>
@@ -54,6 +55,8 @@ public class WorkmatesAdapter extends
         }
 
         viewHolder.description.setText(text);
+
+        putImageIntoImageView(viewHolder.porfilePic, userInformation.getPhotoUrl());
     }
 
     @Override
@@ -63,11 +66,13 @@ public class WorkmatesAdapter extends
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView description;
+        private ImageView porfilePic;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             description = itemView.findViewById(R.id.workmates_item_description);
+            porfilePic = itemView.findViewById(R.id.workmates_item_image);
         }
     }
 
