@@ -294,7 +294,7 @@ public class NavigationActivity extends AppCompatActivity {
 
             switch (id) {
                 case R.id.nav_drawer_your_lunch:
-              //      displayUserPlan();
+                   displayUserPlan();
                     break;
                 case R.id.nav_drawer_settings:
                     intent = new Intent(getApplicationContext(), SettingsActivity.class);
@@ -312,7 +312,7 @@ public class NavigationActivity extends AppCompatActivity {
         });
     }
 
-    /*private void displayUserPlan() {
+    private void displayUserPlan() {
         Calendar calendar = Calendar.getInstance();
         String year = String.valueOf(calendar.get(Calendar.YEAR));
         String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
@@ -326,11 +326,15 @@ public class NavigationActivity extends AppCompatActivity {
         document.get().addOnSuccessListener(documentSnapshot -> {
             EatingPlan eatingPlan = documentSnapshot.toObject(EatingPlan.class);
             boolean foundPlace = false;
-            for (RestaurantInfo restaurantInfo : nearByPlaces.getRestaurantInfoList()) {
-                if (restaurantInfo.getId().equals(eatingPlan.getRestaurantID())) {
-                    showRestaurantInfo(restaurantInfo);
-                    foundPlace = true;
-                    break;
+            List<RestaurantInfo> restaurantInfoList = nearByPlaces.getRestaurantInfoList();
+            for (RestaurantInfo restaurantInfo : restaurantInfoList) {
+                try {
+                    if (restaurantInfo.getId().equals(eatingPlan.getRestaurantID())) {
+                        showRestaurantInfo(restaurantInfo);
+                        foundPlace = true;
+                        break;
+                    }
+                } catch (NullPointerException e) {
                 }
             }
             if (!foundPlace) {
@@ -348,7 +352,7 @@ public class NavigationActivity extends AppCompatActivity {
         Intent intent = new Intent(NavigationActivity.this, RestaurantActivity.class);
         intent.putExtra(RESTAURANT_INFO_BUNDLE_EXTRA, restaurantInfo);
         startActivity(intent);
-    }*/
+    }
 
     private void displayProfileImage() {
         String photoUrl;
