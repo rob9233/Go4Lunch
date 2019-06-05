@@ -5,6 +5,7 @@ import com.google.firebase.firestore.ServerTimestamp;
 import java.util.Date;
 
 public class EatingPlan {
+    private String restaurantName;
     private String userID;
     private String restaurantID;
     @ServerTimestamp
@@ -24,6 +25,14 @@ public class EatingPlan {
 
     public void setRestaurantID(String restaurantID) {
         this.restaurantID = restaurantID;
+    }
+
+    public String getRestaurantName() {
+        return restaurantName;
+    }
+
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
     }
 
     public Date getTimestamp() {

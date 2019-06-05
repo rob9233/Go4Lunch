@@ -16,8 +16,9 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp">
             <TextView
-                android:id="@+id/workmates_item_name"
-                android:textSize="15sp"
+                android:id="@+id/workmates_item_description"
+                android:textSize="18sp"
+                android:textColor="@color/quantum_grey"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

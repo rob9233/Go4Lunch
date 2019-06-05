@@ -3,11 +3,6 @@ package robfernandes.xyz.go4lunch.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.List;
-
-import robfernandes.xyz.go4lunch.model.placesResponse.OpeningHours;
-import robfernandes.xyz.go4lunch.model.placesResponse.Photo;
-
 public class RestaurantInfo implements Parcelable {
     private String name;
     private String adress;

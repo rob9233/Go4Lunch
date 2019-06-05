@@ -160,6 +160,7 @@ public class RestaurantActivity extends AppCompatActivity {
             EatingPlan eatingPlan = new EatingPlan();
             eatingPlan.setUserID(FirebaseAuth.getInstance().getCurrentUser().getUid());
             eatingPlan.setRestaurantID(restaurantInfo.getId());
+            eatingPlan.setRestaurantName(restaurantInfo.getName());
 
             String pathName = getFormatedTodaysDate();
 
