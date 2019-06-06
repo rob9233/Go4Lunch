@@ -132,8 +132,8 @@ public class RestaurantActivity extends AppCompatActivity {
                 try {
                     UserInformation userInformation = document.toObject(UserInformation.class);
                     for (EatingPlan plan : eatingPlans) {
-                        if ((plan.getUserID().equals(userInformation.getId())
-                                && (plan.getRestaurantID().equals(restaurantInfo.getId()))
+                        if ((plan.getUserID().equals(userInformation.getId()) &&
+                                (plan.getRestaurantID().equals(restaurantInfo.getId()))
                         )) {
                             usersList.add(userInformation);
                         }
@@ -178,7 +178,6 @@ public class RestaurantActivity extends AppCompatActivity {
                 star3.setVisibility(View.INVISIBLE);
             }
         } catch (NullPointerException e) {
-
         }
 
         restaurantTitle.setText(restaurantInfo.getName());
@@ -203,7 +202,6 @@ public class RestaurantActivity extends AppCompatActivity {
         if (goingToThisRestaurant) {
             removeUserPlan();
             goingToThisRestaurant = false;
-            usersList.remove(userInformation);
             displayPlan();
         } else {
             removeUserPlan();
@@ -253,11 +251,18 @@ public class RestaurantActivity extends AppCompatActivity {
                 .delete();
 
         try {
-            usersList.remove(userInformation);
+            usersList.remove(getUserInfo());
             workmatesAdapter.notifyDataSetChanged();
         } catch (NullPointerException e) {
         }
 
+    }
+
+    private UserInformation getUserInfo() {
+        for (UserInformation item: usersList) {
+            if (item.getId().equals(userInformation.getId())) return item;
+        }
+        return null;
     }
 
 
