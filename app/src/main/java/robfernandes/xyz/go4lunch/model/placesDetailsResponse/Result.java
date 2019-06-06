@@ -12,6 +12,9 @@ public class Result {
     @SerializedName("opening_hours")
     @Expose
     private OpeningHours openingHours;
+    @SerializedName("website")
+    @Expose
+    private String website;
 
     public String getFormattedPhoneNumber() {
         return formattedPhoneNumber;
@@ -29,4 +32,11 @@ public class Result {
         this.openingHours = openingHours;
     }
 
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
 }

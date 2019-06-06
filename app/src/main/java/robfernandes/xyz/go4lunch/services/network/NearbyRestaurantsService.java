@@ -11,7 +11,7 @@ public interface NearbyRestaurantsService {
     Call<PlacesResponse> getNearbyRestaurants(@Query("location") String location,
                                               @Query("key") String apiKey);
 
-    @GET("details/json?fields=opening_hours,formatted_phone_number")
+    @GET("details/json?fields=opening_hours,formatted_phone_number,website")
     Call<PlacesDetailsResponse> getPlaceDetails(@Query("placeid") String placeid,
                                                 @Query("key") String apiKey);
 }

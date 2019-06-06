@@ -26,12 +26,21 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.adapters.WorkmatesAdapter;
 import robfernandes.xyz.go4lunch.model.EatingPlan;
 import robfernandes.xyz.go4lunch.model.RestaurantInfo;
 import robfernandes.xyz.go4lunch.model.UserInformation;
+import robfernandes.xyz.go4lunch.model.placesDetailsResponse.PlacesDetailsResponse;
+import robfernandes.xyz.go4lunch.model.placesDetailsResponse.Result;
+import robfernandes.xyz.go4lunch.services.network.NearbyRestaurantsService;
 
+import static robfernandes.xyz.go4lunch.utils.Constants.GOOGLE_PLACES_BASE_URL;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.formatNumberOfStars;
@@ -75,12 +84,45 @@ public class RestaurantActivity extends AppCompatActivity {
     }
 
     private void init() {
+        if (!restaurantInfo.isDetailedInfo()) {
+            getDetailedInfo();
+        }
         setViews();
         setRecyclerView();
         showInfo();
         checkPlan();
         setUserList();
         setListeners();
+    }
+
+    private void getDetailedInfo() {
+        String apiKey = getString(R.string.google_maps_api_key);
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(GOOGLE_PLACES_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        NearbyRestaurantsService service = retrofit.create(NearbyRestaurantsService.class);
+        Call<PlacesDetailsResponse> detailsCall = service.getPlaceDetails(
+                restaurantInfo.getId()
+                , apiKey
+        );
+
+        detailsCall.enqueue(new Callback<PlacesDetailsResponse>() {
+            @Override
+            public void onResponse(Call<PlacesDetailsResponse> call, Response<PlacesDetailsResponse> response) {
+                PlacesDetailsResponse body = response.body();
+                Result result = body.getResult();
+                restaurantInfo.setWebsite(result.getWebsite());
+                restaurantInfo.setPhone(result.getFormattedPhoneNumber());
+                restaurantInfo.setDetailedInfo(true);
+            }
+
+            @Override
+            public void onFailure(Call<PlacesDetailsResponse> call, Throwable t) {
+
+            }
+        });
     }
 
     private void checkPlan() {
@@ -325,13 +367,26 @@ public class RestaurantActivity extends AppCompatActivity {
         } else {
             Toast.makeText(getBaseContext(),
                     "This restaurant doens't have a mobile number associated"
-            , Toast.LENGTH_SHORT).show();
+                    , Toast.LENGTH_SHORT).show();
         }
     }
 
     private void goToRestaurantWebsite() {
-        //TODO
-        Toast.makeText(getBaseContext(), "goToRestaurantWebsite", Toast.LENGTH_SHORT).show();
+        if (restaurantInfo.getWebsite() != null && !restaurantInfo.getWebsite().isEmpty()) {
+            try {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW
+                        , Uri.parse(restaurantInfo.getWebsite()));
+                startActivity(browserIntent);
+            } catch (Exception e) {
+                Toast.makeText(getBaseContext()
+                        , "It is not possible to go to this restaurant website",
+                        Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(getBaseContext(),
+                    "This restaurant doens't have a website associated"
+                    , Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void likeRestaurant() {

@@ -183,7 +183,7 @@ public class NavigationActivity extends AppCompatActivity {
                                 result.getPlaceId()
                                 , apiKey
                         );
-
+                        Log.d(TAG, "onResponse: " + detailsCall.request().url());
                         detailsCall.enqueue(new Callback<PlacesDetailsResponse>() {
                             @Override
                             public void onResponse(Call<PlacesDetailsResponse> call
@@ -225,6 +225,7 @@ public class NavigationActivity extends AppCompatActivity {
     private void addRestaurant(List<RestaurantInfo> restaurantInfoList, Result result,
                                PlacesDetailsResponse placesDetailsResponse) {
         RestaurantInfo restaurantInfo = new RestaurantInfo();
+        restaurantInfo.setDetailedInfo(true);
         restaurantInfo.setName(result.getName());
         restaurantInfo.setId(result.getId());
         restaurantInfo.setLat(result.getGeometry().getLocation().getLat());
@@ -242,6 +243,10 @@ public class NavigationActivity extends AppCompatActivity {
         }
         try {
             restaurantInfo.setPhotoRef(result.getPhotos().get(0).getPhotoReference());
+        } catch (NullPointerException e) {
+        }
+        try {
+            restaurantInfo.setWebsite(placesDetailsResponse.getResult().getWebsite());
         } catch (NullPointerException e) {
         }
         try {

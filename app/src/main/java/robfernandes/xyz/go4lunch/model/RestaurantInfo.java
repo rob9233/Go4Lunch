@@ -20,6 +20,7 @@ public class RestaurantInfo implements Parcelable {
     private String phone;
     private String website;
     private List<String> openSchedule;
+    private boolean detailedInfo = false;
 
     public RestaurantInfo() {
     }
@@ -37,6 +38,7 @@ public class RestaurantInfo implements Parcelable {
         phone = in.readString();
         website = in.readString();
         openSchedule = in.createStringArrayList();
+        detailedInfo = in.readByte() != 0;
     }
 
     public static final Creator<RestaurantInfo> CREATOR = new Creator<RestaurantInfo>() {
@@ -147,6 +149,14 @@ public class RestaurantInfo implements Parcelable {
         this.openSchedule = openSchedule;
     }
 
+    public boolean isDetailedInfo() {
+        return detailedInfo;
+    }
+
+    public void setDetailedInfo(boolean detailedInfo) {
+        this.detailedInfo = detailedInfo;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -166,5 +176,6 @@ public class RestaurantInfo implements Parcelable {
         dest.writeString(phone);
         dest.writeString(website);
         dest.writeStringList(openSchedule);
+        dest.writeByte((byte) (detailedInfo ? 1 : 0));
     }
 }
