@@ -133,6 +133,7 @@
                     android:layout_height="@dimen/actitivity_restaurant_contacts_item_size"
                     android:layout_marginBottom="3dp"
                     android:gravity="center_horizontal"
+                    android:id="@+id/restaurant_activity_star_image_view"
                     app:srcCompat="@drawable/ic_star_border_orange_75dp" />
 
                 <TextView

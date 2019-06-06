@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -13,6 +14,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.net.FetchPhotoRequest;
@@ -24,7 +27,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -51,7 +56,7 @@ import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
 public class RestaurantActivity extends AppCompatActivity {
 
     private RestaurantInfo restaurantInfo;
-    private ImageView restaurantImage, star1, star2, star3, planImageView;
+    private ImageView restaurantImage, star1, star2, star3, planImageView, starImageView;
     private TextView restaurantTitle, restaurantDescription;
     private RelativeLayout goOptionContainer;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -67,6 +72,7 @@ public class RestaurantActivity extends AppCompatActivity {
     private static final int PHOTO_MAX_HEIGHT = 400;
     private PlacesClient placesClient;
     private ViewGroup phone, like, website;
+    private boolean userLike;
 
 
     @Override
@@ -84,15 +90,30 @@ public class RestaurantActivity extends AppCompatActivity {
     }
 
     private void init() {
-        if (!restaurantInfo.isDetailedInfo()) {
-            getDetailedInfo();
-        }
         setViews();
         setRecyclerView();
         showInfo();
         checkPlan();
         setUserList();
-        setListeners();
+        getLikeStatus();
+        if (!restaurantInfo.isDetailedInfo()) {
+            getDetailedInfo();
+        } else {
+            setContactsListeners();
+        }
+    }
+
+    private void getLikeStatus() {
+        db.collection("likes").document(userInformation.getId())
+                .collection(restaurantInfo.getId())
+                .document("like")
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        setUserLike(true);
+                    }
+                    like.setOnClickListener(v -> likeRestaurant());
+                }).addOnFailureListener(e -> like.setOnClickListener(v -> likeRestaurant()));
     }
 
     private void getDetailedInfo() {
@@ -116,6 +137,7 @@ public class RestaurantActivity extends AppCompatActivity {
                 restaurantInfo.setWebsite(result.getWebsite());
                 restaurantInfo.setPhone(result.getFormattedPhoneNumber());
                 restaurantInfo.setDetailedInfo(true);
+                setContactsListeners();
             }
 
             @Override
@@ -213,6 +235,7 @@ public class RestaurantActivity extends AppCompatActivity {
         phone = findViewById(R.id.restaurant_activity_phone);
         like = findViewById(R.id.restaurant_activity_like);
         website = findViewById(R.id.restaurant_activity_web);
+        starImageView = findViewById(R.id.restaurant_activity_star_image_view);
     }
 
     private void setRecyclerView() {
@@ -348,10 +371,9 @@ public class RestaurantActivity extends AppCompatActivity {
         return null;
     }
 
-    private void setListeners() {
-        phone.setOnClickListener(v -> callRestaurant());
-        like.setOnClickListener(v -> likeRestaurant());
+    private void setContactsListeners() {
         website.setOnClickListener(v -> goToRestaurantWebsite());
+        phone.setOnClickListener(v -> callRestaurant());
     }
 
     private void callRestaurant() {
@@ -390,8 +412,36 @@ public class RestaurantActivity extends AppCompatActivity {
     }
 
     private void likeRestaurant() {
-        //TODO
-        Toast.makeText(getBaseContext(), "Like restaurant", Toast.LENGTH_SHORT).show();
+        Map<String, String> likes = new HashMap<>();
+        likes.put("restaurantId", restaurantInfo.getId());
+        likes.put("userId", userInformation.getId());
+
+        OnFailureListener failed = e -> Toast.makeText(getBaseContext(),
+                "Failed", Toast.LENGTH_SHORT).show();
+        if (!userLike) {
+            db.collection("likes").document(userInformation.getId())
+                    .collection(restaurantInfo.getId())
+                    .document("like")
+                    .set(likes).addOnSuccessListener(documentReference -> setUserLike(true))
+                    .addOnFailureListener(failed);
+        } else {
+            db.collection("likes").document(userInformation.getId())
+                    .collection(restaurantInfo.getId())
+                    .document("like").delete()
+                    .addOnSuccessListener(documentReference -> setUserLike(false))
+                    .addOnFailureListener(failed);
+        }
+    }
+
+    private void setUserLike(boolean b) {
+        userLike = b;
+        if (b) {
+            starImageView.setImageDrawable(getResources().getDrawable(
+                    R.drawable.ic_star_full_75));
+        } else {
+            starImageView.setImageDrawable(getResources().getDrawable(
+                    R.drawable.ic_star_border_orange_75dp));
+        }
     }
 
     @Override
