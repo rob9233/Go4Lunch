@@ -69,7 +69,7 @@ public class MapFragment extends BaseFragment {
     private Double currentLocationLat;
     private Double currentLocationLon;
     private UserInformation userInformation;
-    private static final long searchRadiusInMetres = 50000;
+    private static final long searchRadiusInMetres = 5000;
     private NearByPlaces nearByPlaces;
     private String defaultSnippet = "Click here to see more";
 

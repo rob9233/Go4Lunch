@@ -2,17 +2,17 @@ package robfernandes.xyz.go4lunch.ui.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.net.FetchPhotoRequest;
@@ -53,11 +53,11 @@ public class RestaurantActivity extends AppCompatActivity {
     private boolean dataChanged = false;
     private List<EatingPlan> eatingPlans;
     private UserInformation userInformation;
-    private static final String TAG = "RestaurantActivity";
     private List<UserInformation> usersList = new ArrayList<>();
     private static final int PHOTO_MAX_WIDTH = 1000;
     private static final int PHOTO_MAX_HEIGHT = 400;
     private PlacesClient placesClient;
+    private ViewGroup phone, like, website;
 
 
     @Override
@@ -76,9 +76,11 @@ public class RestaurantActivity extends AppCompatActivity {
 
     private void init() {
         setViews();
+        setRecyclerView();
         showInfo();
         checkPlan();
         setUserList();
+        setListeners();
     }
 
     private void checkPlan() {
@@ -166,7 +168,9 @@ public class RestaurantActivity extends AppCompatActivity {
         star3 = findViewById(R.id.restaurant_activity_rating_star_3);
         goOptionContainer = findViewById(R.id.restaurant_activity_go_option_container);
         planImageView = findViewById(R.id.restaurant_activity_go_option_plan);
-        setRecyclerView();
+        phone = findViewById(R.id.restaurant_activity_phone);
+        like = findViewById(R.id.restaurant_activity_like);
+        website = findViewById(R.id.restaurant_activity_web);
     }
 
     private void setRecyclerView() {
@@ -194,7 +198,7 @@ public class RestaurantActivity extends AppCompatActivity {
 
         try {
             restaurantTitle.setText(restaurantInfo.getName());
-            restaurantDescription.setText(restaurantInfo.getAdress());
+            restaurantDescription.setText(restaurantInfo.getAddress());
         } catch (NullPointerException e) {
         }
 
@@ -302,6 +306,38 @@ public class RestaurantActivity extends AppCompatActivity {
         return null;
     }
 
+    private void setListeners() {
+        phone.setOnClickListener(v -> callRestaurant());
+        like.setOnClickListener(v -> likeRestaurant());
+        website.setOnClickListener(v -> goToRestaurantWebsite());
+    }
+
+    private void callRestaurant() {
+        if (restaurantInfo.getPhone() != null && !restaurantInfo.getPhone().isEmpty()) {
+            try {
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse(String.format("tel:%s", restaurantInfo.getPhone())));
+                startActivity(callIntent);
+            } catch (Exception e) {
+                Toast.makeText(getBaseContext(), "It is not possible to call this restaurant",
+                        Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(getBaseContext(),
+                    "This restaurant doens't have a mobile number associated"
+            , Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void goToRestaurantWebsite() {
+        //TODO
+        Toast.makeText(getBaseContext(), "goToRestaurantWebsite", Toast.LENGTH_SHORT).show();
+    }
+
+    private void likeRestaurant() {
+        //TODO
+        Toast.makeText(getBaseContext(), "Like restaurant", Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     public void onBackPressed() {

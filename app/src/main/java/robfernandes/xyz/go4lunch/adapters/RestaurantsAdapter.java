@@ -73,7 +73,7 @@ public class RestaurantsAdapter extends
         }
 
         viewHolder.title.setText(restaurantInfo.getName());
-        viewHolder.description.setText(restaurantInfo.getAdress());
+        viewHolder.description.setText(restaurantInfo.getAddress());
         try {
             if (restaurantInfo.isOpen()) {
                 viewHolder.openHours.setText("Open now");

@@ -95,6 +95,7 @@
             android:weightSum="3">
 
             <LinearLayout
+                android:id="@+id/restaurant_activity_phone"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -119,6 +120,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/restaurant_activity_like"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -144,6 +146,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/restaurant_activity_web"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

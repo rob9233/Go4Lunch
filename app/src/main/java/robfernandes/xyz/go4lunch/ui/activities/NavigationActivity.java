@@ -47,6 +47,7 @@ import robfernandes.xyz.go4lunch.model.EatingPlan;
 import robfernandes.xyz.go4lunch.model.NearByPlaces;
 import robfernandes.xyz.go4lunch.model.RestaurantInfo;
 import robfernandes.xyz.go4lunch.model.UserInformation;
+import robfernandes.xyz.go4lunch.model.placesDetailsResponse.PlacesDetailsResponse;
 import robfernandes.xyz.go4lunch.model.placesResponse.PlacesResponse;
 import robfernandes.xyz.go4lunch.model.placesResponse.Result;
 import robfernandes.xyz.go4lunch.services.network.NearbyRestaurantsService;
@@ -57,7 +58,7 @@ import robfernandes.xyz.go4lunch.ui.fragments.WorkmatesFragment;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
-import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES_BASE_URL;
+import static robfernandes.xyz.go4lunch.utils.Constants.GOOGLE_PLACES_BASE_URL;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
@@ -160,17 +161,17 @@ public class NavigationActivity extends AppCompatActivity {
 
     private void getNearByRestaurants(int flag) {
         String location = currentLocationLat + "," + currentLocationLon;
+        String apiKey = getString(R.string.google_maps_api_key);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(NEARBY_PLACES_BASE_URL)
+                .baseUrl(GOOGLE_PLACES_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         NearbyRestaurantsService service = retrofit.create(NearbyRestaurantsService.class);
-        Call<PlacesResponse> call = service.getNearbyRestaurants(location
-                , getString(R.string.google_maps_api_key));
+        Call<PlacesResponse> nearbyRestaurantsCall = service.getNearbyRestaurants(location, apiKey);
 
-        call.enqueue(new Callback<PlacesResponse>() {
+        nearbyRestaurantsCall.enqueue(new Callback<PlacesResponse>() {
             @Override
             public void onResponse(Call<PlacesResponse> call, Response<PlacesResponse> response) {
                 if (response.code() == 200) {
@@ -178,26 +179,26 @@ public class NavigationActivity extends AppCompatActivity {
                     List<RestaurantInfo> restaurantInfoList = new ArrayList<>();
                     List<Result> results = response.body().getResults();
                     for (Result result : results) {
-                        RestaurantInfo restaurantInfo = new RestaurantInfo();
-                        restaurantInfo.setName(result.getName());
-                        restaurantInfo.setId(result.getId());
-                        restaurantInfo.setLat(result.getGeometry().getLocation().getLat());
-                        restaurantInfo.setLon(result.getGeometry().getLocation().getLng());
-                        restaurantInfo.setAdress(result.getVicinity());
-                        try {
-                            restaurantInfo.setOpen(result.getOpeningHours().getOpenNow());
-                        } catch (NullPointerException e) {
-                        }
-                        try {
-                            restaurantInfo.setPhotoRef(result.getPhotos().get(0).getPhotoReference());
-                        } catch (NullPointerException e) {
-                        }
-                        try {
-                            restaurantInfo.setRating(result.getRating());
-                        } catch (NullPointerException e) {
-                        }
+                        Call<PlacesDetailsResponse> detailsCall = service.getPlaceDetails(
+                                result.getPlaceId()
+                                , apiKey
+                        );
 
-                        restaurantInfoList.add(restaurantInfo);
+                        detailsCall.enqueue(new Callback<PlacesDetailsResponse>() {
+                            @Override
+                            public void onResponse(Call<PlacesDetailsResponse> call
+                                    , Response<PlacesDetailsResponse> response) {
+                                if (response.code() == 200) {
+                                    PlacesDetailsResponse placeDetail = response.body();
+                                    addRestaurant(restaurantInfoList, result, placeDetail);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<PlacesDetailsResponse> call, Throwable t) {
+                            }
+                        });
+
                     }
                     nearByPlaces.setRestaurantInfoList(restaurantInfoList);
                     switch (flag) {
@@ -219,6 +220,34 @@ public class NavigationActivity extends AppCompatActivity {
                 Log.d("TAG", "onFailure: ");
             }
         });
+    }
+
+    private void addRestaurant(List<RestaurantInfo> restaurantInfoList, Result result,
+                               PlacesDetailsResponse placesDetailsResponse) {
+        RestaurantInfo restaurantInfo = new RestaurantInfo();
+        restaurantInfo.setName(result.getName());
+        restaurantInfo.setId(result.getId());
+        restaurantInfo.setLat(result.getGeometry().getLocation().getLat());
+        restaurantInfo.setLon(result.getGeometry().getLocation().getLng());
+        restaurantInfo.setAddress(result.getVicinity());
+        try {
+            restaurantInfo.setOpen(result.getOpeningHours().getOpenNow());
+        } catch (NullPointerException e) {
+        }
+        try {
+            restaurantInfo.setPhotoRef(result.getPhotos().get(0).getPhotoReference());
+        } catch (NullPointerException e) {
+        }
+        try {
+            restaurantInfo.setRating(result.getRating());
+        } catch (NullPointerException e) {
+        }
+
+        try {
+            restaurantInfo.setPhone(placesDetailsResponse.getResult().getFormattedPhoneNumber());
+        } catch (NullPointerException e) {
+        }
+        restaurantInfoList.add(restaurantInfo);
     }
 
     private void showWorkers() {

@@ -7,7 +7,7 @@ import com.google.android.libraries.places.api.model.PhotoMetadata;
 
 public class RestaurantInfo implements Parcelable {
     private String name;
-    private String adress;
+    private String address;
     private boolean open;
     private String id;
     private double lat;
@@ -15,13 +15,15 @@ public class RestaurantInfo implements Parcelable {
     private String photoRef;
     private PhotoMetadata photoMetadata;
     private double rating;
+    private String phone;
+    private String website;
 
     public RestaurantInfo() {
     }
 
     protected RestaurantInfo(Parcel in) {
         name = in.readString();
-        adress = in.readString();
+        address = in.readString();
         open = in.readByte() != 0;
         id = in.readString();
         lat = in.readDouble();
@@ -29,6 +31,8 @@ public class RestaurantInfo implements Parcelable {
         photoRef = in.readString();
         photoMetadata = in.readParcelable(PhotoMetadata.class.getClassLoader());
         rating = in.readDouble();
+        phone = in.readString();
+        website = in.readString();
     }
 
     public static final Creator<RestaurantInfo> CREATOR = new Creator<RestaurantInfo>() {
@@ -51,12 +55,12 @@ public class RestaurantInfo implements Parcelable {
         this.name = name;
     }
 
-    public String getAdress() {
-        return adress;
+    public String getAddress() {
+        return address;
     }
 
-    public void setAdress(String adress) {
-        this.adress = adress;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public boolean isOpen() {
@@ -115,6 +119,22 @@ public class RestaurantInfo implements Parcelable {
         this.rating = rating;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -123,7 +143,7 @@ public class RestaurantInfo implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeString(adress);
+        dest.writeString(address);
         dest.writeByte((byte) (open ? 1 : 0));
         dest.writeString(id);
         dest.writeDouble(lat);
@@ -131,5 +151,7 @@ public class RestaurantInfo implements Parcelable {
         dest.writeString(photoRef);
         dest.writeParcelable(photoMetadata, flags);
         dest.writeDouble(rating);
+        dest.writeString(phone);
+        dest.writeString(website);
     }
 }
