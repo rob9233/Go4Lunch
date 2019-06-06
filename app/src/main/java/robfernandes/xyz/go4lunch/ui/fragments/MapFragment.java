@@ -60,7 +60,7 @@ public class MapFragment extends BaseFragment {
     private static final String TAG = MapFragment.class.getSimpleName();
     private View view;
     private GoogleMap mMap;
-    private static final float DEFAULT_ZOOM = 14f;
+    private static final float DEFAULT_ZOOM = 14.5f;
     private AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
     private PlacesClient placesClient;
     private AutocompleteAdapter autocompleteAdapter;
@@ -263,7 +263,6 @@ public class MapFragment extends BaseFragment {
 
     private void moveCamera(Place place) {
         mMap.clear();
-
         LatLng latLng = place.getLatLng();
         if (latLng == null) {
             LatLngBounds viewport = place.getViewport();
@@ -278,6 +277,9 @@ public class MapFragment extends BaseFragment {
         restaurantInfo.setLat(place.getLatLng().latitude);
         restaurantInfo.setLon(place.getLatLng().longitude);
         restaurantInfo.setName(place.getName());
+        try {
+            restaurantInfo.setPhotoMetadata(place.getPhotoMetadatas().get(0));
+        } catch (NullPointerException e) {}
 
         addMarker(restaurantInfo);
     }

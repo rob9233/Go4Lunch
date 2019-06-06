@@ -62,14 +62,11 @@ public class AutocompleteAdapter extends RecyclerView.Adapter<AutocompleteAdapte
             textView = itemView.findViewById(R.id.autocomplete_item_text_view);
             textViewDesc = itemView.findViewById(R.id.autocomplete_item_text_view_desc);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (onAutoCompleteItemClickListener != null) {
-                        AutocompletePrediction autocompletePrediction = autocompletePredictionList
-                                .get(getAdapterPosition());
-                        onAutoCompleteItemClickListener.onLocationClicked(autocompletePrediction);
-                    }
+            itemView.setOnClickListener(v -> {
+                if (onAutoCompleteItemClickListener != null) {
+                    AutocompletePrediction autocompletePrediction = autocompletePredictionList
+                            .get(getAdapterPosition());
+                    onAutoCompleteItemClickListener.onLocationClicked(autocompletePrediction);
                 }
             });
         }

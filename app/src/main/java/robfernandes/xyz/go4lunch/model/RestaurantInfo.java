@@ -3,6 +3,8 @@ package robfernandes.xyz.go4lunch.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.libraries.places.api.model.PhotoMetadata;
+
 public class RestaurantInfo implements Parcelable {
     private String name;
     private String adress;
@@ -11,6 +13,7 @@ public class RestaurantInfo implements Parcelable {
     private double lat;
     private double lon;
     private String photoRef;
+    private PhotoMetadata photoMetadata;
     private double rating;
 
     public RestaurantInfo() {
@@ -24,6 +27,7 @@ public class RestaurantInfo implements Parcelable {
         lat = in.readDouble();
         lon = in.readDouble();
         photoRef = in.readString();
+        photoMetadata = in.readParcelable(PhotoMetadata.class.getClassLoader());
         rating = in.readDouble();
     }
 
@@ -95,6 +99,14 @@ public class RestaurantInfo implements Parcelable {
         this.photoRef = photoRef;
     }
 
+    public PhotoMetadata getPhotoMetadata() {
+        return photoMetadata;
+    }
+
+    public void setPhotoMetadata(PhotoMetadata photoMetadata) {
+        this.photoMetadata = photoMetadata;
+    }
+
     public double getRating() {
         return rating;
     }
@@ -117,6 +129,7 @@ public class RestaurantInfo implements Parcelable {
         dest.writeDouble(lat);
         dest.writeDouble(lon);
         dest.writeString(photoRef);
+        dest.writeParcelable(photoMetadata, flags);
         dest.writeDouble(rating);
     }
 }

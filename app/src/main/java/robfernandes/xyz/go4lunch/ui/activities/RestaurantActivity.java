@@ -1,15 +1,22 @@
 package robfernandes.xyz.go4lunch.ui.activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.PhotoMetadata;
+import com.google.android.libraries.places.api.net.FetchPhotoRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -48,12 +55,16 @@ public class RestaurantActivity extends AppCompatActivity {
     private UserInformation userInformation;
     private static final String TAG = "RestaurantActivity";
     private List<UserInformation> usersList = new ArrayList<>();
+    private static final int PHOTO_MAX_WIDTH = 1000;
+    private static final int PHOTO_MAX_HEIGHT = 400;
+    private PlacesClient placesClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant);
-
+        placesClient = Places.createClient(getBaseContext());
         restaurantInfo = getIntent().getParcelableExtra(RESTAURANT_INFO_BUNDLE_EXTRA);
         userInformation = getIntent().getParcelableExtra(USER_INFORMATION_EXTRA);
         if (restaurantInfo != null) {
@@ -177,20 +188,46 @@ public class RestaurantActivity extends AppCompatActivity {
             if (starsNum < 3) {
                 star3.setVisibility(View.INVISIBLE);
             }
+
         } catch (NullPointerException e) {
         }
 
-        restaurantTitle.setText(restaurantInfo.getName());
-        restaurantDescription.setText(restaurantInfo.getAdress());
         try {
-            String restaurantPhotoUrl = getRestaurantPhotoUrl(
-                    restaurantInfo.getPhotoRef()
-                    , getApplicationContext(),
-                    "1000",
-                    "400");
-            putImageIntoImageView(restaurantImage, restaurantPhotoUrl);
-        } catch (Exception e) {
+            restaurantTitle.setText(restaurantInfo.getName());
+            restaurantDescription.setText(restaurantInfo.getAdress());
+        } catch (NullPointerException e) {
         }
+
+        String photoRef = restaurantInfo.getPhotoRef();
+
+        try {
+            if (photoRef != null && !photoRef.isEmpty()) {
+                setPhotoFromPhotoRef(photoRef);
+            } else if (restaurantInfo.getPhotoMetadata() != null) {
+                fetchPhotoFromAtributes(restaurantInfo.getPhotoMetadata());
+            }
+        } catch (NullPointerException e) {
+        }
+    }
+
+    private void setPhotoFromPhotoRef(String photoRef) {
+        String restaurantPhotoUrl = getRestaurantPhotoUrl(
+                photoRef
+                , getApplicationContext(),
+                String.valueOf(PHOTO_MAX_WIDTH),
+                String.valueOf(PHOTO_MAX_HEIGHT));
+        putImageIntoImageView(restaurantImage, restaurantPhotoUrl);
+    }
+
+    private void fetchPhotoFromAtributes(PhotoMetadata photoMetadata) {
+        FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
+                .setMaxWidth(PHOTO_MAX_WIDTH)
+                .setMaxHeight(PHOTO_MAX_HEIGHT)
+                .build();
+        placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+            Bitmap bitmap = fetchPhotoResponse.getBitmap();
+            restaurantImage.setImageBitmap(bitmap);
+        });
     }
 
     private void setPlanListeners() {
@@ -259,7 +296,7 @@ public class RestaurantActivity extends AppCompatActivity {
     }
 
     private UserInformation getUserInfo() {
-        for (UserInformation item: usersList) {
+        for (UserInformation item : usersList) {
             if (item.getId().equals(userInformation.getId())) return item;
         }
         return null;

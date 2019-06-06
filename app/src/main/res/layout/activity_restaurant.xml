@@ -85,9 +85,34 @@
                 android:layout_centerInParent="true" />
         </RelativeLayout>
 
+        <LinearLayout
+            android:id="@+id/restaurant_activity_contacts_container"
+            android:layout_below="@+id/restaurant_activity_title_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:gravity="center">
+            <ImageView
+                android:layout_margin="10dp"
+                android:layout_width="@dimen/actitivity_restaurant_contacts_item_size"
+                android:layout_height="@dimen/actitivity_restaurant_contacts_item_size"
+                android:background="@android:color/black"/>
+            <ImageView
+                android:layout_margin="10dp"
+                android:layout_width="@dimen/actitivity_restaurant_contacts_item_size"
+                android:layout_height="@dimen/actitivity_restaurant_contacts_item_size"
+                android:background="@android:color/holo_green_dark"/>
+            <ImageView
+                android:layout_margin="10dp"
+                android:layout_width="@dimen/actitivity_restaurant_contacts_item_size"
+                android:layout_height="@dimen/actitivity_restaurant_contacts_item_size"
+                android:background="@android:color/holo_blue_light"/>
+
+        </LinearLayout>
+
         <android.support.v7.widget.RecyclerView
             android:layout_margin="5dp"
-            android:layout_below="@+id/restaurant_activity_title_container"
+            android:layout_below="@+id/restaurant_activity_contacts_container"
             android:id="@+id/activity_restaurant_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
