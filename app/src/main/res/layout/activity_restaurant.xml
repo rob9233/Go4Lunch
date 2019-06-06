@@ -20,10 +20,10 @@
             android:src="@android:color/black" />
 
         <LinearLayout
+            android:id="@+id/restaurant_activity_title_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/restaurant_activity_image_view"
-            android:id="@+id/restaurant_activity_title_container"
             android:background="@color/colorPrimary"
             android:orientation="vertical"
             android:padding="10dp">
@@ -87,36 +87,86 @@
 
         <LinearLayout
             android:id="@+id/restaurant_activity_contacts_container"
-            android:layout_below="@+id/restaurant_activity_title_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/restaurant_activity_title_container"
             android:background="@android:color/white"
             android:gravity="center">
-            <ImageView
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:layout_width="@dimen/actitivity_restaurant_contacts_item_size"
-                android:layout_height="@dimen/actitivity_restaurant_contacts_item_size"
-                android:background="@android:color/black"/>
-            <ImageView
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/actitivity_restaurant_contacts_item_size"
+                    android:layout_height="@dimen/actitivity_restaurant_contacts_item_size"
+                    android:layout_marginBottom="3dp"
+                    app:srcCompat="@drawable/ic_call_orange_75dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Call"
+                    android:textSize="@dimen/activity_restaurant_contacts_text_size"
+                    android:textColor="@color/colorPrimary" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:layout_width="@dimen/actitivity_restaurant_contacts_item_size"
-                android:layout_height="@dimen/actitivity_restaurant_contacts_item_size"
-                android:background="@android:color/holo_green_dark"/>
-            <ImageView
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/actitivity_restaurant_contacts_item_size"
+                    android:layout_height="@dimen/actitivity_restaurant_contacts_item_size"
+                    android:layout_marginBottom="3dp"
+                    app:srcCompat="@drawable/ic_star_border_orange_75dp" />
+
+                <TextView
+                    android:textSize="@dimen/activity_restaurant_contacts_text_size"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="Like"
+                    android:textColor="@color/colorPrimary" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:layout_width="@dimen/actitivity_restaurant_contacts_item_size"
-                android:layout_height="@dimen/actitivity_restaurant_contacts_item_size"
-                android:background="@android:color/holo_blue_light"/>
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/actitivity_restaurant_contacts_item_size"
+                    android:layout_height="@dimen/actitivity_restaurant_contacts_item_size"
+                    android:layout_marginBottom="3dp"
+                    app:srcCompat="@drawable/ic_public_world_75dp" />
+
+                <TextView
+                    android:textSize="@dimen/activity_restaurant_contacts_text_size"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="Website"
+                    android:textColor="@color/colorPrimary" />
+            </LinearLayout>
 
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
-            android:layout_margin="5dp"
-            android:layout_below="@+id/restaurant_activity_contacts_container"
             android:id="@+id/activity_restaurant_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+            android:layout_below="@+id/restaurant_activity_contacts_container"
+            android:layout_margin="5dp"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
     </RelativeLayout>
 

@@ -8,5 +8,6 @@
     <dimen name="log_btn_margin_top">10dp</dimen>
     <dimen name="btn_corners_radius">5dp</dimen>
     <dimen name="profile_margin">10dp</dimen>
-    <dimen name="actitivity_restaurant_contacts_item_size">80dp</dimen>
+    <dimen name="actitivity_restaurant_contacts_item_size">65dp</dimen>
+    <dimen name="activity_restaurant_contacts_text_size">20sp</dimen>
 </resources>
