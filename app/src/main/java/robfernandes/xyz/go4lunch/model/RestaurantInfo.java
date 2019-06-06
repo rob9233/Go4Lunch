@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 
+import java.util.List;
+
 public class RestaurantInfo implements Parcelable {
     private String name;
     private String address;
@@ -17,6 +19,7 @@ public class RestaurantInfo implements Parcelable {
     private double rating;
     private String phone;
     private String website;
+    private List<String> openSchedule;
 
     public RestaurantInfo() {
     }
@@ -33,6 +36,7 @@ public class RestaurantInfo implements Parcelable {
         rating = in.readDouble();
         phone = in.readString();
         website = in.readString();
+        openSchedule = in.createStringArrayList();
     }
 
     public static final Creator<RestaurantInfo> CREATOR = new Creator<RestaurantInfo>() {
@@ -135,6 +139,14 @@ public class RestaurantInfo implements Parcelable {
         this.website = website;
     }
 
+    public List<String> getOpenSchedule() {
+        return openSchedule;
+    }
+
+    public void setOpenSchedule(List<String> openSchedule) {
+        this.openSchedule = openSchedule;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -153,5 +165,6 @@ public class RestaurantInfo implements Parcelable {
         dest.writeDouble(rating);
         dest.writeString(phone);
         dest.writeString(website);
+        dest.writeStringList(openSchedule);
     }
 }

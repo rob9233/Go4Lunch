@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_E
 import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.formatNumberOfStars;
 import static robfernandes.xyz.go4lunch.utils.Utils.getRestaurantPhotoUrl;
+import static robfernandes.xyz.go4lunch.utils.Utils.getTodaysWeekDay;
 import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
 
 public class RestaurantsAdapter extends
@@ -42,6 +44,7 @@ public class RestaurantsAdapter extends
     private LatLng userLatLng;
     private Context context;
     private List<EatingPlan> eatingPlanList;
+    private static final String TAG = "RestaurantsAdapter";
 
     public RestaurantsAdapter(List<RestaurantInfo> restaurantInfoList, LatLng userLatLng
             , List<EatingPlan> eatingPlanList, UserInformation userInformation, Context context) {
@@ -65,7 +68,7 @@ public class RestaurantsAdapter extends
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         RestaurantInfo restaurantInfo = restaurantInfoList.get(i);
         int numOfPlans = getNumberOfPlansOnRestaurant(restaurantInfo);
-        if (numOfPlans>0) {
+        if (numOfPlans > 0) {
             viewHolder.plansContainer.setVisibility(View.VISIBLE);
             viewHolder.numPlansTextView.setText(String.format(String.valueOf(numOfPlans), "(%d)"));
         } else {
@@ -75,13 +78,19 @@ public class RestaurantsAdapter extends
         viewHolder.title.setText(restaurantInfo.getName());
         viewHolder.description.setText(restaurantInfo.getAddress());
         try {
+            String sheduleText;
             if (restaurantInfo.isOpen()) {
-                viewHolder.openHours.setText("Open now");
+                sheduleText = "Open now";
                 viewHolder.openHours.setTextColor(Color.GREEN);
             } else {
-                viewHolder.openHours.setText("Closed");
+                sheduleText = "Closed";
                 viewHolder.openHours.setTextColor(Color.RED);
             }
+            int weekDay = getTodaysWeekDay();
+            Log.d(TAG, "onBindViewHolder: " + weekDay);
+            sheduleText = String.format("%s: %s", sheduleText,
+                    restaurantInfo.getOpenSchedule().get(weekDay));
+            viewHolder.openHours.setText(sheduleText);
         } catch (NullPointerException e) {
         }
 

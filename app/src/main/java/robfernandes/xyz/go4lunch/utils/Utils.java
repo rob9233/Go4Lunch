@@ -16,6 +16,7 @@ import com.google.maps.android.SphericalUtil;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -89,5 +90,10 @@ public class Utils {
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         drawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+    public static int getTodaysWeekDay() {
+        //-1 to start at monday
+        return Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2;
     }
 }

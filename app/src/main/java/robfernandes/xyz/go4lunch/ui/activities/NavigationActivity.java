@@ -231,6 +231,12 @@ public class NavigationActivity extends AppCompatActivity {
         restaurantInfo.setLon(result.getGeometry().getLocation().getLng());
         restaurantInfo.setAddress(result.getVicinity());
         try {
+            List<String> openSchedule =  placesDetailsResponse.getResult()
+                    .getOpeningHours().getWeekdayText();
+            restaurantInfo.setOpenSchedule(openSchedule);
+        } catch (NullPointerException e) {
+        }
+        try {
             restaurantInfo.setOpen(result.getOpeningHours().getOpenNow());
         } catch (NullPointerException e) {
         }
