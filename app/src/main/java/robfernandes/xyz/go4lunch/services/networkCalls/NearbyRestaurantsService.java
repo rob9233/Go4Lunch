@@ -1,4 +1,4 @@
-package robfernandes.xyz.go4lunch.services.network;
+package robfernandes.xyz.go4lunch.services.networkCalls;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

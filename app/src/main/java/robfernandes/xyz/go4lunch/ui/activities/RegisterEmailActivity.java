@@ -97,18 +97,21 @@ public class RegisterEmailActivity extends BaseRegisterActivity {
                 .getInstance()
                 .getReference()
                 .child("images/" + filename);
-
-        storageReference.putFile(profileImageUri)
-                .addOnSuccessListener(taskSnapshot -> storageReference
-                        .getDownloadUrl()
-                        .addOnSuccessListener(uri -> {
-                            String profileImageUrl;
-                            profileImageUrl = uri.toString();
-                            createUser(profileImageUrl);
-                        }))
-                .addOnFailureListener(exception -> {
-                   Toast.makeText(getBaseContext(), "Failed", Toast.LENGTH_SHORT).show();
-                });
+        if (profileImageUri != null) {
+            storageReference.putFile(profileImageUri)
+                    .addOnSuccessListener(taskSnapshot -> storageReference
+                            .getDownloadUrl()
+                            .addOnSuccessListener(uri -> {
+                                String profileImageUrl;
+                                profileImageUrl = uri.toString();
+                                createUser(profileImageUrl);
+                            }))
+                    .addOnFailureListener(exception -> {
+                        Toast.makeText(getBaseContext(), "Failed", Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            createUser("");
+        }
     }
 
     private void createUser(String profileImageUrl) {

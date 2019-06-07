@@ -50,7 +50,7 @@ import robfernandes.xyz.go4lunch.model.UserInformation;
 import robfernandes.xyz.go4lunch.model.placesDetailsResponse.PlacesDetailsResponse;
 import robfernandes.xyz.go4lunch.model.placesResponse.PlacesResponse;
 import robfernandes.xyz.go4lunch.model.placesResponse.Result;
-import robfernandes.xyz.go4lunch.services.network.NearbyRestaurantsService;
+import robfernandes.xyz.go4lunch.services.networkCalls.NearbyRestaurantsService;
 import robfernandes.xyz.go4lunch.ui.fragments.MapFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.RestaurantListFragment;
 import robfernandes.xyz.go4lunch.ui.fragments.WorkmatesFragment;
@@ -63,6 +63,7 @@ import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_E
 import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
 import static robfernandes.xyz.go4lunch.utils.Utils.restartApp;
+import static robfernandes.xyz.go4lunch.utils.Utils.userSubscribeToNotifications;
 
 public class NavigationActivity extends AppCompatActivity {
 
@@ -92,6 +93,8 @@ public class NavigationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
+        //TODO remove this
+        userSubscribeToNotifications();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             FirebaseFirestore.getInstance().collection("users")

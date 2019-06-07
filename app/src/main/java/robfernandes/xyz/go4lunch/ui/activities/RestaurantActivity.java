@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.net.FetchPhotoRequest;
@@ -43,7 +41,7 @@ import robfernandes.xyz.go4lunch.model.RestaurantInfo;
 import robfernandes.xyz.go4lunch.model.UserInformation;
 import robfernandes.xyz.go4lunch.model.placesDetailsResponse.PlacesDetailsResponse;
 import robfernandes.xyz.go4lunch.model.placesDetailsResponse.Result;
-import robfernandes.xyz.go4lunch.services.network.NearbyRestaurantsService;
+import robfernandes.xyz.go4lunch.services.networkCalls.NearbyRestaurantsService;
 
 import static robfernandes.xyz.go4lunch.utils.Constants.GOOGLE_PLACES_BASE_URL;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;

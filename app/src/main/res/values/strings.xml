@@ -24,6 +24,7 @@
     <string name="your_lunch">YOUR LUNCH</string>
     <string name="settings">SETTINGS</string>
     <string name="logout">LOGOUT</string>
+    <string name="default_notification_channel_id">Go4Lucnh</string>
     <string name="title_activity_settings">Settings</string>
     <string name="logo_url"><![CDATA[https://firebasestorage.googleapis.com/v0/b/go4lunch–70a23.appspot.com/o/images%2Flogo.png?alt=media&token=2055f8d2–6d9e-4cd0-ae7f-6df066ff4364]]></string>
 

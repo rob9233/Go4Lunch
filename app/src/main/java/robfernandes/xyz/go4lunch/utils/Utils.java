@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.maps.android.SphericalUtil;
 import com.squareup.picasso.Picasso;
 
@@ -95,5 +96,13 @@ public class Utils {
     public static int getTodaysWeekDay() {
         //-1 to start at monday
         return Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2;
+    }
+
+    public static void userSubscribeToNotifications() {
+        FirebaseMessaging.getInstance().subscribeToTopic("has_eating_plan");
+    }
+
+    public static void userUnsubscribeToNotifications() {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("has_eating_plan");
     }
 }
