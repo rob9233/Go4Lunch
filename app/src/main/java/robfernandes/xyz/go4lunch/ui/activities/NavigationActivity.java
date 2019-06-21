@@ -63,7 +63,6 @@ import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_E
 import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
 import static robfernandes.xyz.go4lunch.utils.Utils.restartApp;
-import static robfernandes.xyz.go4lunch.utils.Utils.userSubscribeToNotifications;
 
 public class NavigationActivity extends AppCompatActivity {
 
@@ -87,14 +86,15 @@ public class NavigationActivity extends AppCompatActivity {
     private static final int WORKERS_FLAG = 2;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ImageView profileImageView;
+    private boolean isBottomOptionsEnable = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
-        //TODO remove this
-        userSubscribeToNotifications();
+        setViews();
+        setListeners();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             FirebaseFirestore.getInstance().collection("users")
@@ -110,15 +110,12 @@ public class NavigationActivity extends AppCompatActivity {
 
     private void init(Bundle savedInstanceState) {
         getUserInfo();
-        setViews();
-        setListeners();
         //Start on Map Fragment but not when the deice is rotated
         if (savedInstanceState == null) {
             getLocationPermission();
         }
 
         setToolbar();
-        configureDrawer();
     }
 
     private void getUserInfo() {
@@ -129,6 +126,7 @@ public class NavigationActivity extends AppCompatActivity {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
                     userInformation = document.toObject(UserInformation.class);
+                    configureDrawer();
                     if (profileImageView != null) {
                         displayProfileImage();
                     }
@@ -186,7 +184,7 @@ public class NavigationActivity extends AppCompatActivity {
                                 result.getPlaceId()
                                 , apiKey
                         );
-                        Log.d(TAG, "onResponse: " + detailsCall.request().url());
+                        Log.d(TAG, "onResponse: detailsCall " + detailsCall.request().url());
                         detailsCall.enqueue(new Callback<PlacesDetailsResponse>() {
                             @Override
                             public void onResponse(Call<PlacesDetailsResponse> call
@@ -204,6 +202,7 @@ public class NavigationActivity extends AppCompatActivity {
 
                     }
                     nearByPlaces.setRestaurantInfoList(restaurantInfoList);
+                    enableBottomBar(true);
                     switch (flag) {
                         case MAP_FLAG:
                             showMapFragment();
@@ -220,7 +219,7 @@ public class NavigationActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<PlacesResponse> call, Throwable t) {
-                Log.d("TAG", "onFailure: ");
+                Log.e("TAG", "onFailure: ");
             }
         });
     }
@@ -235,7 +234,7 @@ public class NavigationActivity extends AppCompatActivity {
         restaurantInfo.setLon(result.getGeometry().getLocation().getLng());
         restaurantInfo.setAddress(result.getVicinity());
         try {
-            List<String> openSchedule =  placesDetailsResponse.getResult()
+            List<String> openSchedule = placesDetailsResponse.getResult()
                     .getOpeningHours().getWeekdayText();
             restaurantInfo.setOpenSchedule(openSchedule);
         } catch (NullPointerException e) {
@@ -326,7 +325,12 @@ public class NavigationActivity extends AppCompatActivity {
 
         TextView emailNav = navigationView.getHeaderView(0)
                 .findViewById(R.id.drawer_header_user_email);
-        emailNav.setText(currentUser.getEmail());
+        TextView nameNav = navigationView.getHeaderView(0)
+                .findViewById(R.id.drawer_header_user_name);
+
+        emailNav.setText(userInformation.getEmail());
+        Log.d(TAG, "configureNavigationView: " + currentUser.getDisplayName());
+        nameNav.setText(userInformation.getName());
 
         profileImageView = navigationView.getHeaderView(0)
                 .findViewById(R.id.drawer_header_user_image);
@@ -437,6 +441,16 @@ public class NavigationActivity extends AppCompatActivity {
             }
             return true;
         });
+        enableBottomBar(false);
+    }
+
+    private void enableBottomBar(boolean enable) {
+        if (isBottomOptionsEnable != enable) {
+            isBottomOptionsEnable = enable;
+            for (int i = 0; i < bottomNav.getMenu().size(); i++) {
+                bottomNav.getMenu().getItem(i).setEnabled(enable);
+            }
+        }
     }
 
     private void showRestaurants() {

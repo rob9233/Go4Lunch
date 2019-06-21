@@ -98,11 +98,4 @@ public class Utils {
         return Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2;
     }
 
-    public static void userSubscribeToNotifications() {
-        FirebaseMessaging.getInstance().subscribeToTopic("has_eating_plan");
-    }
-
-    public static void userUnsubscribeToNotifications() {
-        FirebaseMessaging.getInstance().unsubscribeFromTopic("has_eating_plan");
-    }
 }
