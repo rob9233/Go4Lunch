@@ -2,38 +2,32 @@ package robfernandes.xyz.go4lunch.ui.fragments;
 
 
 import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
+import android.view.Window;
 import android.widget.Button;
-import android.widget.SearchView;
-import android.widget.Toast;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-
-import java.util.List;
 
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.adapters.RestaurantsAdapter;
 import robfernandes.xyz.go4lunch.model.NearByPlaces;
-import robfernandes.xyz.go4lunch.model.RestaurantInfo;
 import robfernandes.xyz.go4lunch.model.UserInformation;
-import robfernandes.xyz.go4lunch.ui.activities.RestaurantActivity;
 
+import static android.support.v7.widget.ListPopupWindow.MATCH_PARENT;
+import static android.support.v7.widget.ListPopupWindow.WRAP_CONTENT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
-import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.restartApp;
 
@@ -81,10 +75,34 @@ public class RestaurantListFragment extends BaseFragment {
 
     private void showFilterDialog() {
         final Dialog dialog = new Dialog(getContext());
-        dialog.setContentView(R.layout.filter_dialog);
-        Button dialogButton = dialog.findViewById(R.id.dialog_button_dismiss);
-        dialogButton.setOnClickListener(v -> dialog.dismiss());
+
         dialog.show();
+        Window window = dialog.getWindow();
+        window.setLayout(MATCH_PARENT, WRAP_CONTENT);
+        dialog.setContentView(R.layout.filter_dialog);
+
+        SeekBar seekBarMinStars = dialog.findViewById(R.id.seekbar_min_num_of_stars);
+        TextView minNumStarsTextView = dialog.findViewById(R.id.min_num_of_stars_text_view);
+        minNumStarsTextView.setText(String.valueOf(seekBarMinStars.getProgress()));
+        seekBarMinStars.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                minNumStarsTextView.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        Button dialogButton = dialog.findViewById(R.id.dialog_button_cancel);
+        dialogButton.setOnClickListener(v -> dialog.dismiss());
     }
 
     @Override
