@@ -86,7 +86,6 @@ public class NavigationActivity extends AppCompatActivity {
     private static final int WORKERS_FLAG = 2;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ImageView profileImageView;
-    private boolean isBottomOptionsEnable = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

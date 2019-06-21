@@ -1,6 +1,7 @@
 package robfernandes.xyz.go4lunch.ui.fragments;
 
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -47,7 +49,6 @@ public class RestaurantListFragment extends BaseFragment {
     private RestaurantsAdapter restaurantsAdapter;
     private UserInformation userInformation;
     private MenuItem filterItem;
-    private static final String TAG = "RestaurantListFragment";
 
     public RestaurantListFragment() {
         // Required empty public constructor
@@ -79,8 +80,11 @@ public class RestaurantListFragment extends BaseFragment {
     }
 
     private void showFilterDialog() {
-        Toast.makeText(getContext(), "distance", Toast.LENGTH_SHORT)
-                .show();
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.filter_dialog);
+        Button dialogButton = dialog.findViewById(R.id.dialog_button_dismiss);
+        dialogButton.setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
     }
 
     @Override
