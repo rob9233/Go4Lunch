@@ -202,7 +202,6 @@ public class NavigationActivity extends AppCompatActivity {
 
                     }
                     nearByPlaces.setRestaurantInfoList(restaurantInfoList);
-                    enableBottomBar(true);
                     switch (flag) {
                         case MAP_FLAG:
                             showMapFragment();
@@ -441,16 +440,6 @@ public class NavigationActivity extends AppCompatActivity {
             }
             return true;
         });
-        enableBottomBar(false);
-    }
-
-    private void enableBottomBar(boolean enable) {
-        if (isBottomOptionsEnable != enable) {
-            isBottomOptionsEnable = enable;
-            for (int i = 0; i < bottomNav.getMenu().size(); i++) {
-                bottomNav.getMenu().getItem(i).setEnabled(enable);
-            }
-        }
     }
 
     private void showRestaurants() {

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -45,9 +46,41 @@ public class RestaurantListFragment extends BaseFragment {
     private Double currentLocationLon;
     private RestaurantsAdapter restaurantsAdapter;
     private UserInformation userInformation;
+    private MenuItem filterItem;
+    private static final String TAG = "RestaurantListFragment";
 
     public RestaurantListFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.restaurant_filter_menu, menu);
+        filterItem = menu.findItem(R.id.restaurant_filter);
+        // Detect SearchView icon clicks
+        searchView.setOnSearchClickListener(v -> filterItem.setVisible(false));
+
+        // Detect SearchView close
+        searchView.setOnCloseListener(() -> {
+            filterItem.setVisible(true);
+            return false;
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.restaurant_filter:
+                showFilterDialog();
+                break;
+        }
+        return false;
+    }
+
+    private void showFilterDialog() {
+        Toast.makeText(getContext(), "distance", Toast.LENGTH_SHORT)
+                .show();
     }
 
     @Override
@@ -61,6 +94,7 @@ public class RestaurantListFragment extends BaseFragment {
         } else {
             restartApp(getActivity());
         }
+
         return view;
     }
 

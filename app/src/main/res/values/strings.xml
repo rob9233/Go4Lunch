@@ -102,4 +102,7 @@
     <string name="don_t_have_an_account_click_here_to_register_for_free">Don\'t have an account? Click here to register for free</string>
     <string name="it_s_not_possible_to_show_the_map_on_yor_device">It\'s not possible to show the map on yor device</string>
     <string name="click_here_to_add_a_profile_picture">Click here to add a profile picture</string>
+    <string name="distance">Filter by distance</string>
+    <string name="num_of_stars">Filter by number of stars</string>
+    <string name="filter">Filter</string>
 </resources>
