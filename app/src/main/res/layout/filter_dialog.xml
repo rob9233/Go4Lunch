@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="wrap_content"
     android:background="@android:color/white"
     android:gravity="center_horizontal"
     android:orientation="vertical">
@@ -13,20 +13,79 @@
         android:text="Min number of stars"
         android:textStyle="bold" />
 
-
-    <SeekBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:max="3"
-        android:id="@+id/seekbar_min_num_of_stars"
-        android:progress="1" />
-
     <TextView
         android:id="@+id/min_num_of_stars_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Min number of stars" />
+        android:text="0 stars" />
+
+    <SeekBar
+        android:id="@+id/seekbar_min_num_of_stars"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:max="3"
+        android:progress="0" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Max number of stars"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/max_num_of_stars_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3 stars" />
+
+    <SeekBar
+        android:id="@+id/seekbar_max_num_of_stars"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:max="3"
+        android:progress="3" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Min distance"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/min_distance_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0 m" />
+
+    <SeekBar
+        android:id="@+id/seekbar_min_distance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:max="1000"
+        android:progress="0" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Max distance"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/max_distance_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1000 m" />
+
+    <SeekBar
+        android:id="@+id/seekbar_max_distance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:max="1000"
+        android:progress="1000" />
 
     <LinearLayout
         android:layout_width="match_parent"

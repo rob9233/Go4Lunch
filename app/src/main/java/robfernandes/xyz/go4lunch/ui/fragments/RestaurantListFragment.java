@@ -27,6 +27,7 @@ import static android.support.v7.widget.ListPopupWindow.MATCH_PARENT;
 import static android.support.v7.widget.ListPopupWindow.WRAP_CONTENT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
+import static robfernandes.xyz.go4lunch.utils.Constants.FILTER_PARAMS_RESTAURANT_KEY;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.restartApp;
@@ -83,11 +84,26 @@ public class RestaurantListFragment extends BaseFragment {
 
         SeekBar seekBarMinStars = dialog.findViewById(R.id.seekbar_min_num_of_stars);
         TextView minNumStarsTextView = dialog.findViewById(R.id.min_num_of_stars_text_view);
+        SeekBar seekBarMaxStars = dialog.findViewById(R.id.seekbar_max_num_of_stars);
+        TextView maxNumStarsTextView = dialog.findViewById(R.id.max_num_of_stars_text_view);
+        SeekBar seekBarMinDistance = dialog.findViewById(R.id.seekbar_min_distance);
+        TextView minDistanceTextView = dialog.findViewById(R.id.min_distance_text_view);
+        SeekBar seekBarMaxDistance = dialog.findViewById(R.id.seekbar_max_distance);
+        TextView maxDistanceTextView = dialog.findViewById(R.id.max_distance_text_view);
         minNumStarsTextView.setText(String.valueOf(seekBarMinStars.getProgress()));
         seekBarMinStars.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                minNumStarsTextView.setText(String.valueOf(progress));
+                String type;
+                if (progress == 1) {
+                    type = "star";
+                } else {
+                    type = "stars";
+                }
+                minNumStarsTextView.setText(String.format("%d %s", progress, type));
+                if (progress > seekBarMaxStars.getProgress()) {
+                    seekBarMaxStars.setProgress(progress);
+                }
             }
 
             @Override
@@ -101,8 +117,90 @@ public class RestaurantListFragment extends BaseFragment {
             }
         });
 
-        Button dialogButton = dialog.findViewById(R.id.dialog_button_cancel);
-        dialogButton.setOnClickListener(v -> dialog.dismiss());
+        seekBarMaxStars.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                String type;
+                if (progress == 1) {
+                    type = "star";
+                } else {
+                    type = "stars";
+                }
+                maxNumStarsTextView.setText(String.format("%d %s", progress, type));
+                if (progress < seekBarMinStars.getProgress()) {
+                    seekBarMinStars.setProgress(progress);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        seekBarMinDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                String type = "m";
+                minDistanceTextView.setText(String.format("%d %s", progress, type));
+                if (progress > seekBarMaxDistance.getProgress()) {
+                    seekBarMaxDistance.setProgress(progress);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        seekBarMaxDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                String type = "m";
+                maxDistanceTextView.setText(String.format("%d %s", progress, type));
+                if (progress < seekBarMinDistance.getProgress()) {
+                    seekBarMinDistance.setProgress(progress);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        Button dialogCancelButton = dialog.findViewById(R.id.dialog_button_cancel);
+        dialogCancelButton.setOnClickListener(v -> dialog.dismiss());
+        Button dialogFilterButton = dialog.findViewById(R.id.dialog_button_filter);
+        dialogFilterButton.setOnClickListener(v -> {
+            dialog.dismiss();
+            filterRestaurantList(seekBarMinStars.getProgress(), seekBarMaxStars.getProgress()
+                    , seekBarMinDistance.getProgress(), seekBarMaxDistance.getProgress());
+        });
+    }
+
+    private void filterRestaurantList(int minStars, int maxStars, int minDistance, int maxDistance) {
+        restaurantsAdapter.getFilter().filter(FILTER_PARAMS_RESTAURANT_KEY
+                + ":minStars=" + minStars
+                + ":maxStars=" + maxStars
+                + ":minDistance=" + minDistance
+                + ":maxDistance=" + maxDistance
+        );
     }
 
     @Override

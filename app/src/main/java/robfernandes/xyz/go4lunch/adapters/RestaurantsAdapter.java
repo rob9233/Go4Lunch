@@ -27,6 +27,7 @@ import robfernandes.xyz.go4lunch.model.UserInformation;
 import robfernandes.xyz.go4lunch.ui.activities.RestaurantActivity;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
+import static robfernandes.xyz.go4lunch.utils.Constants.FILTER_PARAMS_RESTAURANT_KEY;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.formatNumberOfStars;
@@ -44,7 +45,7 @@ public class RestaurantsAdapter extends
     private LatLng userLatLng;
     private Context context;
     private List<EatingPlan> eatingPlanList;
-    private static final String TAG = "RestaurantsAdapter";
+    private static final String TAG = "RestaurantsAdapterx";
 
     public RestaurantsAdapter(List<RestaurantInfo> restaurantInfoList, LatLng userLatLng
             , List<EatingPlan> eatingPlanList, UserInformation userInformation, Context context) {
@@ -87,7 +88,6 @@ public class RestaurantsAdapter extends
                 viewHolder.openHours.setTextColor(Color.RED);
             }
             int weekDay = getTodaysWeekDay();
-            Log.d(TAG, "onBindViewHolder: " + weekDay);
             sheduleText = String.format("%s: %s", sheduleText,
                     restaurantInfo.getOpenSchedule().get(weekDay));
             viewHolder.openHours.setText(sheduleText);
@@ -138,18 +138,14 @@ public class RestaurantsAdapter extends
         //this runs asycn
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            List<RestaurantInfo> filteredList = new ArrayList<>();
-
+            List<RestaurantInfo> filteredList;
             if (constraint == null || constraint.length() == 0) {
+                filteredList = new ArrayList<>();
                 filteredList.addAll(fullRestaurantsList);
+            } else if (constraint.toString().contains(FILTER_PARAMS_RESTAURANT_KEY)) {
+                filteredList = getFilteredListFromParams(constraint);
             } else {
-                String filterPattern = constraint.toString().toLowerCase().trim();
-
-                for (RestaurantInfo restaurantInfo : fullRestaurantsList) {
-                    if (restaurantInfo.getName().toLowerCase().contains(filterPattern)) {
-                        filteredList.add(restaurantInfo);
-                    }
-                }
+                filteredList = getFilteredListFromQuery(constraint);
             }
             FilterResults results = new FilterResults();
             results.values = filteredList;
@@ -166,6 +162,53 @@ public class RestaurantsAdapter extends
             notifyDataSetChanged();
         }
     };
+
+    private List<RestaurantInfo> getFilteredListFromParams(CharSequence constraint) {
+        List<RestaurantInfo> filteredList = new ArrayList<>();
+        String originString = constraint.toString();
+        Log.d(TAG, "getFilteredListFromParams: " + originString);
+        int minStars = getFilterParamValue(originString, "minStars");
+        int maxStars = getFilterParamValue(originString, "maxStars");
+        int minDistance = getFilterParamValue(originString, "minDistance");
+        int maxDistance = getFilterParamValue(originString, "maxDistance");
+        Log.d(TAG, "getFilteredListFromParams: minStars " + minStars);
+        Log.d(TAG, "getFilteredListFromParams: maxStars " + maxStars);
+        Log.d(TAG, "getFilteredListFromParams: minDistance " + minDistance);
+        Log.d(TAG, "getFilteredListFromParams: maxDistance " + maxDistance);
+
+        for (RestaurantInfo restaurantInfo : fullRestaurantsList) {
+            try {
+                int starsNum = formatNumberOfStars(restaurantInfo.getRating());
+                LatLng restaurantLatLng = new LatLng(restaurantInfo.getLat(), restaurantInfo.getLon());
+                int distance = (int) computeDistanceBetween(userLatLng, restaurantLatLng);
+                if (
+                        starsNum >= minStars
+                                && starsNum <= maxStars
+                                && distance >= minDistance
+                                && distance <= maxDistance
+                ) {
+                    filteredList.add(restaurantInfo);
+                }
+            } catch (Exception e) {
+            }
+        }
+        return filteredList;
+    }
+
+    private List<RestaurantInfo> getFilteredListFromQuery(CharSequence constraint) {
+        List<RestaurantInfo> filteredList = new ArrayList<>();
+        Log.d(TAG, "getFilteredListFromQuery: " + constraint);
+
+        String filterPattern = constraint.toString().toLowerCase().trim();
+
+        for (RestaurantInfo restaurantInfo : fullRestaurantsList) {
+            if (restaurantInfo.getName().toLowerCase().contains(filterPattern)) {
+                filteredList.add(restaurantInfo);
+            }
+        }
+
+        return filteredList;
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView title, description, openHours, distance, numPlansTextView;
@@ -218,5 +261,22 @@ public class RestaurantsAdapter extends
         } catch (Exception e) {
         }
         return numOfPlans;
+    }
+
+    public static int getFilterParamValue(String string, String param) {
+        int value;
+        String formatedParam = param + "=";
+        int index = string.indexOf(formatedParam);
+        int paramSize = formatedParam.length();
+        String formatedString = string.substring(index + paramSize);
+        int endIndex = formatedString.indexOf(":");
+
+        if (endIndex == -1) {
+            endIndex = formatedString.length();
+        }
+        formatedString = formatedString.substring(0, endIndex);
+
+        value = Integer.parseInt(formatedString);
+        return value;
     }
 }

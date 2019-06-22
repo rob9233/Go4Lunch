@@ -31,7 +31,7 @@ public class MainActivity extends BaseRegisterActivity {
     private GoogleSignInOptions gso;
     private FirebaseAuth firebaseAuth;
     private GoogleSignInClient mGoogleSignInClient;
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "MainActivityc";
     private static final int RC_SIGN_IN = 9001;
 
     @Override
@@ -47,7 +47,7 @@ public class MainActivity extends BaseRegisterActivity {
 
     private void setSignInOptions() {
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken(getString(R.string.web_client_id))
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
@@ -62,6 +62,7 @@ public class MainActivity extends BaseRegisterActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        Log.d(TAG, "onActivityResult: ");
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -70,10 +71,8 @@ public class MainActivity extends BaseRegisterActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
-                Toast.makeText(getBaseContext(), "Google sign in failed"
+                Toast.makeText(getApplicationContext(), "Google sign in failed"
                         , Toast.LENGTH_SHORT).show();
-                // ...
             }
         }
     }
@@ -121,7 +120,7 @@ public class MainActivity extends BaseRegisterActivity {
                         Toast.makeText(getBaseContext(), "please insert an email",
                                 Toast.LENGTH_SHORT).show();
                     } else if (password.getText().toString().isEmpty()) {
-                        Toast.makeText(getBaseContext(), "please insert a password",
+                        Toast.makeText(getApplicationContext(), "please insert a password",
                                 Toast.LENGTH_SHORT).show();
                     } else {
                         logInWithEmail();

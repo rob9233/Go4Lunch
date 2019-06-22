@@ -6,5 +6,6 @@ public class Constants {
     public static final String DEVICE_LOCATION_LAT = "DEVICE_LOCATION_LAT";
     public static final String DEVICE_LOCATION_LON = "DEVICE_LOCATION_LON";
     public static final String NEARBY_PLACES = "NEARBY_PLACES";
+    public static final String FILTER_PARAMS_RESTAURANT_KEY = "FILTER_PARAMS_RESTAURANT_KEY";
     public static final String USER_INFORMATION_EXTRA = "USER_INFORMATION_EXTRA";
 }
