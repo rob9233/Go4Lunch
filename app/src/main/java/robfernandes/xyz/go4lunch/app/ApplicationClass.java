@@ -3,10 +3,12 @@ package robfernandes.xyz.go4lunch.app;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
+
 import androidx.multidex.MultiDexApplication;
+import robfernandes.xyz.go4lunch.R;
 
 public class ApplicationClass extends MultiDexApplication {
-    public static final String CHANNEL_PLANS_ID = "CHANNEL_PLANS";
+    public static final String CHANNEL_PLANS_ID = "Go4Lucnh";
 
     @Override
     public void onCreate() {
@@ -17,7 +19,7 @@ public class ApplicationClass extends MultiDexApplication {
     private void createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel1 = new NotificationChannel(
-                    CHANNEL_PLANS_ID,
+                    getString(R.string.default_notification_channel_id),
                     "Show plans",
                     NotificationManager.IMPORTANCE_HIGH
             );
