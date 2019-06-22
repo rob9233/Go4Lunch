@@ -3,8 +3,8 @@ package robfernandes.xyz.go4lunch.ui.fragments;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,8 +23,8 @@ import robfernandes.xyz.go4lunch.adapters.RestaurantsAdapter;
 import robfernandes.xyz.go4lunch.model.NearByPlaces;
 import robfernandes.xyz.go4lunch.model.UserInformation;
 
-import static android.support.v7.widget.ListPopupWindow.MATCH_PARENT;
-import static android.support.v7.widget.ListPopupWindow.WRAP_CONTENT;
+import static androidx.appcompat.widget.ListPopupWindow.MATCH_PARENT;
+import static androidx.appcompat.widget.ListPopupWindow.WRAP_CONTENT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.FILTER_PARAMS_RESTAURANT_KEY;

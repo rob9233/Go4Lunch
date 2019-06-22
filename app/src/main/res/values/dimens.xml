@@ -10,4 +10,5 @@
     <dimen name="profile_margin">10dp</dimen>
     <dimen name="actitivity_restaurant_contacts_item_size">40dp</dimen>
     <dimen name="activity_restaurant_contacts_text_size">15sp</dimen>
+    <dimen name="activity_settings_items_margin">10dp</dimen>
 </resources>

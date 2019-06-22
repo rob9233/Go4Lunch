@@ -8,4 +8,6 @@ public class Constants {
     public static final String NEARBY_PLACES = "NEARBY_PLACES";
     public static final String FILTER_PARAMS_RESTAURANT_KEY = "FILTER_PARAMS_RESTAURANT_KEY";
     public static final String USER_INFORMATION_EXTRA = "USER_INFORMATION_EXTRA";
+    public static String PREFS_KEY = "SHARED_PREFERENCES_KEY";
+    public static String NOTIFICATIONS_KEY = "NOTIFICATIONS_KEY";
 }

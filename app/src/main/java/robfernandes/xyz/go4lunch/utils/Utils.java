@@ -3,6 +3,7 @@ package robfernandes.xyz.go4lunch.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -12,7 +13,6 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.maps.android.SphericalUtil;
 import com.squareup.picasso.Picasso;
 
@@ -23,7 +23,9 @@ import java.util.UUID;
 
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.ui.activities.MainActivity;
-import robfernandes.xyz.go4lunch.ui.activities.NavigationActivity;
+
+import static robfernandes.xyz.go4lunch.utils.Constants.NOTIFICATIONS_KEY;
+import static robfernandes.xyz.go4lunch.utils.Constants.PREFS_KEY;
 
 public class Utils {
     public static LatLngBounds getBounds(LatLng center, double radiusInMeters) {
@@ -98,4 +100,15 @@ public class Utils {
         return Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2;
     }
 
+    private static SharedPreferences getSharedPreference(Context context) {
+        return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
+    }
+
+    public static boolean getNotificationStatusFromPrefs(Context context) {
+        return getSharedPreference(context).getBoolean(NOTIFICATIONS_KEY, true);
+    }
+
+    public static void setNotificationStatusInPrefs(Context context, boolean value) {
+        getSharedPreference(context).edit().putBoolean(NOTIFICATIONS_KEY, value).apply();
+    }
 }

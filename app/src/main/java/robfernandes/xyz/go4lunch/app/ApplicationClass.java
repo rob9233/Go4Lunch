@@ -3,7 +3,7 @@ package robfernandes.xyz.go4lunch.app;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
-import android.support.multidex.MultiDexApplication;
+import androidx.multidex.MultiDexApplication;
 
 public class ApplicationClass extends MultiDexApplication {
     public static final String CHANNEL_PLANS_ID = "CHANNEL_PLANS";
