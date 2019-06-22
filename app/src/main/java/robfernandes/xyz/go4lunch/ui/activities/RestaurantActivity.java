@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -29,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -92,7 +92,6 @@ public class RestaurantActivity extends AppCompatActivity {
         setRecyclerView();
         showInfo();
         checkPlan();
-        setUserList();
         getLikeStatus();
         if (!restaurantInfo.isDetailedInfo()) {
             getDetailedInfo();
@@ -165,6 +164,7 @@ public class RestaurantActivity extends AppCompatActivity {
                         } catch (Exception e) {
                         }
                     }
+                    setUserList();
                     if (eatingPlans.size() > 0) {
                         boolean found = false;
                         for (EatingPlan eatingPlan : eatingPlans) {
