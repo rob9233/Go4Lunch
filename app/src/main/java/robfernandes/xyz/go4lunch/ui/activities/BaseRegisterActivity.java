@@ -1,7 +1,7 @@
 package robfernandes.xyz.go4lunch.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -10,8 +10,10 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import androidx.appcompat.app.AppCompatActivity;
 import robfernandes.xyz.go4lunch.model.UserInformation;
 
+@SuppressLint("Registered")
 public class BaseRegisterActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -42,7 +44,7 @@ public class BaseRegisterActivity extends AppCompatActivity {
                 task -> {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
+                        if (document != null && document.exists()) {
                             //user exists the the db
                             logInUser();
                         } else {

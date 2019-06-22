@@ -1,7 +1,5 @@
 package robfernandes.xyz.go4lunch.adapters;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +9,8 @@ import com.google.android.libraries.places.api.model.AutocompletePrediction;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import robfernandes.xyz.go4lunch.R;
 
 public class AutocompleteAdapter extends RecyclerView.Adapter<AutocompleteAdapter.ViewHolder> {
@@ -22,7 +22,8 @@ public class AutocompleteAdapter extends RecyclerView.Adapter<AutocompleteAdapte
         this.autocompletePredictionList = autocompletePredictionList;
     }
 
-    public void setAutocompletePredictionList(List<AutocompletePrediction> autocompletePredictionList) {
+    public void setAutocompletePredictionList(List<AutocompletePrediction>
+                                                      autocompletePredictionList) {
         this.autocompletePredictionList = autocompletePredictionList;
     }
 
@@ -49,14 +50,13 @@ public class AutocompleteAdapter extends RecyclerView.Adapter<AutocompleteAdapte
             return autocompletePredictionList.size();
         }
         return 0;
-
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         private TextView textView;
         private TextView textViewDesc;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             textView = itemView.findViewById(R.id.autocomplete_item_text_view);

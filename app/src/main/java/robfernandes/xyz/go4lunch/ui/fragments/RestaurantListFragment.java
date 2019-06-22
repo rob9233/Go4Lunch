@@ -3,8 +3,6 @@ package robfernandes.xyz.go4lunch.ui.fragments;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +16,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.adapters.RestaurantsAdapter;
 import robfernandes.xyz.go4lunch.model.NearByPlaces;
@@ -28,6 +28,10 @@ import static androidx.appcompat.widget.ListPopupWindow.WRAP_CONTENT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
 import static robfernandes.xyz.go4lunch.utils.Constants.FILTER_PARAMS_RESTAURANT_KEY;
+import static robfernandes.xyz.go4lunch.utils.Constants.MAX_DISTANCE;
+import static robfernandes.xyz.go4lunch.utils.Constants.MAX_STARS;
+import static robfernandes.xyz.go4lunch.utils.Constants.MIN_DISTANCE;
+import static robfernandes.xyz.go4lunch.utils.Constants.MIN_STARS;
 import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.restartApp;
@@ -196,10 +200,10 @@ public class RestaurantListFragment extends BaseFragment {
 
     private void filterRestaurantList(int minStars, int maxStars, int minDistance, int maxDistance) {
         restaurantsAdapter.getFilter().filter(FILTER_PARAMS_RESTAURANT_KEY
-                + ":minStars=" + minStars
-                + ":maxStars=" + maxStars
-                + ":minDistance=" + minDistance
-                + ":maxDistance=" + maxDistance
+                + ":" + MIN_STARS + "=" + minStars
+                + ":" + MAX_STARS + "=" + maxStars
+                + ":" + MIN_DISTANCE + "=" + minDistance
+                + ":" + MAX_DISTANCE + "=" + maxDistance
         );
     }
 

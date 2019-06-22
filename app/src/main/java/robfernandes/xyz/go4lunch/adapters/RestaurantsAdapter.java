@@ -3,9 +3,6 @@ package robfernandes.xyz.go4lunch.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +17,8 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.model.EatingPlan;
 import robfernandes.xyz.go4lunch.model.RestaurantInfo;
@@ -28,6 +27,10 @@ import robfernandes.xyz.go4lunch.ui.activities.RestaurantActivity;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 import static robfernandes.xyz.go4lunch.utils.Constants.FILTER_PARAMS_RESTAURANT_KEY;
+import static robfernandes.xyz.go4lunch.utils.Constants.MAX_DISTANCE;
+import static robfernandes.xyz.go4lunch.utils.Constants.MAX_STARS;
+import static robfernandes.xyz.go4lunch.utils.Constants.MIN_DISTANCE;
+import static robfernandes.xyz.go4lunch.utils.Constants.MIN_STARS;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.formatNumberOfStars;
@@ -45,7 +48,6 @@ public class RestaurantsAdapter extends
     private LatLng userLatLng;
     private Context context;
     private List<EatingPlan> eatingPlanList;
-    private static final String TAG = "RestaurantsAdapterx";
 
     public RestaurantsAdapter(List<RestaurantInfo> restaurantInfoList, LatLng userLatLng
             , List<EatingPlan> eatingPlanList, UserInformation userInformation, Context context) {
@@ -81,17 +83,17 @@ public class RestaurantsAdapter extends
         try {
             String sheduleText;
             if (restaurantInfo.isOpen()) {
-                sheduleText = "Open now";
+                sheduleText = context.getString(R.string.open_now);
                 viewHolder.openHours.setTextColor(Color.GREEN);
             } else {
-                sheduleText = "Closed";
+                sheduleText = context.getString(R.string.closed);
                 viewHolder.openHours.setTextColor(Color.RED);
             }
             int weekDay = getTodaysWeekDay();
             sheduleText = String.format("%s: %s", sheduleText,
                     restaurantInfo.getOpenSchedule().get(weekDay));
             viewHolder.openHours.setText(sheduleText);
-        } catch (NullPointerException e) {
+        } catch (NullPointerException ignored) {
         }
 
         LatLng restaurantLatLng = new LatLng(restaurantInfo.getLat(), restaurantInfo.getLon());
@@ -104,19 +106,25 @@ public class RestaurantsAdapter extends
             String photoUrl = getRestaurantPhotoUrl(photoReference, context
                     , "100", "100");
             putImageIntoImageView(viewHolder.imageView, photoUrl);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             int starsNum = formatNumberOfStars(restaurantInfo.getRating());
             if (starsNum < 1) {
                 viewHolder.star1.setVisibility(View.INVISIBLE);
+            } else {
+                viewHolder.star1.setVisibility(View.VISIBLE);
             }
             if (starsNum < 2) {
                 viewHolder.star2.setVisibility(View.INVISIBLE);
+            } else {
+                viewHolder.star2.setVisibility(View.VISIBLE);
             }
             if (starsNum < 3) {
                 viewHolder.star3.setVisibility(View.INVISIBLE);
+            } else {
+                viewHolder.star3.setVisibility(View.VISIBLE);
             }
 
         } catch (NullPointerException e) {
@@ -134,14 +142,13 @@ public class RestaurantsAdapter extends
         return restaurantFilter;
     }
 
-    private Filter restaurantFilter = new Filter() {
+    private final Filter restaurantFilter = new Filter() {
         //this runs asycn
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<RestaurantInfo> filteredList;
             if (constraint == null || constraint.length() == 0) {
-                filteredList = new ArrayList<>();
-                filteredList.addAll(fullRestaurantsList);
+                filteredList = new ArrayList<>(fullRestaurantsList);
             } else if (constraint.toString().contains(FILTER_PARAMS_RESTAURANT_KEY)) {
                 filteredList = getFilteredListFromParams(constraint);
             } else {
@@ -158,7 +165,9 @@ public class RestaurantsAdapter extends
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             restaurantInfoList.clear();
-            restaurantInfoList.addAll((List) results.values);
+            if (results.values != null) {
+                restaurantInfoList.addAll((List) results.values);
+            }
             notifyDataSetChanged();
         }
     };
@@ -166,21 +175,17 @@ public class RestaurantsAdapter extends
     private List<RestaurantInfo> getFilteredListFromParams(CharSequence constraint) {
         List<RestaurantInfo> filteredList = new ArrayList<>();
         String originString = constraint.toString();
-        Log.d(TAG, "getFilteredListFromParams: " + originString);
-        int minStars = getFilterParamValue(originString, "minStars");
-        int maxStars = getFilterParamValue(originString, "maxStars");
-        int minDistance = getFilterParamValue(originString, "minDistance");
-        int maxDistance = getFilterParamValue(originString, "maxDistance");
-        Log.d(TAG, "getFilteredListFromParams: minStars " + minStars);
-        Log.d(TAG, "getFilteredListFromParams: maxStars " + maxStars);
-        Log.d(TAG, "getFilteredListFromParams: minDistance " + minDistance);
-        Log.d(TAG, "getFilteredListFromParams: maxDistance " + maxDistance);
+        int minStars = getFilterParamValue(originString, MIN_STARS);
+        int maxStars = getFilterParamValue(originString, MAX_STARS);
+        int minDistance = getFilterParamValue(originString, MIN_DISTANCE);
+        int maxDistance = getFilterParamValue(originString, MAX_DISTANCE);
 
         for (RestaurantInfo restaurantInfo : fullRestaurantsList) {
             try {
                 int starsNum = formatNumberOfStars(restaurantInfo.getRating());
                 LatLng restaurantLatLng = new LatLng(restaurantInfo.getLat(), restaurantInfo.getLon());
                 int distance = (int) computeDistanceBetween(userLatLng, restaurantLatLng);
+
                 if (
                         starsNum >= minStars
                                 && starsNum <= maxStars
@@ -189,7 +194,7 @@ public class RestaurantsAdapter extends
                 ) {
                     filteredList.add(restaurantInfo);
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         return filteredList;
@@ -197,7 +202,6 @@ public class RestaurantsAdapter extends
 
     private List<RestaurantInfo> getFilteredListFromQuery(CharSequence constraint) {
         List<RestaurantInfo> filteredList = new ArrayList<>();
-        Log.d(TAG, "getFilteredListFromQuery: " + constraint);
 
         String filterPattern = constraint.toString().toLowerCase().trim();
 
@@ -210,13 +214,13 @@ public class RestaurantsAdapter extends
         return filteredList;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         private TextView title, description, openHours, distance, numPlansTextView;
         private ImageView imageView, star1, star2, star3;
         private View starContainer;
         private View plansContainer;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             title = itemView.findViewById(R.id.restaurant_item_title);
@@ -258,25 +262,25 @@ public class RestaurantsAdapter extends
                     numOfPlans++;
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return numOfPlans;
     }
 
-    public static int getFilterParamValue(String string, String param) {
+    private static int getFilterParamValue(String string, String param) {
         int value;
-        String formatedParam = param + "=";
-        int index = string.indexOf(formatedParam);
-        int paramSize = formatedParam.length();
-        String formatedString = string.substring(index + paramSize);
-        int endIndex = formatedString.indexOf(":");
+        String formattedParam = param + "=";
+        int index = string.indexOf(formattedParam);
+        int paramSize = formattedParam.length();
+        String formattedString = string.substring(index + paramSize);
+        int endIndex = formattedString.indexOf(":");
 
         if (endIndex == -1) {
-            endIndex = formatedString.length();
+            endIndex = formattedString.length();
         }
-        formatedString = formatedString.substring(0, endIndex);
+        formattedString = formattedString.substring(0, endIndex);
 
-        value = Integer.parseInt(formatedString);
+        value = Integer.parseInt(formattedString);
         return value;
     }
 }

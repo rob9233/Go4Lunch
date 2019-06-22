@@ -105,4 +105,13 @@
     <string name="distance">Filter by distance</string>
     <string name="num_of_stars">Filter by number of stars</string>
     <string name="filter">Filter</string>
+    <string name="open_now">Open now</string>
+    <string name="closed">Closed</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="background_image">Background Image</string>
+    <string name="authentication_failed">Authentication failed</string>
+    <string name="google_sign_in_failed">Google sign in failed</string>
+    <string name="please_unsert_an_email">please insert an email</string>
+    <string name="please_insert_a_password">please insert a password</string>
 </resources>

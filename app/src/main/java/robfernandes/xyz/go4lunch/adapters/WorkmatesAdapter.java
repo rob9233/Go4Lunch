@@ -1,8 +1,6 @@
 package robfernandes.xyz.go4lunch.adapters;
 
 import android.graphics.Color;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +12,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.model.EatingPlan;
 import robfernandes.xyz.go4lunch.model.UserInformation;
@@ -46,7 +46,8 @@ public class WorkmatesAdapter extends
     @NonNull
     @Override
     public WorkmatesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext())
+        View view;
+        view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.workmate_item, viewGroup, false);
         return new WorkmatesAdapter.ViewHolder(view);
     }
@@ -80,11 +81,11 @@ public class WorkmatesAdapter extends
         return userList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         private TextView description;
         private ImageView porfilePic;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             description = itemView.findViewById(R.id.workmates_item_description);
@@ -117,7 +118,7 @@ public class WorkmatesAdapter extends
             FilterResults results = new FilterResults();
             results.values = filteredList;
 
-            //returns to pubishResults
+            //returns to publishResults
             return results;
         }
 
@@ -137,7 +138,7 @@ public class WorkmatesAdapter extends
                     return eatingPlan.getRestaurantName();
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return null;

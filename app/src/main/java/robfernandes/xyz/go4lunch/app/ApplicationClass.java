@@ -8,7 +8,6 @@ import androidx.multidex.MultiDexApplication;
 import robfernandes.xyz.go4lunch.R;
 
 public class ApplicationClass extends MultiDexApplication {
-    public static final String CHANNEL_PLANS_ID = "Go4Lucnh";
 
     @Override
     public void onCreate() {

@@ -6,18 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +15,8 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -37,6 +27,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,8 +56,8 @@ import robfernandes.xyz.go4lunch.ui.fragments.WorkmatesFragment;
 
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LAT;
 import static robfernandes.xyz.go4lunch.utils.Constants.DEVICE_LOCATION_LON;
-import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 import static robfernandes.xyz.go4lunch.utils.Constants.GOOGLE_PLACES_BASE_URL;
+import static robfernandes.xyz.go4lunch.utils.Constants.NEARBY_PLACES;
 import static robfernandes.xyz.go4lunch.utils.Constants.RESTAURANT_INFO_BUNDLE_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
@@ -69,13 +68,10 @@ public class NavigationActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private ActionBarDrawerToggle toggle;
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 928;
-    private static final String TAG = "NavigationActivity";
     private double currentLocationLat;
     private double currentLocationLon;
     private NearByPlaces nearByPlaces;
@@ -123,7 +119,7 @@ public class NavigationActivity extends AppCompatActivity {
         docRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
-                if (document.exists()) {
+                if (document != null && document.exists()) {
                     userInformation = document.toObject(UserInformation.class);
                     configureDrawer();
                     if (profileImageView != null) {
@@ -149,8 +145,7 @@ public class NavigationActivity extends AppCompatActivity {
                         getNearByRestaurants(MAP_FLAG);
                     }
                 });
-            } catch (SecurityException e) {
-                Log.e(TAG, "getDeviceLocation: SecurityException: " + e.getMessage());
+            } catch (SecurityException ignored) {
             }
         } else {
             Toast.makeText(getBaseContext(), "It is not possible to display the map"
@@ -183,7 +178,6 @@ public class NavigationActivity extends AppCompatActivity {
                                 result.getPlaceId()
                                 , apiKey
                         );
-                        Log.d(TAG, "onResponse: detailsCall " + detailsCall.request().url());
                         detailsCall.enqueue(new Callback<PlacesDetailsResponse>() {
                             @Override
                             public void onResponse(Call<PlacesDetailsResponse> call
@@ -217,7 +211,6 @@ public class NavigationActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<PlacesResponse> call, Throwable t) {
-                Log.e("TAG", "onFailure: ");
             }
         });
     }
@@ -235,7 +228,7 @@ public class NavigationActivity extends AppCompatActivity {
             List<String> openSchedule = placesDetailsResponse.getResult()
                     .getOpeningHours().getWeekdayText();
             restaurantInfo.setOpenSchedule(openSchedule);
-        } catch (NullPointerException e) {
+        } catch (NullPointerException ignored) {
         }
         try {
             restaurantInfo.setOpen(result.getOpeningHours().getOpenNow());
@@ -313,14 +306,14 @@ public class NavigationActivity extends AppCompatActivity {
 
     private void configureDrawerLayout() {
         this.drawerLayout = findViewById(R.id.activity_navigation_drawer_layout);
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
     }
 
     private void configureNavigationView() {
-        this.navigationView = findViewById(R.id.activity_navigation_nav_view);
+        NavigationView navigationView = findViewById(R.id.activity_navigation_nav_view);
 
         TextView emailNav = navigationView.getHeaderView(0)
                 .findViewById(R.id.drawer_header_user_email);
@@ -328,7 +321,6 @@ public class NavigationActivity extends AppCompatActivity {
                 .findViewById(R.id.drawer_header_user_name);
 
         emailNav.setText(userInformation.getEmail());
-        Log.d(TAG, "configureNavigationView: " + currentUser.getDisplayName());
         nameNav.setText(userInformation.getName());
 
         profileImageView = navigationView.getHeaderView(0)

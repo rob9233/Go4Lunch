@@ -2,7 +2,6 @@ package robfernandes.xyz.go4lunch.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -19,6 +18,8 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.util.Objects;
+
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.model.UserInformation;
 
@@ -28,10 +29,8 @@ public class MainActivity extends BaseRegisterActivity {
     private SignInButton getLogInWithGmailBtn;
     private TextView dontHaveAccountTextView;
     private EditText email, password;
-    private GoogleSignInOptions gso;
     private FirebaseAuth firebaseAuth;
     private GoogleSignInClient mGoogleSignInClient;
-    private static final String TAG = "MainActivityc";
     private static final int RC_SIGN_IN = 9001;
 
     @Override
@@ -46,7 +45,7 @@ public class MainActivity extends BaseRegisterActivity {
     }
 
     private void setSignInOptions() {
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.web_client_id))
                 .requestEmail()
                 .build();
@@ -62,16 +61,15 @@ public class MainActivity extends BaseRegisterActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.d(TAG, "onActivityResult: ");
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                firebaseAuthWithGoogle(account);
+                firebaseAuthWithGoogle(Objects.requireNonNull(account));
             } catch (ApiException e) {
-                Toast.makeText(getApplicationContext(), "Google sign in failed"
+                Toast.makeText(getApplicationContext(), getString(R.string.google_sign_in_failed)
                         , Toast.LENGTH_SHORT).show();
             }
         }
@@ -87,15 +85,16 @@ public class MainActivity extends BaseRegisterActivity {
                         userInformation.setName(acct.getDisplayName());
                         userInformation.setId(firebaseAuth.getUid());
                         try {
-                            userInformation.setPhotoUrl(acct.getPhotoUrl().toString());
+                            userInformation.setPhotoUrl(Objects.requireNonNull(acct.getPhotoUrl()).
+                                    toString());
                         } catch (NullPointerException e) {
                             userInformation.setPhotoUrl(getString(R.string.logo_url));
                         }
 
                         saveUserInfoAndLogIn(userInformation);
                     } else {
-                        // If sign in fails, display a message to the user.
-                        Log.e(TAG, "signInWithCredential:failure", task.getException());
+                        Toast.makeText(getBaseContext(), getString(R.string.authentication_failed)
+                                , Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -117,10 +116,11 @@ public class MainActivity extends BaseRegisterActivity {
 
         logInWithEmailBtn.setOnClickListener(v -> {
                     if (email.getText().toString().isEmpty()) {
-                        Toast.makeText(getBaseContext(), "please insert an email",
+                        Toast.makeText(getBaseContext(), getString(R.string.please_unsert_an_email),
                                 Toast.LENGTH_SHORT).show();
                     } else if (password.getText().toString().isEmpty()) {
-                        Toast.makeText(getApplicationContext(), "please insert a password",
+                        Toast.makeText(getApplicationContext(),
+                                getString(R.string.please_insert_a_password),
                                 Toast.LENGTH_SHORT).show();
                     } else {
                         logInWithEmail();
@@ -128,10 +128,9 @@ public class MainActivity extends BaseRegisterActivity {
                 }
         );
 
-        dontHaveAccountTextView.setOnClickListener(v -> {
-            startActivity(new Intent(MainActivity.this
-                    , RegisterEmailActivity.class));
-        });
+        dontHaveAccountTextView.setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this
+                        , RegisterEmailActivity.class)));
 
         getLogInWithGmailBtn.setOnClickListener(v -> googleSignIn());
     }

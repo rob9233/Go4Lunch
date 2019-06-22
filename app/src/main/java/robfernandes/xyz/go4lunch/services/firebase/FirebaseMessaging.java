@@ -23,7 +23,8 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         Notification notification = new NotificationCompat.Builder(this,
                 getString(R.string.default_notification_channel_id))
                 .setSmallIcon(R.drawable.ic_restaurant_orange_24dp)
-                .setContentTitle(firebaseNotification != null ? firebaseNotification.getTitle() : null)
+                .setContentTitle(firebaseNotification != null ? 
+                        firebaseNotification.getTitle() : null)
                 .setContentText(Objects.requireNonNull(firebaseNotification).getBody())
                 .build();
 

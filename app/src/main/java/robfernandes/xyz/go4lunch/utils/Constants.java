@@ -10,4 +10,8 @@ public class Constants {
     public static final String USER_INFORMATION_EXTRA = "USER_INFORMATION_EXTRA";
     public static String PREFS_KEY = "SHARED_PREFERENCES_KEY";
     public static String NOTIFICATIONS_KEY = "NOTIFICATIONS_KEY";
+    public static String MIN_STARS = "minStars";
+    public static String MAX_STARS = "maxStars";
+    public static String MIN_DISTANCE = "minDistance";
+    public static String MAX_DISTANCE = "maxDistance";
 }
