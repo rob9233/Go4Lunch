@@ -101,16 +101,23 @@ public class RestaurantActivity extends AppCompatActivity {
     }
 
     private void getLikeStatus() {
-        db.collection("likes").document(userInformation.getId())
-                .collection(restaurantInfo.getId())
-                .document("like")
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        setUserLike(true);
-                    }
-                    like.setOnClickListener(v -> likeRestaurant());
-                }).addOnFailureListener(e -> like.setOnClickListener(v -> likeRestaurant()));
+
+        //TODO check try to reuse - likeRestaurant()
+        try {
+            db.collection("likes").document(userInformation.getId())
+                    .collection(restaurantInfo.getId())
+                    .document("like")
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            setUserLike(true);
+                        }
+                        like.setOnClickListener(v -> likeRestaurant());
+                    }).addOnFailureListener(e -> like.setOnClickListener(v -> likeRestaurant()));
+        } catch (Exception e) {
+
+        }
+
     }
 
     private void getDetailedInfo() {
@@ -179,11 +186,7 @@ public class RestaurantActivity extends AppCompatActivity {
                             } catch (NullPointerException e) {
                             }
                         }
-                        if (found) {
-                            setPlanParams(true);
-                        } else {
-                            setPlanParams(false);
-                        }
+                        setPlanParams(found);
                     } else {
                         setPlanParams(false);
                     }
@@ -416,6 +419,8 @@ public class RestaurantActivity extends AppCompatActivity {
 
         OnFailureListener failed = e -> Toast.makeText(getBaseContext(),
                 "Failed", Toast.LENGTH_SHORT).show();
+
+        //TODO remove duplicated code
         if (!userLike) {
             db.collection("likes").document(userInformation.getId())
                     .collection(restaurantInfo.getId())

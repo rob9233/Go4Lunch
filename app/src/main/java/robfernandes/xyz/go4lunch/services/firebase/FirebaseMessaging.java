@@ -18,6 +18,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
+
         super.onMessageReceived(remoteMessage);
         RemoteMessage.Notification firebaseNotification = remoteMessage.getNotification();
         Notification notification = new NotificationCompat.Builder(this,

@@ -97,7 +97,35 @@ public class Utils {
 
     public static int getTodaysWeekDay() {
         //-1 to start at monday
-        return Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2;
+        int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        int googleApiIndex;
+        switch (day) {
+            case Calendar.MONDAY:
+                googleApiIndex = 0;
+                break;
+            case Calendar.TUESDAY:
+                googleApiIndex = 1;
+                break;
+            case Calendar.WEDNESDAY:
+                googleApiIndex = 2;
+                break;
+            case Calendar.THURSDAY:
+                googleApiIndex = 3;
+                break;
+            case Calendar.FRIDAY:
+                googleApiIndex = 4;
+                break;
+            case Calendar.SATURDAY:
+                googleApiIndex = 5;
+                break;
+            case Calendar.SUNDAY:
+                googleApiIndex = 6;
+                break;
+            default:
+                googleApiIndex = 0;
+                break;
+        }
+        return googleApiIndex;
     }
 
     private static SharedPreferences getSharedPreference(Context context) {

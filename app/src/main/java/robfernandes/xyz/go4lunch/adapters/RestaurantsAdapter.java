@@ -93,7 +93,7 @@ public class RestaurantsAdapter extends
             sheduleText = String.format("%s: %s", sheduleText,
                     restaurantInfo.getOpenSchedule().get(weekDay));
             viewHolder.openHours.setText(sheduleText);
-        } catch (NullPointerException ignored) {
+        } catch (Exception ignored) {
         }
 
         LatLng restaurantLatLng = new LatLng(restaurantInfo.getLat(), restaurantInfo.getLon());
