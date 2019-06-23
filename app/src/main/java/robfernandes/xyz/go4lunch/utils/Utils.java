@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -19,6 +20,7 @@ import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 import robfernandes.xyz.go4lunch.R;
@@ -138,5 +140,15 @@ public class Utils {
 
     public static void setNotificationStatusInPrefs(Context context, boolean value) {
         getSharedPreference(context).edit().putBoolean(NOTIFICATIONS_KEY, value).apply();
+    }
+
+    public static void changeLanguage(Activity activity, String lang) {
+        Configuration config = activity.getResources().getConfiguration();
+        Locale locale = new Locale(lang);
+        Locale.setDefault(locale);
+        config.locale = locale;
+        activity.getResources().updateConfiguration(config,
+                activity.getResources().getDisplayMetrics());
+        restartApp(activity);
     }
 }

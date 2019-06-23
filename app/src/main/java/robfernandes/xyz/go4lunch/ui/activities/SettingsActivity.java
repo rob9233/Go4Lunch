@@ -1,10 +1,10 @@
 package robfernandes.xyz.go4lunch.ui.activities;
 
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.widget.Switch;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import robfernandes.xyz.go4lunch.R;
 
 import static robfernandes.xyz.go4lunch.utils.Utils.getNotificationStatusFromPrefs;
