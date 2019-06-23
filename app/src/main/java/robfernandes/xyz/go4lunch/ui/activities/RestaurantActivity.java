@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,6 +19,7 @@ import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -71,6 +73,7 @@ public class RestaurantActivity extends AppCompatActivity {
     private PlacesClient placesClient;
     private ViewGroup phone, like, website;
     private boolean userLike;
+    private static final String TAG = "RestaurantActivityx";
 
 
     @Override
@@ -101,12 +104,8 @@ public class RestaurantActivity extends AppCompatActivity {
     }
 
     private void getLikeStatus() {
-
-        //TODO check try to reuse - likeRestaurant()
         try {
-            db.collection("likes").document(userInformation.getId())
-                    .collection(restaurantInfo.getId())
-                    .document("like")
+            getLikeDocument()
                     .get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
@@ -115,9 +114,8 @@ public class RestaurantActivity extends AppCompatActivity {
                         like.setOnClickListener(v -> likeRestaurant());
                     }).addOnFailureListener(e -> like.setOnClickListener(v -> likeRestaurant()));
         } catch (Exception e) {
-
+            Log.e(TAG, "getLikeStatus: ", e);
         }
-
     }
 
     private void getDetailedInfo() {
@@ -362,7 +360,6 @@ public class RestaurantActivity extends AppCompatActivity {
             workmatesAdapter.notifyDataSetChanged();
         } catch (NullPointerException e) {
         }
-
     }
 
     private UserInformation getUserInfo() {
@@ -413,27 +410,35 @@ public class RestaurantActivity extends AppCompatActivity {
     }
 
     private void likeRestaurant() {
-        Map<String, String> likes = new HashMap<>();
-        likes.put("restaurantId", restaurantInfo.getId());
-        likes.put("userId", userInformation.getId());
+        try {
+            Map<String, String> likes = new HashMap<>();
+            likes.put("restaurantId", restaurantInfo.getId());
+            likes.put("userId", userInformation.getId());
 
-        OnFailureListener failed = e -> Toast.makeText(getBaseContext(),
-                "Failed", Toast.LENGTH_SHORT).show();
+            OnFailureListener failed = e -> Toast.makeText(getBaseContext(),
+                    "Failed", Toast.LENGTH_SHORT).show();
 
-        //TODO remove duplicated code
-        if (!userLike) {
-            db.collection("likes").document(userInformation.getId())
-                    .collection(restaurantInfo.getId())
-                    .document("like")
-                    .set(likes).addOnSuccessListener(documentReference -> setUserLike(true))
-                    .addOnFailureListener(failed);
-        } else {
-            db.collection("likes").document(userInformation.getId())
-                    .collection(restaurantInfo.getId())
-                    .document("like").delete()
-                    .addOnSuccessListener(documentReference -> setUserLike(false))
-                    .addOnFailureListener(failed);
+            DocumentReference document = getLikeDocument();
+            if (!userLike) {
+                document
+                        .set(likes).addOnSuccessListener(documentReference -> setUserLike(true))
+                        .addOnFailureListener(failed);
+            } else {
+                document
+                        .delete()
+                        .addOnSuccessListener(documentReference -> setUserLike(false))
+                        .addOnFailureListener(failed);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "likeRestaurant: ", e);
         }
+    }
+
+    private DocumentReference getLikeDocument() {
+        return db.collection("likes")
+                .document(userInformation.getId())
+                .collection(restaurantInfo.getId())
+                .document("like");
     }
 
     private void setUserLike(boolean b) {
