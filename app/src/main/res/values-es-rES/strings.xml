@@ -1,5 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Go4Lunch</string>
-    <string name="logout">sair</string>
+    <string name="log_in">Iniciar sesión</string>
+
+    <string name="navigation_drawer_open">cajón abierto</string>
+    <string name="navigation_drawer_close">cajón cerrado</string>
+    <string name="title_home">Casa</string>
+    <string name="title_dashboard">Tablero</string>
+    <string name="title_notifications">Notificaciones</string>
+    <string name="restaurant_list">Lista de restaurantes</string>
+    <string name="map">Mapa</string>
+    <string name="workmates">Compañeros de trabajo</string>
+    <string name="search">Buscar</string>
+    <string name="logo">Logo</string>
+    <string name="log_in_with_email">Inicia sesión con correo electrónico</string>
+    <string name="log_in_with_facebook">Inicia sesión con Facebook</string>
+    <string name="log_in_with_gmail">Inicia sesión con Gmail</string>
+    <string name="log_in_with_twitter">Inicia sesión con Twitter</string>
+    <string name="log_in_with_github">Inicia sesión con GitHub</string>
+    <string name="profile_picture">Foto de perfil</string>
+    <string name="your_lunch">TU ALMUERZO</string>
+    <string name="settings">AJUSTES</string>
+    <string name="logout">CERRAR SESIÓN</string>
+    <string name="title_activity_settings">Ajustes</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Habilitar recomendaciones sociales</string>
+    <string name="pref_description_social_recommendations">Recomendaciones para personas a contactar.
+        basado en tu historial de mensajes
+    </string>
+
+    <string name="pref_title_display_name">mostrar nombre</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Añadir amigos a los mensajes</string>
+
+    <string-array name="multi_select_list_preference_default_value" />
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notificaciones</string>
+
+    <string name="pref_title_new_message_notifications">Notificaciones de nuevos mensajes</string>
+
+    <string name="don_t_have_an_account_click_here_to_register_for_free">¿No tienes una cuenta? Haga clic aquí para registrarse gratis</string>
+    <string name="it_s_not_possible_to_show_the_map_on_yor_device">No es posible mostrar el mapa en tu dispositivo</string>
+    <string name="click_here_to_add_a_profile_picture">Haga clic aquí para agregar una foto de perfil</string>
+    <string name="distance">Filtrar por distancia</string>
+    <string name="num_of_stars">Filtrar por número de estrellas</string>
+    <string name="open_now">Abierto ahora</string>
+    <string name="closed">Cerrado</string>
+    <string name="background_image">Imagen de fondo</string>
+    <string name="authentication_failed">Autenticación fallida</string>
+    <string name="google_sign_in_failed">El inicio de sesión de Google falló</string>
+    <string name="please_unsert_an_email">por favor inserte un correo electrónico</string>
+    <string name="please_insert_a_password">por favor ingrese una contraseña</string>
+    <string name="language">Idioma:</string>
+    <string name="notifications">Notificaciones:</string>
+    <string name="loading_map">Cargando mapa</string>
+    <string name="change_language">Cambiar idioma</string>
+    <string name="change_lang_restart_app">Cambiar el idioma reiniciará la aplicación, ¿quieres continuar?</string>
+    <string name="failed">Ha fallado</string>
+    <string name="it_is_not_possible_to_display_info_restaurant">No es posible mostrar información sobre este restaurante.</string>
+    <string name="click_here_to_see_more">Haga clic aquí para ver más</string>
+    <string name="it_is_not_pos_find_place">No es posible encontrar el lugar.</string>
+    <string name="person_is">persona es</string>
+    <string name="persons_are">las personas son</string>
+    <string name="going_here">%d %s yendo aqui</string>
+    <string name="place_not_found">Lugar no encontrado:</string>
+    <string name="star">estrella</string>
+    <string name="stars">estrellas</string>
+    <string name="it_is_not_possible_to_dispay_map">No es posible visualizar el mapa.</string>
+    <string name="it_was_not_foun_lunch">No se encontró un plan de almuerzo.</string>
+    <string name="name">Nombre</string>
+    <string name="email">Email</string>
+    <string name="password">Contraseña</string>
+    <string name="register">Registro</string>
+    <string name="call">Llamada</string>
+    <string name="like">Me gusta</string>
+    <string name="website">Sitio web</string>
+    <string name="filter">Filtrar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="min_number_of_stars">Min numero de estrellas</string>
+    <string name="_0_stars">0 estrellas</string>
+    <string name="max_number_of_stars">Max numero de estrellas</string>
+    <string name="_3_stars">3 estrellas</string>
+    <string name="min_distance">Min distancia</string>
+    <string name="max_distance">Max distancia</string>
+    <string name="ftr">filtrar</string>
+    <string name="is_eating_at">va a comer a</string>
+    <string name="hasnt_decided_yet">no se ha decidido</string>
 </resources>

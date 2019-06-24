@@ -252,7 +252,7 @@ public class RestaurantActivity extends AppCompatActivity {
 
     private void setRecyclerView() {
         RecyclerView recyclerView = findViewById(R.id.activity_restaurant_recycler_view);
-        workmatesAdapter = new WorkmatesAdapter(usersList
+        workmatesAdapter = new WorkmatesAdapter(getBaseContext(), usersList
                 , eatingPlans, false);
         recyclerView.setAdapter(workmatesAdapter);
     }

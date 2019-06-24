@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">Go4Lunch</string>
+    <string name="app_name" translatable="false">Go4Lunch</string>
     <string name="log_in">Log In</string>
 
     <string name="navigation_drawer_open">open drawer</string>
     <string name="navigation_drawer_close">close drawer</string>
-    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_main2" translatable="false">Main2Activity</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
@@ -18,15 +18,15 @@
     <string name="log_in_with_gmail">Log In With Gmail</string>
     <string name="log_in_with_twitter">Log In WIth Twitter</string>
     <string name="log_in_with_github">Log In With GitHub</string>
-    <string name="go4lunch">Go4Lunch</string>
-    <string name="email_email_com">email@email.com</string>
+    <string name="go4lunch" translatable="false">Go4Lunch</string>
+    <string name="email_email_com" translatable="false">email@email.com</string>
     <string name="profile_picture">Profile Picture</string>
     <string name="your_lunch">YOUR LUNCH</string>
     <string name="settings">SETTINGS</string>
     <string name="logout">LOGOUT</string>
-    <string name="default_notification_channel_id">Go4Lucnh</string>
+    <string name="default_notification_channel_id" translatable="false">Go4Lucnh</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="logo_url"><![CDATA[https://firebasestorage.googleapis.com/v0/b/go4lunch–70a23.appspot.com/o/images%2Flogo.png?alt=media&token=2055f8d2–6d9e-4cd0-ae7f-6df066ff4364]]></string>
+    <string name="logo_url" translatable="false"><![CDATA[https://firebasestorage.googleapis.com/v0/b/go4lunch–70a23.appspot.com/o/images%2Flogo.png?alt=media&token=2055f8d2–6d9e-4cd0-ae7f-6df066ff4364]]></string>
 
     <!-- Strings related to Settings -->
 
@@ -54,9 +54,9 @@
     </string-array>
 
     <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
+    <string name="pref_header_data_sync" translatable="false">Data &amp; sync</string>
 
-    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string name="pref_title_sync_frequency" translatable="false">Sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
         <item>15 minutes</item>
         <item>30 minutes</item>
@@ -88,17 +88,17 @@
 
     <string-array name="multi_select_list_preference_default_value" />
 
-    <string name="pref_title_system_sync_settings">System sync settings</string>
+    <string name="pref_title_system_sync_settings" translatable="false">System sync settings</string>
 
     <!-- Example settings for Notifications -->
     <string name="pref_header_notifications">Notifications</string>
 
     <string name="pref_title_new_message_notifications">New message notifications</string>
 
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
+    <string name="pref_title_ringtone" translatable="false">Ringtone</string>
+    <string name="pref_ringtone_silent" translatable="false">Silent</string>
 
-    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="pref_title_vibrate" translatable="false">Vibrate</string>
     <string name="don_t_have_an_account_click_here_to_register_for_free">Don\'t have an account? Click here to register for free</string>
     <string name="it_s_not_possible_to_show_the_map_on_yor_device">It\'s not possible to show the map on yor device</string>
     <string name="click_here_to_add_a_profile_picture">Click here to add a profile picture</string>
@@ -142,8 +142,10 @@
     <string name="max_number_of_stars">Max number of stars</string>
     <string name="_3_stars">3 stars</string>
     <string name="min_distance">Min distance</string>
-    <string name="_0_m">0 m</string>
+    <string name="_0_m" translatable="false">0 m</string>
     <string name="max_distance">Max distance</string>
-    <string name="_1000_m">1000 m</string>
+    <string name="_1000_m" translatable="false">1000 m</string>
     <string name="ftr">filter</string>
+    <string name="is_eating_at">is eating at</string>
+    <string name="hasnt_decided_yet">hasn\'t decided yet</string>
 </resources>

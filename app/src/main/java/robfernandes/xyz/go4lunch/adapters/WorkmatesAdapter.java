@@ -1,5 +1,6 @@
 package robfernandes.xyz.go4lunch.adapters;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,20 +29,24 @@ public class WorkmatesAdapter extends
     private List<UserInformation> userList;
     private List<UserInformation> fullUserList;
     private List<EatingPlan> eatingPlanList;
+    private Context context;
     private boolean showFullDescription;
 
-    public WorkmatesAdapter(List<UserInformation> userList, List<EatingPlan> eatingPlanList,
-                            boolean showFullDescription
+    public WorkmatesAdapter(
+            Context context,
+            List<UserInformation> userList, List<EatingPlan> eatingPlanList,
+            boolean showFullDescription
     ) {
+        this.context = context;
         this.showFullDescription = showFullDescription;
         this.userList = userList;
         this.fullUserList = new ArrayList<>(userList);
         this.eatingPlanList = eatingPlanList;
     }
 
-    public WorkmatesAdapter(List<UserInformation> userList, List<EatingPlan> eatingPlanList
+    public WorkmatesAdapter(Context context, List<UserInformation> userList, List<EatingPlan> eatingPlanList
     ) {
-        this(userList, eatingPlanList, true);
+        this(context, userList, eatingPlanList, true);
     }
 
     @NonNull
@@ -62,10 +67,11 @@ public class WorkmatesAdapter extends
             String planedRestaurantName = getPlanedRestaurant(userInformation);
             descriptionText = userInformation.getName();
             if (planedRestaurantName != null && !planedRestaurantName.isEmpty()) {
-                descriptionText += " is eating at " + planedRestaurantName;
+                descriptionText += " " +
+                        context.getString(R.string.is_eating_at) + " " + planedRestaurantName;
                 viewHolder.description.setTextColor(Color.BLACK);
             } else {
-                descriptionText += " hasn't decided yet";
+                descriptionText += " " + context.getString(R.string.hasnt_decided_yet);
             }
         } else {
             viewHolder.description.setTextColor(Color.BLACK);

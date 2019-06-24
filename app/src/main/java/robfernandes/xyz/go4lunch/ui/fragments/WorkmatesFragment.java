@@ -72,7 +72,7 @@ public class WorkmatesFragment extends BaseFragment {
 
     private void displayUsers() {
         RecyclerView recyclerView = view.findViewById(R.id.fragment_work_mates_recycler_view);
-        workmatesAdapter = new WorkmatesAdapter(userList, eatingPlanList);
+        workmatesAdapter = new WorkmatesAdapter(getContext(), userList, eatingPlanList);
         recyclerView.setAdapter(workmatesAdapter);
     }
 
