@@ -39,6 +39,7 @@ import static robfernandes.xyz.go4lunch.utils.Utils.getRestaurantPhotoUrl;
 import static robfernandes.xyz.go4lunch.utils.Utils.getTodaysWeekDay;
 import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
 
+@SuppressWarnings("unchecked")
 public class RestaurantsAdapter extends
         RecyclerView.Adapter<RestaurantsAdapter.ViewHolder>
         implements Filterable {

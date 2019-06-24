@@ -68,7 +68,7 @@
     <string name="it_is_not_pos_find_place">No es posible encontrar el lugar.</string>
     <string name="person_is">persona es</string>
     <string name="persons_are">las personas son</string>
-    <string name="going_here">%d %s yendo aqui</string>
+    <string name="going_here">%d %s yendo aquí</string>
     <string name="place_not_found">Lugar no encontrado:</string>
     <string name="star">estrella</string>
     <string name="stars">estrellas</string>
