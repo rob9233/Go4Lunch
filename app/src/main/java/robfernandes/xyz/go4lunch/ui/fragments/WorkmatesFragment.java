@@ -2,18 +2,19 @@ package robfernandes.xyz.go4lunch.ui.fragments;
 
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.adapters.WorkmatesAdapter;
@@ -25,7 +26,6 @@ import robfernandes.xyz.go4lunch.model.UserInformation;
 public class WorkmatesFragment extends BaseFragment {
 
     private List<UserInformation> userList;
-    private RecyclerView recyclerView;
     private WorkmatesAdapter workmatesAdapter;
     private View view;
 
@@ -35,7 +35,7 @@ public class WorkmatesFragment extends BaseFragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_work_mates, container, false);
@@ -54,12 +54,13 @@ public class WorkmatesFragment extends BaseFragment {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
+                        for (QueryDocumentSnapshot document :
+                                Objects.requireNonNull(task.getResult())) {
                             UserInformation userInformation = document
                                     .toObject(UserInformation.class);
                             userList.add(userInformation);
                         }
-                      getEatingPlans();
+                        getEatingPlans();
                     }
                 });
     }
@@ -70,7 +71,7 @@ public class WorkmatesFragment extends BaseFragment {
     }
 
     private void displayUsers() {
-        recyclerView = view.findViewById(R.id.fragment_work_mates_recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.fragment_work_mates_recycler_view);
         workmatesAdapter = new WorkmatesAdapter(userList, eatingPlanList);
         recyclerView.setAdapter(workmatesAdapter);
     }

@@ -64,6 +64,7 @@ import static robfernandes.xyz.go4lunch.utils.Constants.USER_INFORMATION_EXTRA;
 import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
 import static robfernandes.xyz.go4lunch.utils.Utils.restartApp;
 
+@SuppressWarnings("NullableProblems")
 public class NavigationActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNav;
@@ -151,7 +152,7 @@ public class NavigationActivity extends AppCompatActivity {
             } catch (SecurityException ignored) {
             }
         } else {
-            Toast.makeText(getBaseContext(), "It is not possible to display the map"
+            Toast.makeText(getBaseContext(), getString(R.string.it_is_not_possible_to_dispay_map)
                     , Toast.LENGTH_SHORT).show();
         }
 
@@ -382,12 +383,12 @@ public class NavigationActivity extends AppCompatActivity {
             }
             if (!foundPlace) {
                 Toast.makeText(getBaseContext()
-                        , "It was not found a lunch plan"
+                        , getString(R.string.it_was_not_foun_lunch)
                         , Toast.LENGTH_SHORT).show();
             }
         })
                 .addOnFailureListener(e -> Toast.makeText(getBaseContext()
-                        , "It was not found a lunch plan"
+                        , getString(R.string.it_was_not_foun_lunch)
                         , Toast.LENGTH_SHORT).show());
     }
 

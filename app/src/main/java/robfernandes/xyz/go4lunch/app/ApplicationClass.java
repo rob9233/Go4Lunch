@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.os.Build;
 
 import androidx.multidex.MultiDexApplication;
+
 import robfernandes.xyz.go4lunch.R;
 
 public class ApplicationClass extends MultiDexApplication {

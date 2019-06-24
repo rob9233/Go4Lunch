@@ -2,18 +2,20 @@ package robfernandes.xyz.go4lunch.ui.fragments;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,6 +39,7 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.adapters.AutocompleteAdapter;
@@ -71,7 +74,7 @@ public class MapFragment extends BaseFragment {
     private UserInformation userInformation;
     private static final long searchRadiusInMetres = 5000;
     private NearByPlaces nearByPlaces;
-    private String defaultSnippet = "Click here to see more";
+    private String defaultSnippet;
 
     public MapFragment() {
         // Required empty public constructor
@@ -82,6 +85,7 @@ public class MapFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         getParams();
+        defaultSnippet = getString(R.string.click_here_to_see_more);
         view = inflater.inflate(R.layout.fragment_map, container, false);
         if (currentLocationLat != null && currentLocationLon != null && userInformation != null
                 && nearByPlaces != null) {
@@ -94,13 +98,15 @@ public class MapFragment extends BaseFragment {
 
     private void initFragment() {
         initMap();
-        Places.initialize(getContext(), getString(R.string.google_maps_api_key));
+        Places.initialize(Objects.requireNonNull(getContext())
+                , getString(R.string.google_maps_api_key));
         placesClient = Places.createClient(getContext());
         setAutocompleteAdapter();
     }
 
     private void getParams() {
-        currentLocationLat = getArguments().getDouble(DEVICE_LOCATION_LAT);
+        currentLocationLat = getArguments() != null ?
+                getArguments().getDouble(DEVICE_LOCATION_LAT) : 0;
         currentLocationLon = getArguments().getDouble(DEVICE_LOCATION_LON);
         nearByPlaces = getArguments().getParcelable(NEARBY_PLACES);
         userInformation = getArguments().getParcelable(USER_INFORMATION_EXTRA);
@@ -111,8 +117,7 @@ public class MapFragment extends BaseFragment {
         recyclerViewAdapter.setHasFixedSize(true);
         autocompletePredictionList = new ArrayList<>();
         autocompleteAdapter = new AutocompleteAdapter(autocompletePredictionList);
-        autocompleteAdapter.setOnAutoCompleteItemClickListener(autocompletePrediction ->
-                setSelectedPlace(autocompletePrediction));
+        autocompleteAdapter.setOnAutoCompleteItemClickListener(this::setSelectedPlace);
         recyclerViewAdapter.setAdapter(autocompleteAdapter);
     }
 
@@ -145,13 +150,12 @@ public class MapFragment extends BaseFragment {
             try {
                 moveCamera(place);
             } catch (Exception e) {
-                Toast.makeText(getContext(), "It is not possible to find the place"
+                Toast.makeText(getContext(), getString(R.string.it_is_not_pos_find_place)
                         , Toast.LENGTH_SHORT).show();
             }
-        }).addOnFailureListener((exception) -> {
-            Toast.makeText(getContext(), "It is not possible to find the place"
-                    , Toast.LENGTH_SHORT).show();
-        });
+        }).addOnFailureListener((exception) ->
+                Toast.makeText(getContext(), getString(R.string.it_is_not_pos_find_place)
+                        , Toast.LENGTH_SHORT).show());
 
     }
 
@@ -159,29 +163,31 @@ public class MapFragment extends BaseFragment {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
 
-        mapFragment.getMapAsync(googleMap -> {
-            mMap = googleMap;
-            moveCamera(new LatLng(currentLocationLat,
-                    currentLocationLon));
-            bounds = RectangularBounds.newInstance(Utils.getBounds(
-                    new LatLng(currentLocationLat,
-                            currentLocationLon)
-                    , searchRadiusInMetres
-            ));
-            if (ActivityCompat.checkSelfPermission(
-                    getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(googleMap -> {
+                mMap = googleMap;
+                moveCamera(new LatLng(currentLocationLat,
+                        currentLocationLon));
+                bounds = RectangularBounds.newInstance(Utils.getBounds(
+                        new LatLng(currentLocationLat,
+                                currentLocationLon)
+                        , searchRadiusInMetres
+                ));
+                if (ActivityCompat.checkSelfPermission(
+                        Objects.requireNonNull(getContext()),
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
 
-                return;
-            }
-            mMap.setMyLocationEnabled(true);
-            mMap.setOnInfoWindowClickListener(marker ->
-                    goToRestaurantActivity(marker));
+                    return;
+                }
+                mMap.setMyLocationEnabled(true);
+                mMap.setOnInfoWindowClickListener(this::goToRestaurantActivity);
 
-            getEatingPlans();
-        });
+                getEatingPlans();
+            });
+        }
     }
 
     @Override
@@ -195,6 +201,7 @@ public class MapFragment extends BaseFragment {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private void addMarker(RestaurantInfo restaurantInfo) {
         String snippet = defaultSnippet;
         MarkerOptions options = new MarkerOptions()
@@ -208,19 +215,18 @@ public class MapFragment extends BaseFragment {
         if (numOfPlans > 0) {
             try {
                 BitmapDescriptor iconBitmap = getMarkerIconFromDrawable(
-                        getActivity().getResources()
+                        Objects.requireNonNull(getActivity()).getResources()
                                 .getDrawable(R.drawable.ic_location_on_green_48dp));
                 options.icon(iconBitmap);
                 String text;
                 if (numOfPlans == 1) {
-                    text = "person is";
+                    text = getString(R.string.person_is);
                 } else {
-                    text = "persons are";
+                    text = getString(R.string.persons_are);
                 }
+                snippet = String.format(getString(R.string.going_here), numOfPlans, text);
 
-                snippet = String.format("%d %s going here", numOfPlans, text);
-
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         options.snippet(snippet);
@@ -235,7 +241,7 @@ public class MapFragment extends BaseFragment {
                 if (eatingPlan.getRestaurantID().equals(restaurantInfo.getId())) {
                     num++;
                 }
-            } catch (NullPointerException e) {
+            } catch (Exception ignored) {
             }
         }
 
@@ -248,10 +254,10 @@ public class MapFragment extends BaseFragment {
             Intent intent = new Intent(getContext(), RestaurantActivity.class);
             intent.putExtra(RESTAURANT_INFO_BUNDLE_EXTRA, restaurantInfo);
             intent.putExtra(USER_INFORMATION_EXTRA, userInformation);
-            getContext().startActivity(intent);
+            Objects.requireNonNull(getContext()).startActivity(intent);
         } else {
-            Toast.makeText(getContext(), "It is not possible to " +
-                            "display info about this restaurant",
+            Toast.makeText(getContext(),
+                    getString(R.string.it_is_not_possible_to_display_info_restaurant),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -266,8 +272,8 @@ public class MapFragment extends BaseFragment {
         LatLng latLng = place.getLatLng();
         if (latLng == null) {
             LatLngBounds viewport = place.getViewport();
-            latLng = new LatLng(viewport.getCenter().latitude,
-                    viewport.getCenter().longitude);
+            latLng = new LatLng(viewport != null ? viewport.getCenter().latitude : 0,
+                    viewport != null ? viewport.getCenter().longitude : 0);
         }
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
@@ -278,8 +284,10 @@ public class MapFragment extends BaseFragment {
         restaurantInfo.setLon(place.getLatLng().longitude);
         restaurantInfo.setName(place.getName());
         try {
-            restaurantInfo.setPhotoMetadata(place.getPhotoMetadatas().get(0));
-        } catch (NullPointerException e) {}
+            restaurantInfo.setPhotoMetadata(
+                    Objects.requireNonNull(place.getPhotoMetadatas()).get(0));
+        } catch (Exception ignored) {
+        }
 
         addMarker(restaurantInfo);
     }
@@ -311,7 +319,8 @@ public class MapFragment extends BaseFragment {
         }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {
                 ApiException apiException = (ApiException) exception;
-                Log.e(TAG, "Place not found: " + apiException.getStatusCode());
+                Log.e(TAG, getString(R.string.place_not_found) +
+                        apiException.getStatusCode());
             }
         });
     }

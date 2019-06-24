@@ -3,12 +3,13 @@ package robfernandes.xyz.go4lunch.ui.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
@@ -62,9 +63,7 @@ public class RegisterEmailActivity extends BaseRegisterActivity {
             }
         });
 
-        profileImage.setOnClickListener(v -> {
-            selectImage();
-        });
+        profileImage.setOnClickListener(v -> selectImage());
     }
 
     private void selectImage() {
@@ -78,7 +77,9 @@ public class RegisterEmailActivity extends BaseRegisterActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK && requestCode == PICK_IMAGE_REQUEST_CODE) {
-            profileImageUri = data.getData();
+            if (data != null) {
+                profileImageUri = data.getData();
+            }
             profileImage.setImageURI(profileImageUri);
             findViewById(R.id.activity_register_email_profile_text_view).setVisibility(View.GONE);
         }
@@ -100,9 +101,9 @@ public class RegisterEmailActivity extends BaseRegisterActivity {
                                 profileImageUrl = uri.toString();
                                 createUser(profileImageUrl);
                             }))
-                    .addOnFailureListener(exception -> {
-                        Toast.makeText(getBaseContext(), "Failed", Toast.LENGTH_SHORT).show();
-                    });
+                    .addOnFailureListener(exception ->
+                            Toast.makeText(getBaseContext()
+                                    , getString(R.string.failed), Toast.LENGTH_SHORT).show());
         } else {
             createUser("");
         }

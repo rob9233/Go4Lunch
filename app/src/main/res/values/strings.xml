@@ -119,4 +119,16 @@
     <string name="loading_map">Loading Map</string>
     <string name="change_language">Change language</string>
     <string name="change_lang_restart_app">Changing language will restart the app, do you want to continue?</string>
+    <string name="failed">Failed</string>
+    <string name="it_is_not_possible_to_display_info_restaurant">It is not possible to display info about this restaurant</string>
+    <string name="click_here_to_see_more">Click here to see more</string>
+    <string name="it_is_not_pos_find_place">It is not possible to find the place</string>
+    <string name="person_is">person is</string>
+    <string name="persons_are">persons are</string>
+    <string name="going_here">%d %s going here</string>
+    <string name="place_not_found">Place not found:</string>
+    <string name="star">star</string>
+    <string name="stars">stars</string>
+    <string name="it_is_not_possible_to_dispay_map">It is not possible to display the map</string>
+    <string name="it_was_not_foun_lunch">It was not found a lunch plan</string>
 </resources>

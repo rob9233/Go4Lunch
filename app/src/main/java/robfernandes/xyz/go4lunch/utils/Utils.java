@@ -1,5 +1,6 @@
 package robfernandes.xyz.go4lunch.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -44,14 +45,14 @@ public class Utils {
     public static void putImageIntoImageView(ImageView imageView, String url, Drawable errorDrawable) {
         try {
             Picasso.get().load(url).error(errorDrawable).into(imageView);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
     public static void putImageIntoImageView(ImageView imageView, String url) {
         try {
             Picasso.get().load(url).into(imageView);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -67,16 +68,14 @@ public class Utils {
 
     public static String getRestaurantPhotoUrl(String photoReference, Context context
             , String maxWidth, String maxHeight) {
-        StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/photo");
-        sb.append("?maxwidth=");
-        sb.append(maxWidth);
-        sb.append("&maxheight=");
-        sb.append(maxHeight);
-        sb.append("&photoreference=");
-        sb.append(photoReference);
-        sb.append("&key=");
-        sb.append(context.getString(R.string.google_maps_api_key));
-        return sb.toString();
+        return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" +
+                maxWidth +
+                "&maxheight=" +
+                maxHeight +
+                "&photoreference=" +
+                photoReference +
+                "&key=" +
+                context.getString(R.string.google_maps_api_key);
     }
 
     public static String generateRandomFileName() {
@@ -85,6 +84,7 @@ public class Utils {
 
     public static String getFormatedTodaysDate() {
         Date date = new Date(System.currentTimeMillis());
+        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat df = new SimpleDateFormat("yyyy/M/d");
         return df.format(date);
     }

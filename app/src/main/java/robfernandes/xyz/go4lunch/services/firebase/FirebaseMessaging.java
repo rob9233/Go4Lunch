@@ -1,7 +1,6 @@
 package robfernandes.xyz.go4lunch.services.firebase;
 
 import android.app.Notification;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -20,6 +19,8 @@ import java.util.Objects;
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.model.EatingPlan;
 
+import static robfernandes.xyz.go4lunch.utils.Utils.getNotificationStatusFromPrefs;
+
 /**
  * Created by Roberto Fernandes on 22/06/2019.
  */
@@ -35,38 +36,43 @@ public class FirebaseMessaging extends FirebaseMessagingService {
 
     private void userHasPlans() {
         try {
-            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            Calendar calendar = Calendar.getInstance();
-            String year = String.valueOf(calendar.get(Calendar.YEAR));
-            String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
-            String day = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+            if (getNotificationStatusFromPrefs(this)) {
+                String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser())
+                        .getUid();
+                Calendar calendar = Calendar.getInstance();
+                String year = String.valueOf(calendar.get(Calendar.YEAR));
+                String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
+                String day = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
 
-            FirebaseFirestore
-                    .getInstance()
-                    .collection("plans")
-                    .document(year)
-                    .collection(month)
-                    .document(day)
-                    .collection("plan")
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
-                        List<EatingPlan> otherUsersEatingPlans = new ArrayList<>();
-                        EatingPlan userEatingPlan = null;
-                        for (DocumentSnapshot doc : documents) {
-                            EatingPlan tempEatingPlan = doc.toObject(EatingPlan.class);
-                            if (tempEatingPlan.getUserID().equals(uid)) {
-                                userEatingPlan = tempEatingPlan;
-                            } else {
-                                otherUsersEatingPlans.add(tempEatingPlan);
+                FirebaseFirestore
+                        .getInstance()
+                        .collection("plans")
+                        .document(year)
+                        .collection(month)
+                        .document(day)
+                        .collection("plan")
+                        .get()
+                        .addOnSuccessListener(queryDocumentSnapshots -> {
+                            List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                            List<EatingPlan> otherUsersEatingPlans = new ArrayList<>();
+                            EatingPlan userEatingPlan = null;
+                            for (DocumentSnapshot doc : documents) {
+                                EatingPlan tempEatingPlan = doc.toObject(EatingPlan.class);
+                                if (tempEatingPlan != null) {
+                                    if (tempEatingPlan.getUserID().equals(uid)) {
+                                        userEatingPlan = tempEatingPlan;
+                                    } else {
+                                        otherUsersEatingPlans.add(tempEatingPlan);
+                                    }
+                                }
                             }
-                        }
-                        if (userEatingPlan != null) {
-                            getNumberUsersGoingToTheSameRestaurant(userEatingPlan
-                                    , otherUsersEatingPlans);
-                        }
-                    }).addOnFailureListener(e -> {
-            });
+                            if (userEatingPlan != null) {
+                                getNumberUsersGoingToTheSameRestaurant(userEatingPlan
+                                        , otherUsersEatingPlans);
+                            }
+                        }).addOnFailureListener(e -> {
+                });
+            }
         } catch (Exception ignored) {
         }
     }

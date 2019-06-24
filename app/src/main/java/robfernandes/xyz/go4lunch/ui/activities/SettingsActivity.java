@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import robfernandes.xyz.go4lunch.R;
 
@@ -20,8 +21,6 @@ import static robfernandes.xyz.go4lunch.utils.Utils.getNotificationStatusFromPre
 import static robfernandes.xyz.go4lunch.utils.Utils.setNotificationStatusInPrefs;
 
 public class SettingsActivity extends AppCompatActivity {
-
-    private static final String TAG = "SettingsActivityx";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +35,7 @@ public class SettingsActivity extends AppCompatActivity {
     private void setToolbar() {
         Toolbar toolbar = findViewById(R.id.activity_settings_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Settings");
     }
 

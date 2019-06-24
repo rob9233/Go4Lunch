@@ -12,6 +12,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
@@ -28,9 +31,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -53,6 +55,7 @@ import static robfernandes.xyz.go4lunch.utils.Utils.getFormatedTodaysDate;
 import static robfernandes.xyz.go4lunch.utils.Utils.getRestaurantPhotoUrl;
 import static robfernandes.xyz.go4lunch.utils.Utils.putImageIntoImageView;
 
+@SuppressWarnings("NullableProblems")
 public class RestaurantActivity extends AppCompatActivity {
 
     private RestaurantInfo restaurantInfo;
@@ -62,7 +65,6 @@ public class RestaurantActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private boolean goingToThisRestaurant = false;
     private CollectionReference plansCollection;
-    private RecyclerView recyclerView;
     private WorkmatesAdapter workmatesAdapter;
     private boolean dataChanged = false;
     private List<EatingPlan> eatingPlans;
@@ -131,18 +133,28 @@ public class RestaurantActivity extends AppCompatActivity {
         );
 
         detailsCall.enqueue(new Callback<PlacesDetailsResponse>() {
+            @SuppressWarnings("NullableProblems")
             @Override
-            public void onResponse(Call<PlacesDetailsResponse> call, Response<PlacesDetailsResponse> response) {
+            public void onResponse(Call<PlacesDetailsResponse>
+                                           call, Response<PlacesDetailsResponse> response) {
                 PlacesDetailsResponse body = response.body();
-                Result result = body.getResult();
-                restaurantInfo.setWebsite(result.getWebsite());
-                restaurantInfo.setPhone(result.getFormattedPhoneNumber());
+                Result result = null;
+                if (body != null) {
+                    result = body.getResult();
+                }
+                if (result != null) {
+                    restaurantInfo.setWebsite(result.getWebsite());
+                }
+                if (result != null) {
+                    restaurantInfo.setPhone(result.getFormattedPhoneNumber());
+                }
                 restaurantInfo.setDetailedInfo(true);
                 setContactsListeners();
             }
 
             @Override
-            public void onFailure(Call<PlacesDetailsResponse> call, Throwable t) {
+            public void onFailure(Call<PlacesDetailsResponse>
+                                          call, Throwable t) {
 
             }
         });
@@ -165,7 +177,7 @@ public class RestaurantActivity extends AppCompatActivity {
                         try {
                             EatingPlan eatingPlan = document.toObject(EatingPlan.class);
                             eatingPlans.add(eatingPlan);
-                        } catch (Exception e) {
+                        } catch (Exception ignored) {
                         }
                     }
                     setUserList();
@@ -180,7 +192,7 @@ public class RestaurantActivity extends AppCompatActivity {
                                         )) {
                                     found = true;
                                 }
-                            } catch (NullPointerException e) {
+                            } catch (Exception ignored) {
                             }
                         }
                         setPlanParams(found);
@@ -207,9 +219,10 @@ public class RestaurantActivity extends AppCompatActivity {
                 try {
                     UserInformation userInformation = document.toObject(UserInformation.class);
                     for (EatingPlan plan : eatingPlans) {
-                        if ((plan.getUserID().equals(userInformation.getId()) &&
-                                (plan.getRestaurantID().equals(restaurantInfo.getId()))
-                        )) {
+                        if (userInformation != null &&
+                                (plan.getUserID().equals(userInformation.getId()) &&
+                                        (plan.getRestaurantID().equals(restaurantInfo.getId()))
+                                )) {
                             usersList.add(userInformation);
                         }
                     }
@@ -238,7 +251,7 @@ public class RestaurantActivity extends AppCompatActivity {
     }
 
     private void setRecyclerView() {
-        recyclerView = findViewById(R.id.activity_restaurant_recycler_view);
+        RecyclerView recyclerView = findViewById(R.id.activity_restaurant_recycler_view);
         workmatesAdapter = new WorkmatesAdapter(usersList
                 , eatingPlans, false);
         recyclerView.setAdapter(workmatesAdapter);
@@ -257,13 +270,13 @@ public class RestaurantActivity extends AppCompatActivity {
                 star3.setVisibility(View.INVISIBLE);
             }
 
-        } catch (NullPointerException e) {
+        } catch (Exception ignored) {
         }
 
         try {
             restaurantTitle.setText(restaurantInfo.getName());
             restaurantDescription.setText(restaurantInfo.getAddress());
-        } catch (NullPointerException e) {
+        } catch (Exception ignored) {
         }
 
         String photoRef = restaurantInfo.getPhotoRef();
@@ -274,7 +287,7 @@ public class RestaurantActivity extends AppCompatActivity {
             } else if (restaurantInfo.getPhotoMetadata() != null) {
                 fetchPhotoFromAtributes(restaurantInfo.getPhotoMetadata());
             }
-        } catch (NullPointerException e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -311,7 +324,8 @@ public class RestaurantActivity extends AppCompatActivity {
         } else {
             removeUserPlan();
             EatingPlan eatingPlan = new EatingPlan();
-            eatingPlan.setUserID(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            eatingPlan.setUserID(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser())
+                    .getUid());
             eatingPlan.setRestaurantID(restaurantInfo.getId());
             eatingPlan.setRestaurantName(restaurantInfo.getName());
 
@@ -348,7 +362,7 @@ public class RestaurantActivity extends AppCompatActivity {
 
     private void removeUserPlan() {
         String pathName = getFormatedTodaysDate();
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
         plansCollection.document(pathName)
                 .collection("plan")
@@ -358,7 +372,7 @@ public class RestaurantActivity extends AppCompatActivity {
         try {
             usersList.remove(getUserInfo());
             workmatesAdapter.notifyDataSetChanged();
-        } catch (NullPointerException e) {
+        } catch (Exception ignored) {
         }
     }
 

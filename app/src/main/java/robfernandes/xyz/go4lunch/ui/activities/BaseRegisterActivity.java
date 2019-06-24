@@ -4,13 +4,14 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import androidx.appcompat.app.AppCompatActivity;
 import robfernandes.xyz.go4lunch.model.UserInformation;
 
 @SuppressLint("Registered")
