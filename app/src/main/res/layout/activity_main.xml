@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/email"
             android:inputType="textEmailAddress"
-            android:autofillHints="Email" />
+            tools:ignore="Autofill" />
 
         <EditText
             android:id="@+id/activity_main_password_edit_text"
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/password"
             android:inputType="textPassword"
-            android:importantForAutofill="no" />
+            tools:ignore="Autofill" />
 
         <Button
             android:id="@+id/activity_main_log_in_btn"

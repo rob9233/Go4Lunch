@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -43,7 +44,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="right"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                tools:ignore="RtlHardcoded">
 
                 <TextView
                     android:id="@+id/restaurant_item_distance"
@@ -51,14 +53,16 @@
                     android:layout_height="wrap_content" />
 
                 <LinearLayout
+                    android:id="@+id/restaurant_item_rating_plans_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/restaurant_item_rating_plans_container">
+                    tools:ignore="UseCompoundDrawables">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        card_view:srcCompat="@drawable/ic_person_black_16dp" />
+                        card_view:srcCompat="@drawable/ic_person_black_16dp"
+                        tools:ignore="ContentDescription" />
 
                     <TextView
                         android:id="@+id/restaurant_item_rating_plans_num"
@@ -76,30 +80,34 @@
                         android:id="@+id/restaurant_item_rating_star_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        card_view:srcCompat="@drawable/ic_star_yellow_16dp" />
+                        card_view:srcCompat="@drawable/ic_star_yellow_16dp"
+                        tools:ignore="ContentDescription" />
 
                     <ImageView
                         android:id="@+id/restaurant_item_rating_star_2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        card_view:srcCompat="@drawable/ic_star_yellow_16dp" />
+                        card_view:srcCompat="@drawable/ic_star_yellow_16dp"
+                        tools:ignore="ContentDescription" />
 
                     <ImageView
                         android:id="@+id/restaurant_item_rating_star_1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        card_view:srcCompat="@drawable/ic_star_yellow_16dp" />
+                        card_view:srcCompat="@drawable/ic_star_yellow_16dp"
+                        tools:ignore="ContentDescription" />
 
                 </LinearLayout>
             </LinearLayout>
 
             <ImageView
-                android:layout_marginLeft="10dp"
                 android:id="@+id/restaurant_item_image"
                 android:layout_width="90dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
-                android:scaleType="fitEnd" />
+                android:layout_marginStart="10dp"
+                android:scaleType="fitEnd"
+                tools:ignore="RtlHardcoded" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

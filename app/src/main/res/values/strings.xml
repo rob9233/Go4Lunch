@@ -104,11 +104,8 @@
     <string name="click_here_to_add_a_profile_picture">Click here to add a profile picture</string>
     <string name="distance">Filter by distance</string>
     <string name="num_of_stars">Filter by number of stars</string>
-    <string name="filter">Filter</string>
     <string name="open_now">Open now</string>
     <string name="closed">Closed</string>
-    <string name="email">Email</string>
-    <string name="password">Password</string>
     <string name="background_image">Background Image</string>
     <string name="authentication_failed">Authentication failed</string>
     <string name="google_sign_in_failed">Google sign in failed</string>
@@ -131,4 +128,22 @@
     <string name="stars">stars</string>
     <string name="it_is_not_possible_to_dispay_map">It is not possible to display the map</string>
     <string name="it_was_not_foun_lunch">It was not found a lunch plan</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="register">Register</string>
+    <string name="call">Call</string>
+    <string name="like">Like</string>
+    <string name="website">Website</string>
+    <string name="filter">Filter</string>
+    <string name="cancel">Cancel</string>
+    <string name="min_number_of_stars">Min number of stars</string>
+    <string name="_0_stars">0 stars</string>
+    <string name="max_number_of_stars">Max number of stars</string>
+    <string name="_3_stars">3 stars</string>
+    <string name="min_distance">Min distance</string>
+    <string name="_0_m">0 m</string>
+    <string name="max_distance">Max distance</string>
+    <string name="_1000_m">1000 m</string>
+    <string name="ftr">filter</string>
 </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
@@ -10,14 +10,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Min number of stars"
+        android:text="@string/min_number_of_stars"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/min_num_of_stars_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0 stars" />
+        android:text="@string/_0_stars" />
 
     <SeekBar
         android:id="@+id/seekbar_min_num_of_stars"
@@ -30,14 +30,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Max number of stars"
+        android:text="@string/max_number_of_stars"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/max_num_of_stars_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="3 stars" />
+        android:text="@string/_3_stars" />
 
     <SeekBar
         android:id="@+id/seekbar_max_num_of_stars"
@@ -50,14 +50,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Min distance"
+        android:text="@string/min_distance"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/min_distance_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0 m" />
+        android:text="@string/_0_m" />
 
     <SeekBar
         android:id="@+id/seekbar_min_distance"
@@ -70,14 +70,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Max distance"
+        android:text="@string/max_distance"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/max_distance_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1000 m" />
+        android:text="@string/_1000_m" />
 
     <SeekBar
         android:id="@+id/seekbar_max_distance"
@@ -96,13 +96,15 @@
             android:id="@+id/dialog_button_filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Filter" />
+            android:text="@string/ftr"
+            tools:ignore="ButtonStyle" />
 
         <Button
             android:id="@+id/dialog_button_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel" />
+            android:text="@string/cancel"
+            tools:ignore="ButtonStyle" />
     </LinearLayout>
 
 </LinearLayout>
