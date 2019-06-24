@@ -95,7 +95,6 @@ public class RestaurantActivity extends AppCompatActivity {
         setRecyclerView();
         showInfo();
         checkPlan();
-        getLikeStatus();
         if (!restaurantInfo.isDetailedInfo()) {
             getDetailedInfo();
         } else {
@@ -214,7 +213,8 @@ public class RestaurantActivity extends AppCompatActivity {
                             usersList.add(userInformation);
                         }
                     }
-                } catch (Exception e) {
+                    getLikeStatus();
+                } catch (Exception ignored) {
                 }
             }
             workmatesAdapter.notifyDataSetChanged();

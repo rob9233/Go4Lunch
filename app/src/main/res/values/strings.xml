@@ -114,4 +114,6 @@
     <string name="google_sign_in_failed">Google sign in failed</string>
     <string name="please_unsert_an_email">please insert an email</string>
     <string name="please_insert_a_password">please insert a password</string>
+    <string name="language">Language:</string>
+    <string name="notifications">Notifications:</string>
 </resources>
