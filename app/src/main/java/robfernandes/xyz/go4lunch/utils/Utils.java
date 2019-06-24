@@ -26,6 +26,7 @@ import java.util.UUID;
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.ui.activities.MainActivity;
 
+import static robfernandes.xyz.go4lunch.utils.Constants.LANG_KEY;
 import static robfernandes.xyz.go4lunch.utils.Constants.NOTIFICATIONS_KEY;
 import static robfernandes.xyz.go4lunch.utils.Constants.PREFS_KEY;
 
@@ -149,6 +150,15 @@ public class Utils {
         config.locale = locale;
         activity.getResources().updateConfiguration(config,
                 activity.getResources().getDisplayMetrics());
+        setLangFromPrefs(activity, lang);
         restartApp(activity);
+    }
+
+    public static String getLangFromPrefs(Context context) {
+        return getSharedPreference(context).getString(LANG_KEY, "en");
+    }
+
+    private static void setLangFromPrefs(Context context, String value) {
+        getSharedPreference(context).edit().putString(LANG_KEY, value).apply();
     }
 }

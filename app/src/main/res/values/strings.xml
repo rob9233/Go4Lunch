@@ -116,4 +116,7 @@
     <string name="please_insert_a_password">please insert a password</string>
     <string name="language">Language:</string>
     <string name="notifications">Notifications:</string>
+    <string name="loading_map">Loading Map</string>
+    <string name="change_language">Change language</string>
+    <string name="change_lang_restart_app">Changing language will restart the app, do you want to continue?</string>
 </resources>

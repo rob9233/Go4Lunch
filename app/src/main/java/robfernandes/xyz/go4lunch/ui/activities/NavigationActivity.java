@@ -105,6 +105,8 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     private void init(Bundle savedInstanceState) {
+        Toast.makeText(getBaseContext(), getString(R.string.loading_map), Toast.LENGTH_SHORT)
+                .show();
         getUserInfo();
         //Start on Map Fragment but not when the deice is rotated
         if (savedInstanceState == null) {

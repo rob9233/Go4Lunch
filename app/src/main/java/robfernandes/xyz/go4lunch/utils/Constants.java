@@ -14,4 +14,5 @@ public class Constants {
     public static String MAX_STARS = "maxStars";
     public static String MIN_DISTANCE = "minDistance";
     public static String MAX_DISTANCE = "maxDistance";
+    public static String LANG_KEY = "LANG_KEY";
 }

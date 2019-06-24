@@ -2,6 +2,7 @@ package robfernandes.xyz.go4lunch.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,10 +19,14 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.util.Locale;
 import java.util.Objects;
 
 import robfernandes.xyz.go4lunch.R;
 import robfernandes.xyz.go4lunch.model.UserInformation;
+
+import static robfernandes.xyz.go4lunch.utils.Utils.changeLanguage;
+import static robfernandes.xyz.go4lunch.utils.Utils.getLangFromPrefs;
 
 public class MainActivity extends BaseRegisterActivity {
 
@@ -37,6 +42,12 @@ public class MainActivity extends BaseRegisterActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        String language = Locale.getDefault().getLanguage();
+        String langFromPrefs = getLangFromPrefs(getBaseContext());
+        if (!language.equals(langFromPrefs)) {
+            changeLanguage(MainActivity.this, langFromPrefs);
+        }
 
         firebaseAuth = FirebaseAuth.getInstance();
         setViews();

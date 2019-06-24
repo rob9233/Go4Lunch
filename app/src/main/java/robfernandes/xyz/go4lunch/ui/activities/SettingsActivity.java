@@ -1,17 +1,21 @@
 package robfernandes.xyz.go4lunch.ui.activities;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Switch;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import java.util.Locale;
+
 import robfernandes.xyz.go4lunch.R;
 
+import static robfernandes.xyz.go4lunch.utils.Utils.changeLanguage;
 import static robfernandes.xyz.go4lunch.utils.Utils.getNotificationStatusFromPrefs;
 import static robfernandes.xyz.go4lunch.utils.Utils.setNotificationStatusInPrefs;
 
@@ -42,17 +46,61 @@ public class SettingsActivity extends AppCompatActivity {
                 R.array.lang_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+        String currentLang = Locale.getDefault().getLanguage();
+        int spinnerIndex;
+
+        switch (currentLang) {
+            case "en":
+                spinnerIndex = 0;
+                break;
+            case "es":
+                spinnerIndex = 1;
+                break;
+            default:
+                spinnerIndex = 0;
+                break;
+        }
+
+        spinner.setSelection(spinnerIndex);
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selection = parent.getItemAtPosition(position).toString();
+                String selectionLangName = parent.getItemAtPosition(position).toString();
+                String selectionLang;
+                switch (selectionLangName) {
+                    case "English":
+                        selectionLang = "en";
+                        break;
+                    case "Español":
+                        selectionLang = "es";
+                        break;
+                    default:
+                        selectionLang = "en";
+                        break;
+                }
+
+                if (!selectionLang.equals(currentLang)) {
+                    displayChangeLangDialog(selectionLang, spinner, spinnerIndex);
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
+    }
+
+    private void displayChangeLangDialog(String lang, Spinner spinner, int spinnerIndex) {
+        new AlertDialog.Builder(SettingsActivity.this)
+                .setTitle(getBaseContext().getString(R.string.change_language))
+                .setMessage(getBaseContext().getString(R.string.change_lang_restart_app))
+                .setPositiveButton(android.R.string.yes, (dialog, which)
+                        -> changeLanguage(SettingsActivity.this, lang))
+                .setNegativeButton(android.R.string.no, (dialog, which)
+                        -> spinner.setSelection(spinnerIndex))
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     private void setNotificationSwitch() {
