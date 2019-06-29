@@ -5,7 +5,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         multiDexEnabled true
-        applicationId "robfernandes.xyz.go4lunch"
+        applicationId "robfernandes.com.go4lunch"
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
@@ -50,6 +50,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:20.1.0'
     implementation 'com.google.firebase:firebase-storage:18.0.0'
     implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'com.facebook.android:facebook-login:[5,6)'
     implementation 'com.google.firebase:firebase-messaging:19.0.1'
     androidTestImplementation 'androidx.test:rules:1.3.0-alpha01'
 }

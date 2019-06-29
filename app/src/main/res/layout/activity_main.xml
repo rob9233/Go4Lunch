@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,10 +7,10 @@
     tools:context=".ui.activities.MainActivity">
 
     <ImageView
-        android:contentDescription="@string/background_image"
         android:id="@+id/activity_main_background_blur_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/background_image"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,6 +34,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/activity_main_background_blur_image" />
 
+
+    -
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
@@ -48,61 +51,68 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/activity_main_background_blur_image"
-        app:layout_constraintVertical_bias="0.88"
-        >
+        app:layout_constraintVertical_bias="0.88">
 
         <EditText
             android:id="@+id/activity_main_email_edit_text"
             android:layout_width="@dimen/log_in_btn_width"
             android:layout_height="wrap_content"
+            android:autofillHints="Email"
             android:hint="@string/email"
-            android:inputType="textEmailAddress"
-            tools:ignore="Autofill" />
+            android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/activity_main_password_edit_text"
             android:layout_width="@dimen/log_in_btn_width"
             android:layout_height="wrap_content"
             android:hint="@string/password"
-            android:inputType="textPassword"
-            tools:ignore="Autofill" />
+            android:importantForAutofill="no"
+            android:inputType="textPassword" />
 
         <Button
             android:id="@+id/activity_main_log_in_btn"
             android:layout_width="@dimen/log_in_btn_width"
             android:layout_height="wrap_content"
-            android:text="@string/log_in_with_email"
-            android:textColor="@android:color/white"
             android:background="@drawable/btn_round_email"
-            />
+            android:text="@string/log_in_with_email"
+            android:textColor="@android:color/white" />
 
-        <Button
-            android:id="@+id/activity_main_facebook_btn"
+
+        -
+
+        <RelativeLayout
             android:layout_width="@dimen/log_in_btn_width"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/log_in_btn_height"
             android:layout_marginTop="@dimen/log_btn_margin_top"
-            android:text="@string/log_in_with_facebook"
-            android:background="@drawable/btn_round_facebook"
-            android:textColor="@android:color/white"
-            />
+            android:background="@color/facebook">
+
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/facebook_login_button"
+                android:layout_width="@dimen/log_in_btn_width"
+                android:layout_height="@dimen/log_in_btn_height"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_horizontal" />
+
+        </RelativeLayout>
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/activity_main_gmail_btn"
             android:layout_width="@dimen/log_in_btn_width"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/log_in_btn_height"
             android:layout_marginTop="@dimen/log_btn_margin_top"
             android:text="@string/log_in_with_gmail"
             android:textColor="@android:color/white" />
 
         <TextView
-            android:textAlignment="center"
-            android:textStyle="bold"
-            android:layout_marginTop="10dp"
             android:id="@+id/activity_main_dont_have_account_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="@string/don_t_have_an_account_click_here_to_register_for_free"
-            android:textColor="@color/design_default_color_primary" />
+            android:textAlignment="center"
+            android:textColor="@color/design_default_color_primary"
+            android:textStyle="bold" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
