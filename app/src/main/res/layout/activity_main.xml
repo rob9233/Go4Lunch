@@ -34,9 +34,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/activity_main_background_blur_image" />
 
-
-    -
-
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
@@ -67,7 +64,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/password"
             android:importantForAutofill="no"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            tools:ignore="UnusedAttribute" />
 
         <Button
             android:id="@+id/activity_main_log_in_btn"

@@ -21,8 +21,6 @@ import robfernandes.com.go4lunch.R;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
@@ -33,45 +31,44 @@ import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class MainActivityEmailTest {
+public class LogInBtnTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     @Test
-    public void mainActivityEmailTest() {
-        ViewInteraction appCompatEditText = onView(
-                allOf(withId(R.id.activity_main_email_edit_text),
+    public void logInBtnTest() {
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            onView(withId(R.id.activity_main_background_blur_image)).perform(click());
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        onView(withId(R.id.activity_main_background_blur_image)).perform(click());
+        ViewInteraction appCompatButton = onView(
+                allOf(withId(R.id.activity_main_log_in_btn), withText("Log In With Email"),
                         childAtPosition(
                                 allOf(withId(R.id.linearLayout),
                                         childAtPosition(
                                                 withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
                                                 2)),
-                                0),
+                                2),
                         isDisplayed()));
-        appCompatEditText.perform(click());
+        appCompatButton.perform(click());
 
-        ViewInteraction appCompatEditText2 = onView(
-                allOf(withId(R.id.activity_main_email_edit_text),
-                        childAtPosition(
-                                allOf(withId(R.id.linearLayout),
-                                        childAtPosition(
-                                                withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                                2)),
-                                0),
-                        isDisplayed()));
-        appCompatEditText2.perform(replaceText("test@gmail.com"), closeSoftKeyboard());
-
-        ViewInteraction editText = onView(
-                allOf(withId(R.id.activity_main_email_edit_text), withText("test@gmail.com"),
+        ViewInteraction button = onView(
+                allOf(withId(R.id.activity_main_log_in_btn),
                         childAtPosition(
                                 allOf(withId(R.id.linearLayout),
                                         childAtPosition(
                                                 IsInstanceOf.<View>instanceOf(android.view.ViewGroup.class),
                                                 2)),
-                                0),
+                                2),
                         isDisplayed()));
-        editText.check(matches(withText("test@gmail.com")));
+        button.check(matches(isDisplayed()));
     }
 
     private static Matcher<View> childAtPosition(
