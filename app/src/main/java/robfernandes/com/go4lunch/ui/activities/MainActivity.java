@@ -35,7 +35,7 @@ import robfernandes.com.go4lunch.utils.Utils;
 
 import static robfernandes.com.go4lunch.utils.Utils.changeLanguage;
 
-public class MainActivity extends BaseRegisterActivity {
+public class MainActivity extends UserLoggedOutBaseRegisterActivity {
 
     private Button logInWithEmailBtn;
     private SignInButton getLogInWithGmailBtn;
@@ -196,7 +196,8 @@ public class MainActivity extends BaseRegisterActivity {
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.getException());
-                        Toast.makeText(MainActivity.this, "Authentication failed.",
+                        Toast.makeText(MainActivity.this
+                                , getString(R.string.authentication_failed),
                                 Toast.LENGTH_SHORT).show();
                     }
                 });

@@ -7,7 +7,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Switch;
 
-import java.util.Locale;
 import java.util.Objects;
 
 import androidx.appcompat.app.AlertDialog;
@@ -16,6 +15,7 @@ import androidx.appcompat.widget.Toolbar;
 import robfernandes.com.go4lunch.R;
 
 import static robfernandes.com.go4lunch.utils.Utils.changeLanguage;
+import static robfernandes.com.go4lunch.utils.Utils.getLangFromPrefs;
 import static robfernandes.com.go4lunch.utils.Utils.getNotificationStatusFromPrefs;
 import static robfernandes.com.go4lunch.utils.Utils.setNotificationStatusInPrefs;
 
@@ -44,7 +44,7 @@ public class SettingsActivity extends AppCompatActivity {
                 R.array.lang_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        String currentLang = Locale.getDefault().getLanguage();
+        String currentLang = getLangFromPrefs(SettingsActivity.this);
         int spinnerIndex;
 
         switch (currentLang) {

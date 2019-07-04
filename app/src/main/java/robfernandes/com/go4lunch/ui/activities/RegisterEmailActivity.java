@@ -20,7 +20,7 @@ import robfernandes.com.go4lunch.model.UserInformation;
 
 import static robfernandes.com.go4lunch.utils.Utils.generateRandomFileName;
 
-public class RegisterEmailActivity extends BaseRegisterActivity {
+public class RegisterEmailActivity extends UserLoggedOutBaseRegisterActivity {
 
     private EditText emailEditText, passwordEditText, nameEditText;
     private Button registerBtn;

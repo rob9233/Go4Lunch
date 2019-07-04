@@ -30,16 +30,13 @@ import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class goingToRegisterActivityTest {
+public class UserLoggedOutgoingToRegisterActivityTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     @Test
     public void goingToRegisterActivityTest() {
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
             onView(withId(R.id.activity_main_background_blur_image)).perform(click());
             Thread.sleep(200);

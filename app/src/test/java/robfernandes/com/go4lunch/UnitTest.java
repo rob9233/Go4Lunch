@@ -5,7 +5,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static robfernandes.com.go4lunch.utils.Utils.formatNumberOfStars;
-import static robfernandes.com.go4lunch.utils.Utils.getFormatedTodaysDate;
 import static robfernandes.com.go4lunch.utils.Utils.getTodaysWeekDay;
 
 /**
@@ -47,13 +46,6 @@ public class UnitTest {
         double rankin = 0;
         int stars = formatNumberOfStars(rankin);
         assertEquals(0, stars);
-    }
-
-    @Test
-    public void getFormatedTodaysDate_size() {
-        String formattedTodaysDate = getFormatedTodaysDate();
-        int length = formattedTodaysDate.length();
-        assertEquals(9, length);
     }
 
     @Test
